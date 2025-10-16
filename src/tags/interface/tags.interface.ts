@@ -1,0 +1,8 @@
+
+
+export interface ITagsServices{
+
+
+    getTags();
+
+}

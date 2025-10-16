@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  modules  RoleModule[]
+  users    User[]
+}
+
+
+model Module {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  roles       RoleModule[]
+}
+
+model RoleModule {
+  id       Int     @id @default(autoincrement())
+  roleId   Int
+  moduleId Int
+  status   Int @default(0)
+  role     Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  module   Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  @@unique([roleId, moduleId])
+}
+
+
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  firstname String?
+  lastname String?
+  Bio      String?
+  password String
+  roleId   Int
+  phone String?
+  country String?
+  state String?
+  postalcode String?
+  address String?
+  role     Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  activityLogs  ActivityLog[]
+}
+
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int?     // nullable if system or guest action
+  action      String
+  description String?
+  entityType  String?
+  entityId    Int?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model EmailTemplate {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  subject   String
+  body      String   // store HTML/Markdown
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Blog {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  image_url String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  tagId    String?     // single tag
+  tagurl String?
+  titleurl String?
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+}
+
+
+
+
+model SeoPages {
+  id            Int      @id @default(autoincrement()) // Or use UUID if you prefer
+  title         String
+  slug          String   @unique
+  content       String
+  meta_title    String?
+  meta_desc     String?
+  meta_keywords String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  seopage       String?
+}
