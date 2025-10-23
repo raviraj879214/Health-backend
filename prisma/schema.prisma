@@ -8,14 +8,13 @@ datasource db {
 }
 
 model Role {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  modules  RoleModule[]
-  users    User[]
+  id        Int          @id @default(autoincrement())
+  name      String       @unique
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  modules   RoleModule[]
+  users     User[]
 }
-
 
 model Module {
   id          Int          @id @default(autoincrement())
@@ -25,38 +24,36 @@ model Module {
 }
 
 model RoleModule {
-  id       Int     @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
   roleId   Int
   moduleId Int
-  status   Int @default(0)
-  role     Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  module   Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  status   Int    @default(0)
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  role     Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
   @@unique([roleId, moduleId])
 }
 
-
-
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  firstname String?
-  lastname String?
-  Bio      String?
-  password String
-  roleId   Int
-  phone String?
-  country String?
-  state String?
-  postalcode String?
-  address String?
-  role     Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  activityLogs  ActivityLog[]
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  roleId       Int
+  Bio          String?
+  firstname    String?
+  lastname     String?
+  address      String?
+  country      String?
+  phone        String?
+  postalcode   String?
+  state        String?
+  activityLogs ActivityLog[]
+  role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
 }
-
 
 model ActivityLog {
   id          Int      @id @default(autoincrement())
-  userId      Int?     // nullable if system or guest action
+  userId      Int?
   action      String
   description String?
   entityType  String?
@@ -64,45 +61,37 @@ model ActivityLog {
   ipAddress   String?
   userAgent   String?
   createdAt   DateTime @default(now())
-
   user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
 
 model EmailTemplate {
   id        Int      @id @default(autoincrement())
   name      String   @unique
   subject   String
-  body      String   // store HTML/Markdown
+  body      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-
 model Blog {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  image_url String?
-
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  image_url  String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  tagId    String?     // single tag
-  tagurl String?
-  titleurl String?
+  tagId      String?
+  tagurl     String?
+  titleurl   String?
 }
 
 model Tag {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique
 }
 
-
-
-
 model SeoPages {
-  id            Int      @id @default(autoincrement()) // Or use UUID if you prefer
+  id            Int      @id @default(autoincrement())
   title         String
   slug          String   @unique
   content       String
@@ -112,4 +101,18 @@ model SeoPages {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
   seopage       String?
+}
+
+
+
+model Notification {
+  id        Int      @id @default(autoincrement())  // Primary key, auto-increment
+  userId    Int?                                   // Optional user ID
+  message   String   @db.VarChar(500)             // Notification message
+  isRead    Boolean  @default(false)              // Has the notification been read
+  type      String?  @db.VarChar(50)              // Optional type/category
+  createdAt DateTime @default(now())              // Created timestamp
+  updatedAt DateTime @updatedAt                   // Updated timestamp (auto-updated)
+
+  @@index([userId])                               // Index for faster lookups by userId
 }

@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import { TagsModule } from './tags/v1/tags,module';
 import { SeoModule } from './seo/v1/seo.module';
 import { ConfigModule } from '@nestjs/config';
+import { NotificationsModule } from './notifications/v1/notifications.module';
 
 
 @Module({
@@ -26,7 +27,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
-    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule ],
+    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule ],
 })
 
 

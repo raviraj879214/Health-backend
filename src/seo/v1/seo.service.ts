@@ -62,7 +62,7 @@ export class SeoServices implements ISeoServices {
 
         try {
 
-            console.log("dto.id" + dto.id);
+         
 
 
             if (!dto || !dto.id) {
