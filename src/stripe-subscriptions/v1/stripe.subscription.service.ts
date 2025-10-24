@@ -10,12 +10,11 @@ import Stripe from "stripe";
 @Injectable()
 export class StripeSubscriptionService implements IStripeSubscriptionService{
 
-     constructor(private readonly prisma:PrismaService)
-    {
+    constructor(private readonly prisma: PrismaService) {}
 
-    }
-
-    private stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {apiVersion: '2025-09-30.clover', });
+      public stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: '2025-09-30.clover',
+      });
 
 
 
