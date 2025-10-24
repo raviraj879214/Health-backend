@@ -23,17 +23,30 @@ export class StripeSubscriptionController {
 
   @Post()
   @Version('1')
-  async handle(@Req() req: Request,@Res() res: Response,@Headers('stripe-signature') signature: string) {
+  async handle(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Headers('stripe-signature') signature: string
+  ) {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-    let event: Stripe.Event;
 
     try {
-      // Use rawBody from Express (bodyParser.raw in main.ts)
-      event = this.stripeService.stripe.webhooks.constructEvent(
-        req.body, // rawBody from bodyParser.raw
-        signature,
-        webhookSecret,
-      );
+      let event: Stripe.Event;
+      
+
+      if (signature && webhookSecret) {
+        // Stripe CLI / real webhook: verify signature
+        event = this.stripeService.stripe.webhooks.constructEvent(
+          req.body, // must be Buffer
+          signature,
+          webhookSecret
+        );
+      } else {
+        // Postman / testing: skip verification
+        event = req.body as Stripe.Event;
+      }
+
+      console.log("event",event);
 
       console.log('Stripe webhook triggered:', event.type);
 
@@ -41,8 +54,13 @@ export class StripeSubscriptionController {
 
       res.status(200).send('OK');
     } catch (err: any) {
-      console.error('Stripe webhook error:', err.message);
+      console.log('Stripe webhook error:', err.message);
       res.status(400).send(`Webhook Error: ${err.message}`);
     }
   }
+
+
+
+
+
 }
