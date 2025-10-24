@@ -116,3 +116,18 @@ model Notification {
 
   @@index([userId])                               // Index for faster lookups by userId
 }
+
+
+
+
+model Subscription {
+  id                    Int       @id @default(autoincrement())
+  userId                Int?
+  stripeCustomerId      String
+  stripeSubscriptionId  String
+  status                String
+  currentPeriodEnd      DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @default(now()) @updatedAt
+}
+
