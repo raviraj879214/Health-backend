@@ -58,7 +58,7 @@ app.enableCors({
   // ✅ Start server
   const port = process.env.PORT ?? 8000;
    app.use(
-    '/api/stripe-subscriptions',
+    '/api/webhook',
     bodyParser.raw({ type: 'application/json' }),
   );
 
