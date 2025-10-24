@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
+import getRawBody from 'raw-body';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -57,10 +58,20 @@ app.enableCors({
 
   // ✅ Start server
   const port = process.env.PORT ?? 8000;
-   app.use(
-    '/api/webhook',
-    bodyParser.raw({ type: 'application/json' }),
-  );
+   
+
+  app.use('/api/webhook', async (req, res, next) => {
+    try {
+      req.body = await getRawBody(req, {
+        length: req.headers['content-length'],
+        limit: '1mb',
+        encoding: true, // returns string
+      });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  });
 
 
   await app.listen(port, '0.0.0.0');
