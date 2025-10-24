@@ -30,33 +30,15 @@ async handle(
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
   let event: Stripe.Event;
 
+  console.log('Stripe webhook received:', req.body);
+
+  
   try {
-    // Extract timestamp from signature header
-    if (signature) {
-      const matches = signature.match(/t=(\d+),/);
-      if (matches) {
-        const timestamp = parseInt(matches[1], 10);
-        console.log('Stripe signature timestamp:', new Date(timestamp * 1000).toISOString());
-      } else {
-        console.log('No timestamp found in signature header');
-      }
-    }
+  
 
-    if (signature && webhookSecret) {
-      // Verify the signature (Stripe CLI / real webhook)
-      event = this.stripeService.stripe.webhooks.constructEvent(
-        req.body,
-        signature,
-        webhookSecret,
-      );
-    } else {
-      // Postman / testing without verification
-      event = req.body as Stripe.Event;
-    }
+    
 
-    console.log('Stripe webhook received:', event.type);
-
-    await this.stripeService.handleWebhook(event);
+    
 
     res.status(200).send('OK');
   } catch (err: any) {
