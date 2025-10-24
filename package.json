@@ -44,6 +44,7 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "stripe": "^19.1.0",
     "ua-parser-js": "^2.0.6"
   },
   "devDependencies": {
@@ -60,6 +61,7 @@
     "@types/node": "^22.18.10",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
+    "@types/stripe": "^8.0.416",
     "@types/supertest": "^6.0.2",
     "@types/ua-parser-js": "^0.7.39",
     "cross-env": "^10.1.0",
