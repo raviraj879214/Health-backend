@@ -29,6 +29,8 @@ export class StripeSubscription{
                     signature,
                     webhookSecret
                 );
+                 console.log("stripe triggered",event);
+                 
                 await this.stripeService.handleWebhook(event);
                 res.status(200).send('OK');
                 } catch (err) {
