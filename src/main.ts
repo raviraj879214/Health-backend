@@ -60,18 +60,20 @@ app.enableCors({
   const port = process.env.PORT ?? 8000;
    
 
-  app.use('/api/webhook', async (req, res, next) => {
-    try {
-      req.body = await getRawBody(req, {
-        length: req.headers['content-length'],
-        limit: '1mb',
-        encoding: true, // returns string
-      });
-      next();
-    } catch (err) {
-      next(err);
-    }
-  });
+ app.use('/api/webhook', async (req, res, next) => {
+  try {
+    // read raw body as string with higher limit
+    req.body = await getRawBody(req, {
+      length: req.headers['content-length'],
+      limit: '10mb',      // set maximum payload size to 10 MB
+      encoding: 'utf-8',  // returns string
+    });
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 
   await app.listen(port, '0.0.0.0');
