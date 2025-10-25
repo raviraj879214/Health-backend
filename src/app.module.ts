@@ -15,7 +15,9 @@ import { TagsModule } from './tags/v1/tags,module';
 import { SeoModule } from './seo/v1/seo.module';
 import { ConfigModule } from '@nestjs/config';
 import { NotificationsModule } from './notifications/v1/notifications.module';
-import { StripeSubScriptionModule } from './stripe-subscriptions/v1/stripe.subscription.module';
+import { SpecialtyTypeModule } from './manage-specialities-type/v1/specialty.type.module';
+import { SpecialtyModule } from './manage-specialities/v1/specialities.module';
+
 
 
 @Module({
@@ -28,7 +30,7 @@ import { StripeSubScriptionModule } from './stripe-subscriptions/v1/stripe.subsc
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
-    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule , StripeSubScriptionModule ],
+    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule  ],
 })
 
 

@@ -30,15 +30,23 @@ export class NotificationsController {
   @ModuleAccess('Manage Notification')
   @Version("1")
   async getUserNotifications(@Param('userId') userId: string,@Req() request: AuthRequest) {
-
     const userIds = request.user?.sub;
-   
-
     return this.notificationsService.getUserNotifications(Number(userIds));
   }
 
 
+  @Get('/markread/:notificationId')
+  @ModuleAccess('Manage Notification')
+  @Version("1")
+  async markAsRead(@Param('notificationId') notificationId: string){
+
+    return this.notificationsService.markAsRead(Number(notificationId));
+  }
+
   
+
+
+
 
 
 }

@@ -1,0 +1,6 @@
+
+
+
+
+
+export const SPECIALTY_SERVICE_V1 = 'SPECIALTY_SERVICE_V1';

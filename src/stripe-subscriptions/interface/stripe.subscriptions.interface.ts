@@ -1,15 +1,12 @@
-import Stripe from "stripe";
+import Stripe from 'stripe';
+
+export interface IStripeSubscriptionService {
+
+  createCustomer(email: string): Promise<Stripe.Customer>;
 
 
+  createCheckoutSession(customerId: string, priceId: string): Promise<Stripe.Checkout.Session>;
 
 
-export interface IStripeSubscriptionService{
-
-     createCustomer(email: string): Promise<Stripe.Customer>;
-     createSubscription(customerId: string, priceId: string): Promise<Stripe.Subscription>;
-     handleWebhook(event: Stripe.Event): Promise<void>;
-    
-
-
-
+  handleWebhook(event: Stripe.Event): Promise<void>;
 }
