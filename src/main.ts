@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
+import * as bodyParser from 'body-parser';
+import getRawBody from 'raw-body';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -56,7 +58,27 @@ app.enableCors({
 
   // ✅ Start server
   const port = process.env.PORT ?? 8000;
-  await app.listen(port);
+   
+
+ app.use('/api/webhook', async (req, res, next) => {
+  try {
+    // read raw body as string with higher limit
+    req.body = await getRawBody(req, {
+      length: req.headers['content-length'],
+      limit: '10mb',      // set maximum payload size to 10 MB
+      encoding: 'utf-8',  // returns string
+    });
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
+  await app.listen(port, '0.0.0.0');
+
+  
   console.log(`Server running on port ${port}`);
 }
 
