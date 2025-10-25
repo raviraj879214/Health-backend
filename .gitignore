@@ -22,15 +22,10 @@ pnpm-debug.log*
 # Environment Variables
 # -----------------------------
 # Ignore all local environment files
-.env
-.env.local
-.env.*.local
+# Ignore environment files
+.env*
 
 
-# Keep template files for reference
-!.env.example
-!.env.staging.example
-!.env.production.example
 
 
 # -----------------------------
