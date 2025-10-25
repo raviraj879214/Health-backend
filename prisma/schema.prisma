@@ -47,6 +47,7 @@ model User {
   phone        String?
   postalcode   String?
   state        String?
+  
   activityLogs ActivityLog[]
   role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
 }
@@ -106,15 +107,17 @@ model SeoPages {
 
 
 model Notification {
-  id        Int      @id @default(autoincrement())  // Primary key, auto-increment
-  userId    Int?                                   // Optional user ID
-  message   String   @db.VarChar(500)             // Notification message
-  isRead    Boolean  @default(false)              // Has the notification been read
-  type      String?  @db.VarChar(50)              // Optional type/category
-  createdAt DateTime @default(now())              // Created timestamp
-  updatedAt DateTime @updatedAt                   // Updated timestamp (auto-updated)
+  id        Int      @id @default(autoincrement())  // Existing numeric ID
+  userId    Int?                                      
+  message   String   @db.VarChar(500)                
+  isRead    Boolean  @default(false)                
+  type      String?  @db.VarChar(50)                
+  createdAt DateTime @default(now())                
+  updatedAt DateTime @updatedAt                     
 
-  @@index([userId])                               // Index for faster lookups by userId
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
+
+  @@index([userId])
 }
 
 
@@ -129,5 +132,28 @@ model Subscription {
   currentPeriodEnd      DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @default(now()) @updatedAt
+}
+
+
+
+model Specialty {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)   
+  typeId      Int                                   
+  type        SpecialtyType @relation(fields: [typeId], references: [id])
+  status      Int           @default(1)       
+  description String?      @db.VarChar(500)    
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model SpecialtyType {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(50)    
+  specialties Specialty[]                           
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
