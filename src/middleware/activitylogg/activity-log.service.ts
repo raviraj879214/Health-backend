@@ -8,21 +8,19 @@ export class ActivityLogService {
 
   constructor(private prisma: PrismaService) {}
 
-  async createLog(data: {
-    userId: number;
-    action: string;
-    description: string;
-    entityType: string;
-    entityId: number;
-    ipAddress: string;
-    userAgent: string;
-  }) {
+
+  async createLog(data: {userId: number;action: string;description: string;entityType: string;entityId: number;ipAddress: string;userAgent: string;})
+  {
+
     return this.prisma.activityLog.create({
-      data: {
-        ...data,
-        createdAt: new Date(),
-      },
+      data: {...data,createdAt: new Date(),},
     });
+
+    
   }
+
+
+
+
 
 }
