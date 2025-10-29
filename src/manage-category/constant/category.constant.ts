@@ -1,0 +1,6 @@
+
+
+
+
+
+export const CATEGORY_SERVICE_V1 = 'CATEGORY_SERVICE_V1';

@@ -17,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
 import { NotificationsModule } from './notifications/v1/notifications.module';
 import { SpecialtyTypeModule } from './manage-specialities-type/v1/specialty.type.module';
 import { SpecialtyModule } from './manage-specialities/v1/specialities.module';
+import { CategoryModule } from './manage-category/v1/category.module';
 
 
 
@@ -30,7 +31,7 @@ import { SpecialtyModule } from './manage-specialities/v1/specialities.module';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
-    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule  ],
+    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule  ],
 })
 
 

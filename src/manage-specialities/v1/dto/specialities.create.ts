@@ -6,4 +6,5 @@ export class SpecialtyCreateDto {
   typeId: number;
   status?: number;      
   description?: string;
+  specialtytypename? : string;
 }

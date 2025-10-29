@@ -157,3 +157,28 @@ model SpecialtyType {
   updatedAt   DateTime      @updatedAt
 }
 
+
+
+model Category {
+  id                 Int        @id @default(autoincrement())
+  name               String     @db.VarChar(150)
+  slug               String     @unique @db.VarChar(150)
+  parent_category_id Int?       
+  parent             Category?  @relation("CategoryHierarchy", fields: [parent_category_id], references: [id], onDelete: Cascade)
+  children           Category[] @relation("CategoryHierarchy")
+  level              Int        @default(1)
+  description        String?    
+  icon               String?    @db.VarChar(100)
+  sort_order         Int        @default(0)
+  status             String     @default("active") @db.VarChar(20)
+  is_featured        Boolean    @default(false)
+  full_path          String?    @db.VarChar(500)
+  path_ids           String?    @db.VarChar(255)
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime?
+
+  @@index([slug])
+  @@index([parent_category_id])
+}
