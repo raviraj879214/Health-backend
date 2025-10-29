@@ -23,6 +23,7 @@ import { CategoryModule } from './manage-category/v1/category.module';
 
 
 
+
 @Module({
  imports: [
      ServeStaticModule.forRoot({
@@ -33,7 +34,7 @@ import { CategoryModule } from './manage-category/v1/category.module';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
-    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule  ],
+    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule   ],
 })
 
 
