@@ -34,6 +34,8 @@ export class BlogController{
     {
 
     
+        console.log("imagePath");
+
         const file = requestbody.file;
         const image_url = file ? `${file.filename}` : null;
         console.log("imagePath",image_url);

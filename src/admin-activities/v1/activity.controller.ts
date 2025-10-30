@@ -27,11 +27,11 @@ export class AdminActivityController{
     @Get()
     @ModuleAccess('Manage Activies')
     @Version("1")
-    getAdminActivities( @Query('page') page: string,@Query('limit') limit: string, @Ip() ipAddress: string , @Headers('user-agent') userAgent: string,@Req() request: AuthRequest)
+    getAdminActivities(@Query('page') page: string,@Query('limit') limit: string, @Ip() ipAddress: string , @Headers('user-agent') userAgent: string,@Req() request: AuthRequest)
     {
 
         const userId = request.user?.sub;
-                
+         
         var uaInfo = (() => { 
         var result = new UAParser(userAgent).getResult(); 
         return `${result.browser.name} ${result.browser.version} on ${result.os.name} ${result.os.version}`; })();
@@ -47,6 +47,7 @@ export class AdminActivityController{
             @ModuleAccess('Manage Activies')
             @Version("1")
             getAdminActivity(@Param('userId') userId: string) {
+                
                 const id = Number(userId);
                 return this.activityService.getAdminActivity(id);
             }
