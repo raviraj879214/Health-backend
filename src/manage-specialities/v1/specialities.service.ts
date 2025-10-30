@@ -17,32 +17,58 @@ export class SpecialtyServices implements ISpecialtyService {
     }
 
 
-    async createSpecialty(dto: SpecialtyCreateDto,userId: number,ipAddress: string,userAgent: string) {
-
+   async createSpecialty(dto: SpecialtyCreateDto, userId: number, ipAddress: string, userAgent: string) {
         try {
-             const specialtyExist = await this.prisma.specialty.findFirst({
-                where: { name: dto.name },
-         });
+            let specialtyTypeId: number; // define once
 
+            // Case 1: If typeId is 0 => create new SpecialtyType
+            if (Number(dto.typeId) === 0) {
+            const existingType = await this.prisma.specialtyType.findFirst({
+                where: { name: dto.specialtytypename },
+            });
 
-        if (specialtyExist) {
+            if (existingType) {
+                return {
+                status: 409,
+                message: "SpecialtyType already exists",
+                };
+            }
+
+            const specialtyCreate = await this.prisma.specialtyType.create({
+                data: { name: dto.specialtytypename ?? "" },
+            });
+
+            specialtyTypeId = specialtyCreate.id;
+            } 
+            // Case 2: Otherwise, use existing id
+            else {
+            specialtyTypeId = Number(dto.typeId);
+            }
+
+            // Check if Specialty already exists
+            const specialtyExist = await this.prisma.specialty.findFirst({
+            where: { name: dto.name },
+            });
+
+            if (specialtyExist) {
             return {
                 status: 409,
                 message: "Specialty already exists",
             };
-        }
-
-        const datacreate = await this.prisma.specialty.create({
-            data : {
-                name : dto.name,
-                typeId : Number(dto.typeId),
-                status : dto.status,
-                description : dto.description
             }
-        });
 
+            // ✅ Create Specialty
+            const datacreate = await this.prisma.specialty.create({
+            data: {
+                name: dto.name,
+                typeId: specialtyTypeId,
+                status: dto.status,
+                description: dto.description,
+            },
+            });
 
-        await this.activityLogService.createLog({
+            // ✅ Log activity
+            await this.activityLogService.createLog({
             userId,
             action: "Create",
             description: `${dto.name} Specialty Created Successfully`,
@@ -52,19 +78,15 @@ export class SpecialtyServices implements ISpecialtyService {
             userAgent,
             });
 
-        
-            return {data : datacreate, message : "Specialty created successfully"}
-
-            
-        } 
-        catch (error) {
-             return { 
-                message : error.message,
-                status : error.status
-            }
+            return { data: datacreate, message: "Specialty created successfully" };
+        } catch (error) {
+            return {
+            message: error.message,
+            status: error.status ?? 500,
+            };
         }
-       
-    }
+        }
+
 
 
 
@@ -108,7 +130,7 @@ export class SpecialtyServices implements ISpecialtyService {
             },
             data :{
                 name : dto.name,
-                typeId : dto.typeId,
+                typeId : Number(dto.typeId),
                 description : dto.description,
             }
         });
