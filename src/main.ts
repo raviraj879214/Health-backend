@@ -10,7 +10,7 @@ async function bootstrap() {
   // ✅ Manual OPTIONS preflight handling (ensures Render/Nest handles it)
 app.use((req, res, next) => {
   const allowedOrigins = [
-    'https://health-tech-ui.vercel.app',
+    'https://health-travel-rho.vercel.app',
     'http://localhost:3000', // add more origins here
   ];
 
