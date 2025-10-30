@@ -17,8 +17,36 @@ export class ActivityService  implements IActivityService {
 
          const totalCount = await this.prisma.user.count();
 
+         console.log("userId",userId);
+
+
+         const rolescheck = await this.prisma.user.findFirst({
+            where :{id : Number(userId)},
+            include :{
+              role :{
+                select:{
+                  name : true
+                }
+              }
+            }
+         });
+
+         console.log("userId test",rolescheck?.role.name);
+         if(rolescheck?.role.name === 'SuperAdmin'){
+            userId = 0;
+         }
+
+
+         const whereClause =
+        userId && Number(userId) > 0
+          ? { id: Number(userId) }
+          : {}; 
+
+
+      console.log("userId test",userId);
+
         const users = await this.prisma.user.findMany({
-         
+         where : whereClause,
         skip: (page - 1) * limit, 
         take: limit,
         include:{
@@ -27,6 +55,7 @@ export class ActivityService  implements IActivityService {
               name :true
             }
           }
+
         }
         });
 
