@@ -14,6 +14,18 @@ export class AuthService {
   ) {}
 
   async login(dto: LoginDto) {
+
+    try {
+      
+    } catch (error) {
+      console.log("Login error:", error);
+
+    return {
+      success: false,
+      message: "Something went wrong while logging in",
+      error: error.message,
+    };
+    }
     const { email, password } = dto;
     const user = await this.prisma.user.findUnique({
       where: { email: email },
@@ -34,4 +46,7 @@ export class AuthService {
 
     return { access_token: this.jwtService.sign(payload), user };
   }
+
+
+
 }
