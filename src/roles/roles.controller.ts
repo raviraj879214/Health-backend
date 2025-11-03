@@ -29,6 +29,9 @@ export class RoleController {
       @Query('page') page: string,
       @Query('limit') limit: string
     ) {
+
+      
+
       const pageNumber = parseInt(page) || 1;
       const pageSize = parseInt(limit) || 10;
       return this.roleService.getRoles(pageNumber, pageSize);

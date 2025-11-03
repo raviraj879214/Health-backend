@@ -17,6 +17,8 @@ export class AuthController {
   
   login(@Body() dto: LoginDto) {
 
+    console.log("NODE_ENV:", process.env.NODE_ENV);
+      console.log("DB:", process.env.DATABASE_URL);
 
     return this.authService.login(dto);
 
