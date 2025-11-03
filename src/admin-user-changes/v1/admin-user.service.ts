@@ -12,11 +12,14 @@ export class AdminUserService{
 
 
     async getAdminUserDetails(id : number){
+        
         const userdetail =await this.prisma.user.findUnique({
             where : {
                 id : id
             }
         });
+        
+        console.log("user detils",userdetail);
         return {
             status : 200,
             message : "Data fetched successfully",

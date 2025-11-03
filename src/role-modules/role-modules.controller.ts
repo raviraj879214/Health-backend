@@ -18,14 +18,16 @@ export class RoleModulesController {
 
 
   
-    @Put('update-role-module')
-    upadteroleModule(@Body() dto: UpdateRoleModuleDto) {
-      const roleId = Number(dto.roleId);
-      const moduleId = Number(dto.moduleId);
-      const status = Number(dto.status); // if status is 0/1
+@Put('update-role-module')
+updateRoleModule(@Body() dto: UpdateRoleModuleDto) {
+  const roleId = Number(dto.roleId);
+  const moduleId = Number(dto.moduleId);
+  const field = dto.field;       // allowGet, allowPost, allowPut, allowDelete
+  const value = Number(dto.value);
 
-      return this.roleModulesService.updateRoleModule(roleId, moduleId, status);
-    }
+  return this.roleModulesService.updateRoleModule(roleId, moduleId, field, value);
+}
+
 
 
 

@@ -1,5 +1,5 @@
 // dto/update-role-module.dto.ts
-import { IsInt, IsBoolean } from "class-validator";
+import { IsInt, IsString, IsNotEmpty } from "class-validator";
 
 export class UpdateRoleModuleDto {
   @IsInt()
@@ -8,6 +8,10 @@ export class UpdateRoleModuleDto {
   @IsInt()
   moduleId: number;
 
+  @IsString()
+  @IsNotEmpty()
+  field: string; // allowGet, allowPost, allowPut, allowDelete
+
   @IsInt()
-  status: number;
+  value: number; // 1 or 0
 }

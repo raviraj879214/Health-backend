@@ -24,15 +24,23 @@ model Module {
 }
 
 model RoleModule {
-  id       Int    @id @default(autoincrement())
-  roleId   Int
-  moduleId Int
-  status   Int    @default(0)
-  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  role     Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  id        Int    @id @default(autoincrement())
+  roleId    Int
+  moduleId  Int
+  status    Boolean @default(false)
+
+  canCreate Boolean @default(false)
+  canUpdate Boolean @default(false)
+  canRead   Boolean @default(false)
+  canDelete Boolean @default(false)
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, moduleId])
 }
+
+
 
 model User {
   id           Int           @id @default(autoincrement())
@@ -183,3 +191,26 @@ model Category {
   @@index([parent_category_id])
 }
 
+
+
+model clinics {
+  id           Int      @id @default(autoincrement())   
+  clinic_uuid  String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_name  String
+  profession   String
+
+  sentMessages     chat[] @relation("SenderRelation")
+  receivedMessages chat[] @relation("ReceiverRelation")
+}
+
+model chat {
+  id           Int      @id @default(autoincrement())   
+  chat_uuid    String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sender_id    Int
+  receiver_id  Int
+  message      String
+  created_at   DateTime @default(now())
+
+  sender   clinics @relation("SenderRelation", fields: [sender_id], references: [id])
+  receiver clinics @relation("ReceiverRelation", fields: [receiver_id], references: [id])
+}

@@ -1,5 +1,11 @@
 // src/common/guards/roles.guard.ts
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -18,8 +24,12 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
+
     if (!authHeader) {
-      throw new UnauthorizedException({ status: 401, message: 'No token provided' });
+      throw new UnauthorizedException({
+        status: 401,
+        message: 'No token provided',
+      });
     }
 
     const token = authHeader.replace('Bearer ', '');
@@ -30,26 +40,41 @@ export class RolesGuard implements CanActivate {
         secret: process.env.JWT_SECRET || 'defaultSecretKey',
       });
     } catch (err) {
-      throw new UnauthorizedException({ status: 401, message: 'Invalid or expired token' });
+      throw new UnauthorizedException({
+        status: 401,
+        message: 'Invalid or expired token',
+      });
     }
 
-    const roleModules = await this.prisma.roleModule.findMany({
-        where: { 
-          roleId: payload.roleId, // filter by specific roleId
-          status: 1               // filter by status = 1 (active/assigned)
+    // ✅ Fetch module permissions for role
+    const roleModule = await this.prisma.roleModule.findFirst({
+      where: {
+        roleId: payload.roleId,
+        module: {
+          name: requiredModule,
         },
-        include: { 
-          module: true            // include related module data in the result
-        },
-      });
+        status: false,
+      },
+    });
 
-
-
-
-    const hasModule = roleModules.some(rm => rm.module.name === requiredModule);
-    if (!hasModule) {
-      // Custom restricted response
+    if (!roleModule) {
       throw new ForbiddenException({ status: 999, message: 'restricted' });
+    }
+
+    // ✅ Determine which permission to check
+    const method = request.method;
+    let permitted = false;
+
+    if (method === 'GET') permitted = roleModule.canRead;
+    if (method === 'POST') permitted = roleModule.canCreate;
+    if (method === 'PUT' || method === 'PATCH') permitted = roleModule.canUpdate;
+    if (method === 'DELETE') permitted = roleModule.canDelete;
+
+    if (!permitted) {
+      throw new ForbiddenException({
+        status: 999,
+        message: `You don't have permission to ${method} this module`,
+      });
     }
 
     request.user = payload;
