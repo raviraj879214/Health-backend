@@ -22,13 +22,22 @@ export class RoleModulesService {
         where: { roleId },
         select: {
           status: true,
+          canCreate : true,
+          canUpdate : true,
+          canDelete : true,
+          canRead: true,
           module: true,
         },
       });
 
       return roleModules.map((rm) => ({
-        ...rm.module,   // spread all module fields
-        status: rm.status, // keep status too
+
+        ...rm.module,  
+        status: rm.status,
+        canCreate : rm.canCreate,
+        canRead :  rm.canRead,
+        canUpdate : rm.canUpdate,
+        canDelete : rm.canDelete
       }));
 
   }
@@ -42,25 +51,35 @@ export class RoleModulesService {
 
 
   // service or repository layer
-async updateRoleModule(roleId: number, moduleId: number, status: number) {
+async updateRoleModule(roleId: number, moduleId: number, field: string, value: number) {
   roleId = Number(roleId);
   moduleId = Number(moduleId);
-  status = Number(status);
+  value = Number(value);
+
+  // ✅ Allowed permission fields based on Prisma model
+  const validFields = ["canRead", "canCreate", "canUpdate", "canDelete" , "status"];
+
+  if (!validFields.includes(field)) {
+    throw new Error(`Invalid permission field: ${field}`);
+  }
 
   const existing = await this.prisma.roleModule.findFirst({
     where: { roleId, moduleId },
   });
 
-  if (!existing) throw new Error("Role module not found");
+  if (!existing) {
+    throw new Error("Role module not found");
+  }
 
   const data = await this.prisma.roleModule.update({
     where: { id: existing.id },
-    data: { status },
+    data: { [field]: Boolean(value) }, 
   });
+
 
   return {
     status: 200,
-    message: "Role module updated successfully",
+    message: `Role module '${field}' updated successfully`,
     data,
   };
 }

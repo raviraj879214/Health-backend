@@ -15,17 +15,6 @@ export class AuthService {
 
   async login(dto: LoginDto) {
 
-    try {
-      
-    } catch (error) {
-      console.log("Login error:", error);
-
-    return {
-      success: false,
-      message: "Something went wrong while logging in",
-      error: error.message,
-    };
-    }
     const { email, password } = dto;
     const user = await this.prisma.user.findUnique({
       where: { email: email },
@@ -44,7 +33,21 @@ export class AuthService {
     //   expiresIn: process.env.JWT_EXPIRES_IN || '3600s',
     // });
 
-    return { access_token: this.jwtService.sign(payload), user };
+
+    const permissions= await this.prisma.roleModule.findMany({
+          where : {
+            roleId : Number(user.roleId)
+          },
+          include:{
+            module : true
+          }
+    });
+
+
+
+
+
+    return { access_token: this.jwtService.sign(payload), user ,permissions : permissions };
   }
 
 

@@ -41,7 +41,11 @@ async createRole(dto: CreateRoleDto) {
           data: {
             roleId: role.id,
             moduleId: element.id,
-            status: 1,
+            status: false,
+            canRead : false,
+            canCreate : false,
+            canUpdate: false,
+            canDelete : false
           },
         })
       )

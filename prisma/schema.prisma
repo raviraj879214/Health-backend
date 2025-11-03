@@ -24,15 +24,23 @@ model Module {
 }
 
 model RoleModule {
-  id       Int    @id @default(autoincrement())
-  roleId   Int
-  moduleId Int
-  status   Int    @default(0)
-  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  role     Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  id        Int    @id @default(autoincrement())
+  roleId    Int
+  moduleId  Int
+  status    Boolean @default(false)
+
+  canCreate Boolean @default(false)
+  canUpdate Boolean @default(false)
+  canRead   Boolean @default(false)
+  canDelete Boolean @default(false)
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, moduleId])
 }
+
+
 
 model User {
   id           Int           @id @default(autoincrement())
