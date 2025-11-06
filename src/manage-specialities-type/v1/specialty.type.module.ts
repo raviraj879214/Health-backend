@@ -7,6 +7,7 @@ import { ActivityLogModule } from 'src/middleware/activitylogg/activity-log.modu
 import { SpecialtyTypeController } from './specialty.type.controller';
 import { SPECIALTY_TYPE_SERVICE_V1 } from '../constant/specialty.type.constant';
 import { SpecialtyTypeService } from './specialty.type.service';
+import { SpecialtyTypeBusiness } from './business/SpecialtyBusiness';
 
 
 
@@ -18,7 +19,8 @@ import { SpecialtyTypeService } from './specialty.type.service';
       provide: SPECIALTY_TYPE_SERVICE_V1,
       useClass: SpecialtyTypeService,
     },
-    RolesGuard, JwtService , PrismaService
+
+    RolesGuard, JwtService , PrismaService, SpecialtyTypeBusiness
   ],
   
   

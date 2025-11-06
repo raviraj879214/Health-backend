@@ -148,7 +148,7 @@ model Specialty {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(100)   
   typeId      Int                                   
-  type        SpecialtyType @relation(fields: [typeId], references: [id])
+  type        SpecialtyType @relation(fields: [typeId], references: [id], onDelete: Cascade)
   status      Int           @default(1)       
   description String?      @db.VarChar(500)    
   uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
@@ -213,4 +213,27 @@ model chat {
 
   sender   clinics @relation("SenderRelation", fields: [sender_id], references: [id])
   receiver clinics @relation("ReceiverRelation", fields: [receiver_id], references: [id])
+}
+
+
+
+model Patients {
+  id                BigInt   @id @default(autoincrement())
+  patient_code      String   @unique
+  first_name        String?
+  last_name         String?
+  gender            String?
+  dob               DateTime?
+  phone             String?
+  email             String?   @unique
+  password          String?   // hashed password
+  reset_token       String?   // token for reset password
+  reset_token_exp   DateTime? // expiry date/time of reset token
+  address           String?
+  city              String?
+  state             String?
+  pincode           String?
+  notes             String?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 }
