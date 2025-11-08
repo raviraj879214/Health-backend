@@ -24,23 +24,19 @@ model Module {
 }
 
 model RoleModule {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   roleId    Int
   moduleId  Int
-  status    Boolean @default(false)
-
   canCreate Boolean @default(false)
-  canUpdate Boolean @default(false)
-  canRead   Boolean @default(false)
   canDelete Boolean @default(false)
-
-  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  canRead   Boolean @default(false)
+  canUpdate Boolean @default(false)
+  status    Boolean @default(false)
+  module    Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  role      Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, moduleId])
 }
-
-
 
 model User {
   id           Int           @id @default(autoincrement())
@@ -55,7 +51,6 @@ model User {
   phone        String?
   postalcode   String?
   state        String?
-  
   activityLogs ActivityLog[]
   role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
 }
@@ -112,70 +107,58 @@ model SeoPages {
   seopage       String?
 }
 
-
-
 model Notification {
-  id        Int      @id @default(autoincrement())  // Existing numeric ID
-  userId    Int?                                      
-  message   String   @db.VarChar(500)                
-  isRead    Boolean  @default(false)                
-  type      String?  @db.VarChar(50)                
-  createdAt DateTime @default(now())                
-  updatedAt DateTime @updatedAt                     
-
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  message   String   @db.VarChar(500)
+  isRead    Boolean  @default(false)
+  type      String?  @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@index([userId])
 }
 
-
-
-
 model Subscription {
-  id                    Int       @id @default(autoincrement())
-  userId                Int?
-  stripeCustomerId      String
-  stripeSubscriptionId  String
-  status                String
-  currentPeriodEnd      DateTime?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @default(now()) @updatedAt
+  id                   Int       @id @default(autoincrement())
+  userId               Int?
+  stripeCustomerId     String
+  stripeSubscriptionId String
+  status               String
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now()) @updatedAt
 }
-
-
 
 model Specialty {
   id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(100)   
-  typeId      Int                                   
+  name        String        @db.VarChar(100)
+  typeId      Int
+  status      Int           @default(1)
+  description String?       @db.VarChar(500)
+  uuid        String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   type        SpecialtyType @relation(fields: [typeId], references: [id], onDelete: Cascade)
-  status      Int           @default(1)       
-  description String?      @db.VarChar(500)    
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
 }
 
 model SpecialtyType {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(50)    
-  specialties Specialty[]                           
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(50)
+  uuid        String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  specialties Specialty[]
 }
-
-
 
 model Category {
   id                 Int        @id @default(autoincrement())
   name               String     @db.VarChar(150)
   slug               String     @unique @db.VarChar(150)
-  parent_category_id Int?       
-  parent             Category?  @relation("CategoryHierarchy", fields: [parent_category_id], references: [id], onDelete: Cascade)
-  children           Category[] @relation("CategoryHierarchy")
+  parent_category_id Int?
   level              Int        @default(1)
-  description        String?    
+  description        String?
   icon               String?    @db.VarChar(100)
   sort_order         Int        @default(0)
   status             String     @default("active") @db.VarChar(20)
@@ -186,54 +169,53 @@ model Category {
   updated_by         Int?
   created_at         DateTime   @default(now())
   updated_at         DateTime?
+  parent             Category?  @relation("CategoryHierarchy", fields: [parent_category_id], references: [id], onDelete: Cascade)
+  children           Category[] @relation("CategoryHierarchy")
 
   @@index([slug])
   @@index([parent_category_id])
 }
 
-
-
 model clinics {
-  id           Int      @id @default(autoincrement())   
-  clinic_uuid  String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clinic_name  String
-  profession   String
-
-  sentMessages     chat[] @relation("SenderRelation")
+  id               Int    @id @default(autoincrement())
+  clinic_uuid      String @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_name      String
+  profession       String
   receivedMessages chat[] @relation("ReceiverRelation")
+  sentMessages     chat[] @relation("SenderRelation")
 }
 
 model chat {
-  id           Int      @id @default(autoincrement())   
-  chat_uuid    String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sender_id    Int
-  receiver_id  Int
-  message      String
-  created_at   DateTime @default(now())
-
-  sender   clinics @relation("SenderRelation", fields: [sender_id], references: [id])
-  receiver clinics @relation("ReceiverRelation", fields: [receiver_id], references: [id])
+  id          Int      @id @default(autoincrement())
+  chat_uuid   String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sender_id   Int
+  receiver_id Int
+  message     String
+  created_at  DateTime @default(now())
+  receiver    clinics  @relation("ReceiverRelation", fields: [receiver_id], references: [id])
+  sender      clinics  @relation("SenderRelation", fields: [sender_id], references: [id])
 }
 
-
-
 model Patients {
-  id                BigInt   @id @default(autoincrement())
-  patient_code      String   @unique
-  first_name        String?
-  last_name         String?
-  gender            String?
-  dob               DateTime?
-  phone             String?
-  email             String?   @unique
-  password          String?   // hashed password
-  reset_token       String?   // token for reset password
-  reset_token_exp   DateTime? // expiry date/time of reset token
-  address           String?
-  city              String?
-  state             String?
-  pincode           String?
-  notes             String?
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  id              Int       @id @default(autoincrement())
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  patient_code    String    @unique
+  first_name      String?
+  last_name       String?
+  gender          String?
+  dob             DateTime?
+  phone           String?
+  email           String?   @unique
+  password        String?
+  reset_token     String?
+  reset_token_exp DateTime?
+  address         String?
+  city            String?
+  state           String?
+  pincode         String?
+  notes           String?
+  status          Int       @default(0)
+  blockreason      String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
 }
