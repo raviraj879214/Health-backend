@@ -9,7 +9,7 @@
     "postinstall": "prisma generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node --max-old-space-size=1024 node dist/src/main.js",
+   "start": "node --max-old-space-size=1024 dist/src/main.js",
     "start:local": "cross-env NODE_ENV=local nest start --watch",
     "start:staging": "cross-env NODE_ENV=staging nest start",
     "start:prod": "cross-env NODE_ENV=production node dist/src/main.js",
