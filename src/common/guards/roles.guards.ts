@@ -53,9 +53,16 @@ export class RolesGuard implements CanActivate {
       },
     });
 
+    console.log("payload.roleId",payload.roleId);
+    console.log("requiredModule",requiredModule);
+    console.log("roleModule",roleModule);
+    
+
+
     if (!roleModule) {
       throw new ForbiddenException({ status: 999, message: 'restricted' });
     }
+
 
     const method = request.method;
     let permitted = false;
