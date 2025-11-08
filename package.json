@@ -12,7 +12,7 @@
     "start": "node --max-old-space-size=1024 dist/main.js",
     "start:local": "cross-env NODE_ENV=local nest start --watch",
     "start:staging": "cross-env NODE_ENV=staging nest start",
-     "start:prod": "cross-env NODE_ENV=production node dist/main.js",
+    "start:prod": "cross-env NODE_ENV=production node dist/main.js",
     "mysqlmigrate:local": "copy .env.local .env && npx prisma migrate dev --name init",
     "mysqlmigrate:staging": "copy .env.staging .env && npx prisma migrate deploy",
     "mysqlmigrate:prod": "copy .env.production .env && npx prisma migrate deploy",
