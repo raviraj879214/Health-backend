@@ -1,4 +1,3 @@
-// src/common/guards/roles.guard.ts
 import {
   Injectable,
   CanActivate,
@@ -33,8 +32,8 @@ export class RolesGuard implements CanActivate {
     }
 
     const token = authHeader.replace('Bearer ', '');
-
     let payload: any;
+
     try {
       payload = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET || 'defaultSecretKey',
@@ -46,13 +45,10 @@ export class RolesGuard implements CanActivate {
       });
     }
 
-    // ✅ Fetch module permissions for role
     const roleModule = await this.prisma.roleModule.findFirst({
       where: {
         roleId: payload.roleId,
-        module: {
-          name: requiredModule,
-        },
+        module: { name: requiredModule },
         status: false,
       },
     });
@@ -61,7 +57,6 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException({ status: 999, message: 'restricted' });
     }
 
-    // ✅ Determine which permission to check
     const method = request.method;
     let permitted = false;
 

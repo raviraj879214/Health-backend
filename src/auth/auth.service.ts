@@ -7,48 +7,44 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService
-  
-  ) {}
-
-  async login(dto: LoginDto) {
-
-    const { email, password } = dto;
-    const user = await this.prisma.user.findUnique({
-      where: { email: email },
-      include: { role: { include: { modules: { include: { module: true } } } } },
-    });
-
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-
-    const passwordValid = await bcrypt.compare(password, user.password);
-    if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
-
-    const payload = { sub: user.id, roleId: user.roleId };
-
-    // const token = this.jwtService.sign(payload, {
-    //   secret: process.env.JWT_SECRET || 'defaultSecretKey',
-    //   expiresIn: process.env.JWT_EXPIRES_IN || '3600s',
-    // });
-
-
-    const permissions= await this.prisma.roleModule.findMany({
-          where : {
-            roleId : Number(user.roleId)
-          },
-          include:{
-            module : true
-          }
-    });
+  constructor(private prisma: PrismaService,private jwtService: JwtService) {}
 
 
 
 
+async login(dto: LoginDto) {
+  const { email, password } = dto;
 
-    return { access_token: this.jwtService.sign(payload), user ,permissions : permissions };
-  }
+  const user = await this.prisma.user.findUnique({
+    where: { email },
+    include: { role: { include: { modules: { include: { module: true } } } } },
+  });
+
+  if (!user) throw new UnauthorizedException('Invalid credentials');
+
+  const passwordValid = await bcrypt.compare(password, user.password);
+  if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
+
+  const payload = { sub: user.id, roleId: user.roleId };
+
+  const permissions = await this.prisma.roleModule.findMany({
+    where: { roleId: Number(user.roleId) },
+    include: { module: true },
+  });
+
+  const token = this.jwtService.sign(payload, {
+    secret: process.env.JWT_SECRET || 'defaultSecretKey',
+    expiresIn: '3600s',
+  });
+
+  console.log(Date.now());
+
+
+
+  return { access_token: token, user, permissions };
+}
+
+
 
 
 
