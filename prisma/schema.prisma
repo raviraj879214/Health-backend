@@ -176,25 +176,6 @@ model Category {
   @@index([parent_category_id])
 }
 
-model clinics {
-  id               Int    @id @default(autoincrement())
-  clinic_uuid      String @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clinic_name      String
-  profession       String
-  receivedMessages chat[] @relation("ReceiverRelation")
-  sentMessages     chat[] @relation("SenderRelation")
-}
-
-model chat {
-  id          Int      @id @default(autoincrement())
-  chat_uuid   String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sender_id   Int
-  receiver_id Int
-  message     String
-  created_at  DateTime @default(now())
-  receiver    clinics  @relation("ReceiverRelation", fields: [receiver_id], references: [id])
-  sender      clinics  @relation("SenderRelation", fields: [sender_id], references: [id])
-}
 
 model Patients {
   id              Int       @id @default(autoincrement())
@@ -218,4 +199,73 @@ model Patients {
   blockreason      String?
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
+}
+
+
+
+
+model Clinic {
+  id             Int       @id @default(autoincrement())
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_code  String?    @unique
+  userId         Int
+  name           String
+  description    String?
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  phone          String?
+  email          String?
+  imageUrl       String?
+
+  priorityLevel  Int       @default(0)    
+  promotionEnd   DateTime?               
+
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  orders         ClinicListingOrder[]
+}
+
+
+model ListingPackage {
+  id            Int       @id @default(autoincrement())
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  listinfpackage_code String?    @unique
+  name          String
+  description   String?
+  price         Decimal    @db.Decimal(10, 2)
+  durationDays  Int
+  priorityLevel Int        @default(1)
+  isActive      Boolean    @default(true)
+
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  orders        ClinicListingOrder[]
+}
+
+
+
+model ClinicListingOrder {
+  id              Int       @id @default(autoincrement())
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cliniclistingorder String? @unique
+  clinicId        Int
+  packageId       Int
+  userId          Int
+  stripePaymentId String?   @unique
+  amount          Decimal   @db.Decimal(10, 2)
+
+  startDate       DateTime
+  endDate         DateTime
+  status          String    @default("ACTIVE")    
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  clinic          Clinic         @relation(fields: [clinicId], references: [id])
+  package         ListingPackage @relation(fields: [packageId], references: [id])
 }
