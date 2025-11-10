@@ -1,3 +1,0 @@
-
-
-export const CHAT_SERVICE_V1 = 'CHAT_SERVICE_V1';
