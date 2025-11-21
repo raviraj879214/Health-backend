@@ -203,12 +203,40 @@ model Patients {
 
 
 
+model ClinicUser {
+  id                Int       @id @default(autoincrement())
+  uuid              String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  email             String    @unique
+  phone             String?
+  passwordHash      String
+
+  resetToken        String?   @unique
+  resetTokenExpiry  DateTime?
+  refreshToken   String? 
+  isVerified        Boolean   @default(false)
+  isActive          Boolean   @default(true)
+  lastLogin         DateTime?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  clinics           Clinic[]
+}
+
+
+
+
+
+
 
 model Clinic {
   id             Int       @id @default(autoincrement())
   uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   clinic_code  String?    @unique
   userId         Int
+  clinicUserId   Int?
+  clinicUser     ClinicUser? @relation(fields: [clinicUserId], references: [id])
   name           String
   description    String?
   address        String?

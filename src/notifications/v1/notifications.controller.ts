@@ -18,12 +18,10 @@ export class NotificationsController {
   @Version("1")
   async send(@Body() body: { userId: number; message: string; type?: string }) {
 
-    
-
-
     await this.notificationsGateway.sendNotification(body);
     return { status: 'ok' };
   }
+  
 
   
   @Get('user/:userId')
