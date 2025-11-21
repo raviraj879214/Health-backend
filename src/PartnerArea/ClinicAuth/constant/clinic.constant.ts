@@ -1,0 +1,6 @@
+
+
+
+
+
+export const CLINIC_AUTH_SERVICE_V1 = 'CLINIC_AUTH_SERVICE_V1'; 
