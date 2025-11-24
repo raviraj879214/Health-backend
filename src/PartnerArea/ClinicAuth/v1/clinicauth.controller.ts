@@ -5,6 +5,7 @@ import { Controller, Post, Body, Version, Inject, Get, UseGuards, Request, Unaut
 import { ClinicService } from './clinic.services';
 import { CLINIC_AUTH_SERVICE_V1 } from '../constant/clinic.constant';
 import { JwtAuthGuard } from 'src/PartnerArea/AuthGuard/jwt-auth.guard';
+import { updateClinicUser } from './dto/clinic.update.dt';
 
 
 @Controller('clinic-auth')
@@ -38,6 +39,7 @@ export class ClinicAuthController {
   @Get('profile')
   @Version("1")
   getProfile(@Request() req) {
+
     return {
       message: 'JWT Protected Route Working!',
       user: req.user
@@ -60,7 +62,7 @@ export class ClinicAuthController {
   @Version("1")
   async logout(@Request() req) {
     const userId = req.user.id;
-    console.log("userId logout", userId);
+    console.log("userId logout", req.user);
     return this.auth.logout(userId);
   }
 
@@ -77,6 +79,8 @@ export class ClinicAuthController {
       }
       const token = authHeader.split(' ')[1];
       const payload = await this.auth.verifyToken(token);
+
+
       return {
         status: 200,
         valid: true,
@@ -91,6 +95,34 @@ export class ClinicAuthController {
       };
     }
   }
+
+
+   @UseGuards(JwtAuthGuard)
+   @Get("/get-clinic-profile")
+   @Version("1")
+   async fetchClinicProfile(@Req() req){
+
+      console.log("req.user.id",req.user.id);
+      return this.auth.getClinicProfile(req.user.id);
+   }
+
+
+   @UseGuards(JwtAuthGuard)
+  @Post("/update-profile")
+  @Version("1")
+  async updateClinicProfile(@Req() req,@Body() dto:updateClinicUser){
+    console.log("req.user.id",req.user.id);
+    console.log("dto",dto);
+
+
+    return this.auth.updateClinicAccount(req.user.id,dto);
+
+  }
+
+
+
+
+
 
 
 

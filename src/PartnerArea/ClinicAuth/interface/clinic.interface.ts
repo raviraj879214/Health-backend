@@ -1,3 +1,4 @@
+import { updateClinicUser } from "../v1/dto/clinic.update.dt";
 
 
 
@@ -11,5 +12,13 @@ export interface IClinicAuthService{
     createClinicUser(data: { email: string; password: string; phone?: string });
     
     verifyToken(token: string);
+
+    logout(userId: string);
+
+
+    getClinicProfile(id);
+
+
+    updateClinicAccount(id,dto:updateClinicUser);
 
 }
