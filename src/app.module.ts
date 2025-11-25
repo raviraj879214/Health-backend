@@ -23,6 +23,7 @@ import { ListingPackageModule } from './manage-listing-packages/v1/listing.modul
 import { PaymentModule } from './FrontEndModules/payments/payment.module';
 import { PurchasedPackagesModule } from './manage-purchased-package-listing/v1/purchasedpackages.module';
 import { ClinicAuthModule } from './PartnerArea/ClinicAuth/v1/clinic.module';
+import { ManageClinichModule } from './PartnerArea/Manage-Clinics/v1/manageclinic.module';
 
 
 
@@ -40,7 +41,7 @@ import { ClinicAuthModule } from './PartnerArea/ClinicAuth/v1/clinic.module';
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
     RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule  , PatientModule,
-    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule
+    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule
   
   
   
