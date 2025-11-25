@@ -115,7 +115,7 @@ model Notification {
   type      String?  @db.VarChar(50)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
 
   @@index([userId])
 }
@@ -137,7 +137,7 @@ model Specialty {
   typeId      Int
   status      Int           @default(1)
   description String?       @db.VarChar(500)
-  uuid        String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid        String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   type        SpecialtyType @relation(fields: [typeId], references: [id], onDelete: Cascade)
@@ -146,7 +146,7 @@ model Specialty {
 model SpecialtyType {
   id          Int         @id @default(autoincrement())
   name        String      @db.VarChar(50)
-  uuid        String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid        String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   specialties Specialty[]
@@ -179,7 +179,7 @@ model Category {
 
 model Patients {
   id              Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   patient_code    String    @unique
   first_name      String?
   last_name       String?
@@ -205,7 +205,7 @@ model Patients {
 
 model ClinicUser {
   id                Int       @id @default(autoincrement())
-  uuid              String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid              String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   firstname         String?
   lastname          String?
   email             String    @unique
@@ -233,10 +233,11 @@ model ClinicUser {
 
 model Clinic {
   id             Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   clinic_code  String?    @unique
   userId         Int
   clinicUserId   Int?
+  clinicUserUuid String?
   clinicUser     ClinicUser? @relation(fields: [clinicUserId], references: [id])
   name           String
   description    String?
@@ -259,9 +260,28 @@ model Clinic {
 }
 
 
+model ClinicImages {
+  id          Int              @id @default(autoincrement())
+  uuid        String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+  clinicuuid  String?
+  type        String?  
+  Images      String?
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+
+
+
+
+
+
+
+
 model ListingPackage {
   id            Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   listinfpackage_code String?    @unique
   name          String
   description   String?
@@ -280,7 +300,7 @@ model ListingPackage {
 
 model ClinicListingOrder {
   id              Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   cliniclistingorder String? @unique
   clinicId        Int
   packageId       Int
