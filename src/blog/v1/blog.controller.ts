@@ -30,7 +30,7 @@ export class BlogController{
     @Post("create-blog")
     @ModuleAccess('Manage Blog')
     @Version("1")
-    createBlog( @Req() requestbody : BlogRequest, @Ip() ipAddress: string , @Headers('user-agent') userAgent: string,@Req() request: AuthRequest)
+    createBlog(@Req() requestbody : BlogRequest, @Ip() ipAddress: string , @Headers('user-agent') userAgent: string,@Req() request: AuthRequest)
     {
 
     

@@ -12,4 +12,5 @@ export interface BlogRequest extends Request {
     content?: string;
     [key: string]: any;
   };
+  
 }

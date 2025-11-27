@@ -24,6 +24,7 @@ import { PaymentModule } from './FrontEndModules/payments/payment.module';
 import { PurchasedPackagesModule } from './manage-purchased-package-listing/v1/purchasedpackages.module';
 import { ClinicAuthModule } from './PartnerArea/ClinicAuth/v1/clinic.module';
 import { ManageClinichModule } from './PartnerArea/Manage-Clinics/v1/manageclinic.module';
+import { ManageSurgeriesModule } from './PartnerArea/manage-surgeries/v1/managesurgeries.module';
 
 
 
@@ -33,15 +34,20 @@ import { ManageClinichModule } from './PartnerArea/Manage-Clinics/v1/manageclini
 @Module({
  imports: [
      ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'), // actual uploads folder
-      serveRoot: '/v1/uploads', // URL prefix
+     rootPath: join(__dirname, '..', '..', 'uploads'),
+    serveRoot: '/v1/uploads',
+   serveStaticOptions: {
+    index: false,      // don’t look for index.html
+    redirect: false,   // don’t redirect to index.html
+  },
     }),
      ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
+    
     RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule  , PatientModule,
-    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule
+    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule
   
   
   
