@@ -11,7 +11,7 @@ export function UploadMiddleware(uploadPath: string) {
   const storage = diskStorage({
     destination: uploadPath,
     filename: (req, file, cb) => {
-      // Generate a random 32-character filename
+     
       const randomName = Array.from({ length: 32 }, () =>
         Math.floor(Math.random() * 16).toString(16)
       ).join('');
@@ -30,9 +30,9 @@ export function UploadMiddleware(uploadPath: string) {
       cb(null, true);
     },
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  }).single('image'); // Accept a single file named 'image'
+  }).single('image'); 
 
-  // Return middleware function
+  
   return (req: Request, res: Response, next: NextFunction) => {
     upload(req, res, (err: any) => {
       if (err) {

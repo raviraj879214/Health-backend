@@ -275,6 +275,25 @@ model ClinicImages {
 
 
 
+model ClinicSurgeryImage {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+
+  clinicUuid   String?
+  doctorUuid   String?
+  type        String?  
+  surgeryId    String?  
+  imageType    String?     
+  imageUrl     String?      
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
+
+
+
 
 
 
