@@ -1,4 +1,4 @@
-// src/notifications/notifications.controller.ts
+// notifications.controller.ts
 import { Controller, Post, Body, Get, Param, Version, Req, UseGuards } from '@nestjs/common';
 import { NotificationsGateway } from './notifications.gateway';
 import { NotificationsService } from './notifications.service';
@@ -16,40 +16,26 @@ export class NotificationsController {
 
   @Post()
   @Version("1")
-  async send(@Body() body: { userId: number; message: string; type?: string }) {
-
+  async send(@Body() body: { globaluserid: string; message: string; type?: string }) {
     await this.notificationsGateway.sendNotification(body);
     return { status: 'ok' };
   }
-  
 
-  
-  @Get('user/:userId')
+  @Get('user')
   @ModuleAccess('Manage Notification')
   @Version("1")
-  async getUserNotifications(@Param('userId') userId: string,@Req() request: AuthRequest) {
+  async getUserNotifications(@Req() request: AuthRequest) {
 
+    const globaluserid = request.user?.sub ; // JWT user id string
+    console.log("globaluserid",globaluserid);
 
-    const userIds = request.user?.sub;
-
-    console.log("notification userid",userIds);
-
-    return this.notificationsService.getUserNotifications(Number(userIds));
+    return this.notificationsService.getUserNotifications(String(globaluserid));
   }
-
 
   @Get('/markread/:notificationId')
   @ModuleAccess('Manage Notification')
   @Version("1")
-  async markAsRead(@Param('notificationId') notificationId: string){
-
+  async markAsRead(@Param('notificationId') notificationId: string) {
     return this.notificationsService.markAsRead(Number(notificationId));
   }
-
-  
-
-
-
-
-
 }

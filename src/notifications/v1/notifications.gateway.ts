@@ -1,4 +1,4 @@
-// src/notifications/notifications.gateway.ts
+// notifications.gateway.ts
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Injectable } from '@nestjs/common';
@@ -13,24 +13,27 @@ export class NotificationsGateway {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @SubscribeMessage('send_notification')
-  async handleNotification(@MessageBody() data: { userId: number; message: string; type?: string }) {
+  async handleNotification(
+    @MessageBody() data: { globaluserid: string; message: string; type?: string }
+  ) {
+    console.log('Received:', data);
 
-    console.log('Received from client:', data);
+    const notification = await this.notificationsService.createNotification(
+      data.globaluserid,
+      data.message,
+      data.type
+    );
 
-    const notification = await this.notificationsService.createNotification(data.userId, data.message, data.type);
-
-    
     this.server.emit('receive_notification', notification);
-
   }
 
- 
-  async sendNotification(data: { userId: number; message: string; type?: string }) {
+  async sendNotification(data: { globaluserid: string; message: string; type?: string }) {
+    const notification = await this.notificationsService.createNotification(
+      data.globaluserid,
+      data.message,
+      data.type
+    );
 
-    const notification = await this.notificationsService.createNotification(data.userId, data.message, data.type);
-
-
-    
     this.server.emit('receive_notification', notification);
   }
 }

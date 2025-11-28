@@ -1,12 +1,10 @@
-// src/notifications/notifications.service.ts
+// notifications.service.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-
-
 export interface DBNotification {
   id: number;
-  userId?: number | null;
+  globaluserid?: string | null;
   message: string;
   isRead: boolean;
   type?: string | null;
@@ -18,33 +16,18 @@ export interface DBNotification {
 export class NotificationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createNotification(userId: number, message: string, type?: string): Promise<DBNotification> {
-
+  async createNotification(globaluserid: string, message: string, type?: string): Promise<DBNotification> {
     return this.prisma.notification.create({
-      data: { userId, message, type },
+      data: { globaluserid, message, type },
     });
-    
   }
 
-  async getUserNotifications(userId?: number): Promise<DBNotification[]> {
-  
-  if (userId) {
+  async getUserNotifications(globaluserid: string): Promise<DBNotification[]> {
     return this.prisma.notification.findMany({
-      where: { userId ,isRead : false },
+      where: { globaluserid, isRead: false },
       orderBy: { createdAt: 'desc' }
     });
   }
-
- 
-  return this.prisma.notification.findMany({
-    where : {isRead : false},
-    orderBy: { createdAt: 'desc' }
-  });
-
-}
-
-
-
 
   async markAsRead(notificationId: number): Promise<DBNotification> {
     return this.prisma.notification.update({
@@ -52,8 +35,4 @@ export class NotificationsService {
       data: { isRead: true },
     });
   }
-
-
-
-  
 }
