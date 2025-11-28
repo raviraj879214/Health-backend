@@ -25,6 +25,8 @@ import { PurchasedPackagesModule } from './manage-purchased-package-listing/v1/p
 import { ClinicAuthModule } from './PartnerArea/ClinicAuth/v1/clinic.module';
 import { ManageClinichModule } from './PartnerArea/Manage-Clinics/v1/manageclinic.module';
 import { ManageSurgeriesModule } from './PartnerArea/manage-surgeries/v1/managesurgeries.module';
+import { ManageBannerModule } from './PartnerArea/manage-banner-images/v1/managebanner.module';
+import { Accreditations } from './PartnerArea/manage-accreditation/v1/accreditation.module';
 
 
 
@@ -36,10 +38,6 @@ import { ManageSurgeriesModule } from './PartnerArea/manage-surgeries/v1/manages
      ServeStaticModule.forRoot({
      rootPath: join(__dirname, '..', '..', 'uploads'),
     serveRoot: '/v1/uploads',
-   serveStaticOptions: {
-    index: false,      // don’t look for index.html
-    redirect: false,   // don’t redirect to index.html
-  },
     }),
      ConfigModule.forRoot({
       isGlobal: true,
@@ -47,7 +45,7 @@ import { ManageSurgeriesModule } from './PartnerArea/manage-surgeries/v1/manages
     }),
     
     RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule  , PatientModule,
-    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule
+    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule,ManageBannerModule,Accreditations
   
   
   

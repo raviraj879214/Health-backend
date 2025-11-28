@@ -4,6 +4,7 @@ import { Request } from 'express';
 
 
 export interface SurgeriesRequest extends Request {
+
   file?: Express.Multer.File; 
 
   body: {
@@ -13,5 +14,6 @@ export interface SurgeriesRequest extends Request {
     [key: string]: any;
   };
 }
+
 
 

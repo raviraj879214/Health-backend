@@ -28,7 +28,12 @@ export class NotificationsController {
   @ModuleAccess('Manage Notification')
   @Version("1")
   async getUserNotifications(@Param('userId') userId: string,@Req() request: AuthRequest) {
+
+
     const userIds = request.user?.sub;
+
+    console.log("notification userid",userIds);
+
     return this.notificationsService.getUserNotifications(Number(userIds));
   }
 

@@ -116,9 +116,10 @@ model Notification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-
+  globaluserid String?
   @@index([userId])
 }
+
 
 model Subscription {
   id                   Int       @id @default(autoincrement())
@@ -257,6 +258,7 @@ model Clinic {
   updatedAt      DateTime  @updatedAt
 
   orders         ClinicListingOrder[]
+
 }
 
 
@@ -266,7 +268,7 @@ model ClinicImages {
   clinicuuid  String?
   type        String?  
   Images      String?
-
+  sort        String?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 }
@@ -337,3 +339,35 @@ model ClinicListingOrder {
   clinic          Clinic         @relation(fields: [clinicId], references: [id])
   package         ListingPackage @relation(fields: [packageId], references: [id])
 }
+
+
+
+model Accreditation {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+  image       String? 
+  name        String?   
+  description String?   
+
+  selectedBy  ClinicAccreditation[] 
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+
+model ClinicAccreditation {
+  id                Int           @id @default(autoincrement())
+  uuid              String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+
+  clinicuuid        String?        
+  accreditationId   Int          
+
+  accreditation     Accreditation @relation(fields: [accreditationId], references: [id])
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@unique([clinicuuid, accreditationId])
+}
+
