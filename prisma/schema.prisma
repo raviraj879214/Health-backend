@@ -77,6 +77,8 @@ model EmailTemplate {
   updatedAt DateTime @updatedAt
 }
 
+
+
 model Blog {
   id         Int      @id @default(autoincrement())
   title      String
@@ -108,18 +110,18 @@ model SeoPages {
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
-  userId    Int?
-  message   String   @db.VarChar(500)
-  isRead    Boolean  @default(false)
-  type      String?  @db.VarChar(50)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+  id           Int      @id @default(autoincrement())
+  userId       Int?
+  message      String   @db.VarChar(500)
+  isRead       Boolean  @default(false)
+  type         String?  @db.VarChar(50)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  uuid         String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   globaluserid String?
+
   @@index([userId])
 }
-
 
 model Subscription {
   id                   Int       @id @default(autoincrement())
@@ -138,7 +140,7 @@ model Specialty {
   typeId      Int
   status      Int           @default(1)
   description String?       @db.VarChar(500)
-  uuid        String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+  uuid        String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   type        SpecialtyType @relation(fields: [typeId], references: [id], onDelete: Cascade)
@@ -147,7 +149,7 @@ model Specialty {
 model SpecialtyType {
   id          Int         @id @default(autoincrement())
   name        String      @db.VarChar(50)
-  uuid        String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
+  uuid        String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   specialties Specialty[]
@@ -177,10 +179,8 @@ model Category {
   @@index([parent_category_id])
 }
 
-
 model Patients {
   id              Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
   patient_code    String    @unique
   first_name      String?
   last_name       String?
@@ -197,49 +197,34 @@ model Patients {
   pincode         String?
   notes           String?
   status          Int       @default(0)
-  blockreason      String?
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
+  uuid            String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  blockreason     String?
 }
-
-
 
 model ClinicUser {
-  id                Int       @id @default(autoincrement())
-  uuid              String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-  firstname         String?
-  lastname          String?
-  email             String    @unique
-  phone             String?
-  passwordHash      String
-
-  resetToken        String?   @unique
-  resetTokenExpiry  DateTime?
-  refreshToken   String? 
-  isVerified        Boolean   @default(false)
-  isActive          Boolean   @default(true)
-  lastLogin         DateTime?
-
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  clinics           Clinic[]
+  id               Int       @id @default(autoincrement())
+  uuid             String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email            String    @unique
+  phone            String?
+  passwordHash     String
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  isVerified       Boolean   @default(false)
+  isActive         Boolean   @default(true)
+  lastLogin        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  refreshToken     String?
+  firstname        String?
+  lastname         String?
+  clinics          Clinic[]
 }
 
-
-
-
-
-
-
 model Clinic {
-  id             Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-  clinic_code  String?    @unique
+  id             Int                  @id @default(autoincrement())
   userId         Int
-  clinicUserId   Int?
-  clinicUserUuid String?
-  clinicUser     ClinicUser? @relation(fields: [clinicUserId], references: [id])
   name           String
   description    String?
   address        String?
@@ -249,125 +234,109 @@ model Clinic {
   phone          String?
   email          String?
   imageUrl       String?
-
-  priorityLevel  Int       @default(0)    
-  promotionEnd   DateTime?               
-
-  isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
+  priorityLevel  Int                  @default(0)
+  promotionEnd   DateTime?
+  isActive       Boolean              @default(true)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  clinic_code    String?              @unique
+  uuid           String               @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinicUserId   Int?
+  clinicUserUuid String?
+  clinicUser     ClinicUser?          @relation(fields: [clinicUserId], references: [id])
   orders         ClinicListingOrder[]
-
 }
-
 
 model ClinicImages {
-  id          Int              @id @default(autoincrement())
-  uuid        String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-  clinicuuid  String?
-  type        String?  
-  Images      String?
-  sort        String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinicuuid String?
+  type       String?
+  Images     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  sort       String?
 }
-
-
-
-
 
 model ClinicSurgeryImage {
-  id           Int      @id @default(autoincrement())
-  uuid         String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-
-  clinicUuid   String?
-  doctorUuid   String?
-  type        String?  
-  surgeryId    String?  
-  imageType    String?     
-  imageUrl     String?      
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinicUuid String?
+  doctorUuid String?
+  imageType  String?
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  type       String?
+  surgeryId  String?
 }
-
-
-
-
-
-
-
-
 
 model ListingPackage {
-  id            Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-  listinfpackage_code String?    @unique
-  name          String
-  description   String?
-  price         Decimal    @db.Decimal(10, 2)
-  durationDays  Int
-  priorityLevel Int        @default(1)
-  isActive      Boolean    @default(true)
-
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  orders        ClinicListingOrder[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  description         String?
+  price               Decimal              @db.Decimal(10, 2)
+  durationDays        Int
+  priorityLevel       Int                  @default(1)
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  listinfpackage_code String?              @unique
+  uuid                String               @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orders              ClinicListingOrder[]
 }
-
-
 
 model ClinicListingOrder {
-  id              Int       @id @default(autoincrement())
-  uuid      String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-  cliniclistingorder String? @unique
-  clinicId        Int
-  packageId       Int
-  userId          Int
-  stripePaymentId String?   @unique
-  amount          Decimal   @db.Decimal(10, 2)
-
-  startDate       DateTime
-  endDate         DateTime
-  status          String    @default("ACTIVE")    
-
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  clinic          Clinic         @relation(fields: [clinicId], references: [id])
-  package         ListingPackage @relation(fields: [packageId], references: [id])
+  id                 Int            @id @default(autoincrement())
+  clinicId           Int
+  packageId          Int
+  userId             Int
+  stripePaymentId    String?        @unique
+  amount             Decimal        @db.Decimal(10, 2)
+  startDate          DateTime
+  endDate            DateTime
+  status             String         @default("ACTIVE")
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  cliniclistingorder String?        @unique
+  uuid               String         @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic             Clinic         @relation(fields: [clinicId], references: [id])
+  package            ListingPackage @relation(fields: [packageId], references: [id])
 }
-
-
 
 model Accreditation {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-  image       String? 
-  name        String?   
-  description String?   
-
-  selectedBy  ClinicAccreditation[] 
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id          Int                   @id @default(autoincrement())
+  uuid        String                @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image       String?
+  name        String?
+  description String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  selectedBy  ClinicAccreditation[]
 }
 
-
 model ClinicAccreditation {
-  id                Int           @id @default(autoincrement())
-  uuid              String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid @unique
-
-  clinicuuid        String?        
-  accreditationId   Int          
-
-  accreditation     Accreditation @relation(fields: [accreditationId], references: [id])
-
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+  id              Int           @id @default(autoincrement())
+  uuid            String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  accreditationId Int
+  clinicuuid      String?
+  accreditation   Accreditation @relation(fields: [accreditationId], references: [id])
 
   @@unique([clinicuuid, accreditationId])
 }
 
+
+
+
+model ClinicDescription {
+  id               Int       @id @default(autoincrement())
+  uuid             String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinicuuid       String?
+  briefDescription String?
+  fullDescription  String?
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}

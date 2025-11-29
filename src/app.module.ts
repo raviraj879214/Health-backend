@@ -27,6 +27,8 @@ import { ManageClinichModule } from './PartnerArea/Manage-Clinics/v1/manageclini
 import { ManageSurgeriesModule } from './PartnerArea/manage-surgeries/v1/managesurgeries.module';
 import { ManageBannerModule } from './PartnerArea/manage-banner-images/v1/managebanner.module';
 import { Accreditations } from './PartnerArea/manage-accreditation/v1/accreditation.module';
+import { EmailModule } from './EmailServices/email.module';
+import { ClinicDescriptionModule } from './PartnerArea/clinic-description/v1/clinicdescription.module';
 
 
 
@@ -45,8 +47,7 @@ import { Accreditations } from './PartnerArea/manage-accreditation/v1/accreditat
     }),
     
     RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule,SpecialtyTypeModule , SpecialtyModule , CategoryModule  , PatientModule,
-    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule,ManageBannerModule,Accreditations
-  
+    ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule,ManageBannerModule,Accreditations,EmailModule,ClinicDescriptionModule
   
   
   ],
