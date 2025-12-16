@@ -9,6 +9,7 @@ export class ManageSurgeriesCreateDto {
   imageUrl?: string;
   type?: string;        
   surgeryId?: string;
+  treatmentid?:string;
    
 
 

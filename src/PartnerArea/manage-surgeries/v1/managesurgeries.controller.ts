@@ -18,10 +18,10 @@ export class ManageSurgeriesController{
 
 
         @UseGuards(JwtAuthGuard)
-        @Get("get-surgeries-images")
+        @Get("get-surgeries-images/:id")
         @Version("1")
-        async GetSurgeriesimages(){
-            return this.managesurgeries.getSurgeryImages();
+        async GetSurgeriesimages(@Param("id") id:string){
+            return this.managesurgeries.getSurgeryImages(id);
         }
 
 
@@ -33,14 +33,17 @@ export class ManageSurgeriesController{
             const file = requestbody.file;
             const image_url = file ? `${file.filename}` : null;
             console.log("imagePath",image_url);
-            const { surgeryid = '',type = '' } = requestbody.body ?? {};
-            console.log("surgeryid",surgeryid);
+            const { surgeryid = '',type = '' , doctorUuid ='' , clinicUuid = '',treatmentid ='' } = requestbody.body ?? {};
+            console.log("treatmentid",treatmentid);
             console.log("type",type);
 
            const dto: ManageSurgeriesCreateDto = {
                 imageUrl: image_url ?? undefined,
                 surgeryId: surgeryid ?? undefined,
-                type: type ?? undefined
+                type: type ?? undefined,
+                doctorUuid : doctorUuid,
+                clinicUuid : clinicUuid,
+                treatmentid : treatmentid
             };
             return this.managesurgeries.addSurgeriesImages(dto);
         }
@@ -54,6 +57,21 @@ export class ManageSurgeriesController{
                 return this.managesurgeries.deleteSurgeriesImages(id);
         }
 
+        @UseGuards(JwtAuthGuard)
+        @Get("get-treatment")
+        @Version("1")
+        async getAllTreatment(){
+            return this.managesurgeries.getTreatments();
+        }
+
+
+        @UseGuards(JwtAuthGuard)
+        @Get("get-doctors/:clinicuuid")
+        @Version("1")
+        async getDoctorsByclinic(@Param("clinicuuid") clinicuuid:string){
+
+            return this.managesurgeries.getDoctors(clinicuuid);
+        }
 
 
 

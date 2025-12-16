@@ -107,17 +107,69 @@ export class ClinicAuthController {
    }
 
 
-   @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post("/update-profile")
   @Version("1")
   async updateClinicProfile(@Req() req,@Body() dto:updateClinicUser){
     console.log("req.user.id",req.user.id);
     console.log("dto",dto);
-
-
     return this.auth.updateClinicAccount(req.user.id,dto);
-
   }
+
+
+
+
+  @Post("/partner-forgot-password")
+  @Version("1")
+  async partnerForgotPassword(@Body("email") email:string) {
+    
+
+    return this.auth.partnerForgot(email);
+  }
+
+    @Post("/partner-reset-verify")
+    @Version("1")
+    async partnerResetVerify(@Body("resettoken") resettoken: string) {
+      try {
+        const payload = await this.auth.verifyToken(resettoken);
+
+        const tokenExists = await this.auth.checkresetTokenExist(resettoken, payload.email);
+
+        if (tokenExists) {
+          return { valid: true, payload };
+        } else {
+          return { valid: false };
+        }
+      } catch (error) {
+        console.error("Reset verification error:", error);
+        return { valid: false };
+      }
+    }
+
+
+
+
+
+    @Post("/partner-reset-password")
+    @Version("1")
+    async partnerResetPasswords(@Body("email") email: string,@Body("password") password: string) {
+
+
+
+      return this.auth.resetPassword(email,password);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -10,9 +10,13 @@ export class PaymentController {
   @Post('create-session')
   @Version("1")
   async createSession(@Body() body: { amount: number; metadata?: Record<string, any> }) {
+
     const { amount, metadata = {} } = body;
-    const successUrl = `${process.env.Front_End_APP_URL}`;
-    const cancelUrl = `${process.env.Front_End_APP_URL}`;
+    const successUrl = `${process.env.Front_End_APP_URL}/partner/boost-package`;
+    const cancelUrl = `${process.env.Front_End_APP_URL}/partner/boost-package`;
+
+
+    console.log("metadata",metadata);
 
     const session = await this.paymentService.createCheckoutSession(amount, metadata, successUrl, cancelUrl);
     return { url: session.url, id: session.id };

@@ -15,7 +15,7 @@ export class EmailController {
   async send(@Body() body: { to: string; subject: string; text?: string }) {
 
     const emailTemplate = await this.prisma.emailTemplate.findUnique({
-      where: { name: 'PASSWORD_RESET' },
+      where: { name: 'password_reset' },
     });
 
     const emailText = emailTemplate?.body || body.text || "";

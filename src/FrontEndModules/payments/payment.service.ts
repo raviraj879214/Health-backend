@@ -37,12 +37,13 @@ export class PaymentService {
             currency: 'usd',
             unit_amount: Math.round(amount * 100),
             product_data: {
-              name: 'One-time payment',
+              name: metadata.packagename || 'Package',
             },
           },
           quantity: 1,
         },
       ],
+
       metadata,
       payment_intent_data: {
         metadata, // ✅ store metadata on PaymentIntent (visible in Dashboard)
@@ -50,6 +51,7 @@ export class PaymentService {
       success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
     });
+
 
     return session;
   }

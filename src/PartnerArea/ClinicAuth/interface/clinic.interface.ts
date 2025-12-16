@@ -21,4 +21,16 @@ export interface IClinicAuthService{
 
     updateClinicAccount(id,dto:updateClinicUser);
 
+
+    partnerForgot(email:string);
+
+
+    resetPassword(email:string,password:string);
+
+    checkresetTokenExist(token:string,email:string);
+
+
+
+
+
 }

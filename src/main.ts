@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 
 
   const allowedOrigins = [
-    'https://health-travel-rho.vercel.app',
+    'https://health-ui-three.vercel.app',
     'http://localhost:3000', // add more origins here
   ];
 

@@ -77,8 +77,6 @@ model EmailTemplate {
   updatedAt DateTime @updatedAt
 }
 
-
-
 model Blog {
   id         Int      @id @default(autoincrement())
   title      String
@@ -134,26 +132,6 @@ model Subscription {
   updatedAt            DateTime  @default(now()) @updatedAt
 }
 
-model Specialty {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(100)
-  typeId      Int
-  status      Int           @default(1)
-  description String?       @db.VarChar(500)
-  uuid        String        @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  type        SpecialtyType @relation(fields: [typeId], references: [id], onDelete: Cascade)
-}
-
-model SpecialtyType {
-  id          Int         @id @default(autoincrement())
-  name        String      @db.VarChar(50)
-  uuid        String      @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  specialties Specialty[]
-}
 
 model Category {
   id                 Int        @id @default(autoincrement())
@@ -219,8 +197,13 @@ model ClinicUser {
   refreshToken     String?
   firstname        String?
   lastname         String?
+  isOtpVerify      Boolean   @default(false)
+  status           Int @default(0)
   clinics          Clinic[]
+  
 }
+
+
 
 model Clinic {
   id             Int                  @id @default(autoincrement())
@@ -245,7 +228,15 @@ model Clinic {
   clinicUserUuid String?
   clinicUser     ClinicUser?          @relation(fields: [clinicUserId], references: [id])
   orders         ClinicListingOrder[]
+  clinicDoctors ClinicDoctor[]
+  clinicDoctorAddress ClinicDoctorAddress[]
+  clinics     ClinicSpecialization[]
+  clinicsSpecialty     ClinicSpecialty[]
+  clinicTreatments ClinicTreatment[]
+
 }
+
+
 
 model ClinicImages {
   id         Int      @id @default(autoincrement())
@@ -259,10 +250,11 @@ model ClinicImages {
 }
 
 model ClinicSurgeryImage {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid()) @db.Uuid
   uuid       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   clinicUuid String?
   doctorUuid String?
+  treatmentid String?
   imageType  String?
   imageUrl   String?
   createdAt  DateTime @default(now())
@@ -327,16 +319,437 @@ model ClinicAccreditation {
   @@unique([clinicuuid, accreditationId])
 }
 
-
-
-
 model ClinicDescription {
-  id               Int       @id @default(autoincrement())
-  uuid             String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clinicuuid       String?
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   briefDescription String?
   fullDescription  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  clinicuuid       String?
+}
 
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+
+
+model Doctor {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinicuuid String?
+  firstname  String?
+  lastname   String?
+  email      String?
+  dob        String?
+  crm        String?
+  languages  Json?
+  videurl    String?
+  image      String?
+  cpf        String?
+  degree     String?
+
+
+  briefDescription String?
+  fullDescription  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+
+
+  specializations DoctorSpecialization[]
+  specialtys      DoctorSpecialty[]
+  doctorTreatments DoctorTreatment[]
+  clinicDoctors ClinicDoctor[]
+  clinicDoctorAddress ClinicDoctorAddress[]
+  packagesDoctor   PackageDoctor[] @relation("DoctorsuuidFk")
+  
+
+
+
+}
+
+model ClinicDoctor {
+  id          String   @id @default(uuid()) @db.Uuid
+  clinicUuid  String   @db.Uuid
+  doctorUuid  String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clinic      Clinic   @relation(fields: [clinicUuid], references: [uuid])
+  doctor      Doctor   @relation(fields: [doctorUuid], references: [uuid])
+
+  @@unique([clinicUuid, doctorUuid])
+}
+
+
+
+model ClinicDoctorAddress {
+  
+  id          String   @id @default(uuid()) @db.Uuid
+  clinicUuid  String   @db.Uuid
+  doctorUuid  String   @db.Uuid
+
+  zipcode       String?
+  street        String?
+  complement    String?
+  postalUnit    String?
+  neighborhood  String?
+  city          String?
+  stateCode     String?
+  stateName     String?
+  region        String?
+  ibgeCode      String?
+  giaCode       String?
+  areaCode      String?
+  siafiCode     String?
+
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clinic      Clinic   @relation(fields: [clinicUuid], references: [uuid])
+  doctor      Doctor   @relation(fields: [doctorUuid], references: [uuid])
+
+}
+
+
+
+
+
+
+model Specialization {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  doctors                   DoctorSpecialization[]
+  clinics                   ClinicSpecialization[]
+  packagesSpecialization    PackageSpecialization[]
+  
+
+}
+
+model ClinicSpecialization{
+  id                     String         @id @default(uuid()) @db.Uuid
+  clinicUuid             String         @db.Uuid
+  specializationId       String?         @db.Uuid
+  suggestedCategoryId    String?               @db.Uuid
+
+  createdAt              DateTime       @default(now())
+  suggestedCategory      SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+  clinic           Clinic         @relation(fields: [clinicUuid], references: [uuid])
+  specialization   Specialization? @relation(fields: [specializationId], references: [id])
+  @@unique([clinicUuid, specializationId])
+}
+
+
+
+
+
+
+model DoctorSpecialization {
+  id                     String         @id @default(uuid()) @db.Uuid
+  doctorUuid             String         @db.Uuid
+  specializationId       String?         @db.Uuid
+  suggestedCategoryId    String?               @db.Uuid
+
+  createdAt              DateTime       @default(now())
+  suggestedCategory      SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+  doctor           Doctor         @relation(fields: [doctorUuid], references: [uuid])
+  specialization   Specialization? @relation(fields: [specializationId], references: [id])
+  @@unique([doctorUuid, specializationId])
+}
+
+
+model SpecializationRequest {
+  id           String   @id @default(uuid()) @db.Uuid
+  type         String?   
+  name         String
+  description  String?
+  status       String   @default("pending")
+  adminNote    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  doctorSpecializations DoctorSpecialization[]
+  doctorspecialty       DoctorSpecialty[]
+  doctorTreatments      DoctorTreatment[]
+  clinicSpecialization  ClinicSpecialization[]
+  clinicsSpecialty      ClinicSpecialty[]
+  clinicTreatment       ClinicTreatment[]
+  packageSpecialization PackageSpecialization[]
+  packageSpecialty      PackageSpecialty[]
+  packageTreatment      PackageTreatment[]
+  packageProcedure      PackageProcedure[]
+  
+
+}
+
+
+
+model Specialty {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  doctors     DoctorSpecialty[]
+  clinicsSpecialty     ClinicSpecialty[]
+  packageSpecialty      PackageSpecialty[]
+}
+
+
+
+
+model ClinicSpecialty{
+  id                  String        @id @default(uuid()) @db.Uuid
+  clinicUuid          String        @db.Uuid
+  specialtyId         String?       @db.Uuid
+  suggestedCategoryId String?       @db.Uuid
+  createdAt           DateTime      @default(now())
+
+  clinic           Clinic                  @relation(fields: [clinicUuid], references: [uuid])
+  specialty        Specialty?              @relation(fields: [specialtyId], references: [id])
+  suggestedCategory SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+
+  @@unique([clinicUuid, specialtyId])
+}
+
+
+
+model DoctorSpecialty {
+  id                  String        @id @default(uuid()) @db.Uuid
+  doctorUuid          String        @db.Uuid
+  specialtyId         String?       @db.Uuid
+  suggestedCategoryId String?       @db.Uuid
+  createdAt           DateTime      @default(now())
+
+  doctor           Doctor                  @relation(fields: [doctorUuid], references: [uuid])
+  specialty        Specialty?              @relation(fields: [specialtyId], references: [id])
+  suggestedCategory SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+
+  @@unique([doctorUuid, specialtyId])
+}
+
+model Treatment{
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+
+  doctorTreatments DoctorTreatment[]
+  clinicTreatments ClinicTreatment[]
+  packageTreatments PackageTreatment[]
+}
+
+
+model ClinicTreatment{
+
+  id                  String        @id @default(uuid()) @db.Uuid
+  clinicUuid          String        @db.Uuid
+  treatmentid         String?       @db.Uuid
+  suggestedCategoryId String?       @db.Uuid
+  createdAt           DateTime      @default(now())
+
+  clinic           Clinic           @relation(fields: [clinicUuid], references: [uuid])
+  treatment        Treatment?       @relation(fields: [treatmentid], references: [id])
+  suggestedCategory SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+
+  @@unique([clinicUuid, treatmentid])
+}
+
+
+
+
+model DoctorTreatment{
+  id                  String        @id @default(uuid()) @db.Uuid
+  doctorUuid          String        @db.Uuid
+  treatmentid         String?       @db.Uuid
+  suggestedCategoryId String?       @db.Uuid
+  createdAt           DateTime      @default(now())
+
+  doctor           Doctor           @relation(fields: [doctorUuid], references: [uuid])
+  treatment        Treatment?       @relation(fields: [treatmentid], references: [id])
+  suggestedCategory SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+
+  @@unique([doctorUuid, treatmentid])
+}
+
+
+model ClinicPackage {
+  id          String        @id @default(uuid()) @db.Uuid
+  clinicId    String        @db.Uuid
+  title       String
+  briefdescription String?
+  fulldescription  String?
+  actualprice      String?
+  discountedprice  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  packages    PackageSpecialization[]
+  package     PackageSpecialty[]
+  boosts      ClinicBoost[]
+  packagestreatment   PackageTreatment[]
+  packagespackages    PackageProcedure[]
+  fieldValues PackageFieldValue[]
+  packagesDoctor   PackageDoctor[] @relation("PackageDoctors")
+  
+
+
+
+}
+
+model BoostPackage {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String
+  durationDays Int
+  price        Decimal       @db.Decimal(10, 2)  // Correct type
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  clinics      ClinicBoost[]
+
+}
+
+model ClinicBoost {
+  id               String        @id @default(uuid()) @db.Uuid
+  clinicPackageId  String        @db.Uuid
+  boostPackageId   String        @db.Uuid
+  startAt          DateTime      @default(now())
+  endAt            DateTime
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  clinicuserid     String?
+
+  clinicPackage    ClinicPackage @relation(fields: [clinicPackageId], references: [id])
+  boostPackage     BoostPackage  @relation(fields: [boostPackageId], references: [id])
+
+}
+
+
+
+
+model PackageSpecialization{
+  id                     String         @id @default(uuid()) @db.Uuid
+  packageId             String         @db.Uuid
+  specializationId       String?        @db.Uuid
+  suggestedCategoryId    String?        @db.Uuid
+
+  createdAt              DateTime       @default(now())
+
+  
+  suggestedCategory      SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+  packages               ClinicPackage         @relation(fields: [packageId], references: [id])
+  specialization         Specialization? @relation(fields: [specializationId], references: [id])
+}
+
+
+
+model PackageSpecialty {
+  id                  String        @id @default(uuid()) @db.Uuid
+  packageid           String         @db.Uuid
+  specialtyId         String?       @db.Uuid
+  suggestedCategoryId String?       @db.Uuid
+  createdAt           DateTime      @default(now())
+
+  package           ClinicPackage?          @relation(fields: [packageid], references: [id])
+  specialty         Specialty?              @relation(fields: [specialtyId], references: [id])
+  suggestedCategory SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+}
+
+
+model PackageTreatment{
+
+  id                         String        @id @default(uuid()) @db.Uuid
+  packageId                  String        @db.Uuid
+  treatmentid                String?       @db.Uuid
+  suggestedCategoryId        String?       @db.Uuid
+  createdAt                  DateTime      @default(now())
+
+  packagestreatment           ClinicPackage           @relation(fields: [packageId], references: [id])
+  treatment                   Treatment?       @relation(fields: [treatmentid], references: [id])
+  suggestedCategory           SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+}
+
+
+model Procedure {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  isActive    Boolean @default(false)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  procedure PackageProcedure[]
+}
+
+
+
+
+model PackageProcedure {
+  id            String   @id @default(uuid()) 
+  packageId                  String        @db.Uuid
+  procedureid   String?
+  suggestedCategoryId        String?       @db.Uuid
+  
+  createdAt                  DateTime      @default(now())
+  packagespackages           ClinicPackage           @relation(fields: [packageId], references: [id])
+  procedure     Procedure? @relation(fields: [procedureid], references: [id])
+  suggestedCategory           SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
+}
+
+
+
+
+model PackageFieldDefinition {
+  id        String   @id @default(uuid()) @db.Uuid
+
+  fieldKey   String   @unique   
+  label      String             
+  fieldType  String            
+  required   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  fieldValues PackageFieldValue[]
+}
+
+
+
+
+model PackageFieldValue {
+  id          String   @id @default(uuid()) @db.Uuid
+  packageId   String   @db.Uuid
+  fieldId     String   @db.Uuid
+
+  valueText    String?
+  valueNumber  Int?
+  valueBoolean Boolean?
+  valueDate    DateTime?
+
+  createdAt DateTime @default(now())
+
+  package ClinicPackage @relation(fields: [packageId], references: [id])
+  field   PackageFieldDefinition @relation(fields: [fieldId], references: [id])
+
+  @@unique([packageId, fieldId])
+}
+
+
+
+
+model PackageDoctor {
+  id        String   @id @default(uuid()) @db.Uuid
+  packageId String   @db.Uuid
+  doctorId  String   @db.Uuid
+
+  packages  ClinicPackage @relation("PackageDoctors", fields: [packageId], references: [id])
+  doctors   Doctor  @relation("DoctorsuuidFk", fields: [doctorId], references: [uuid])
+  
+  createdAt DateTime @default(now())
 }

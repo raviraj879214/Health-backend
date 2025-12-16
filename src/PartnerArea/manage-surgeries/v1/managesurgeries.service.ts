@@ -13,9 +13,17 @@ export class ManageSurgeries implements IManageSurgeries{
     constructor(private readonly prisma:PrismaService,private readonly fileservice:FileService){}
 
 
-    async getSurgeryImages() {
+    async getSurgeryImages(id:string) {
 
-        const surgeriesdata = await this.prisma.clinicSurgeryImage.findMany();
+
+
+        const surgeriesdata = await this.prisma.clinicSurgeryImage.findMany({
+            where :{
+                clinicUuid : id
+            }
+        });
+
+        console.log("surgeriesdata",surgeriesdata);
 
         return {
             status : 200,
@@ -31,7 +39,10 @@ export class ManageSurgeries implements IManageSurgeries{
             data : {
                 imageType : dto.type,
                 imageUrl : dto.imageUrl,
-                surgeryId : dto.surgeryId
+                surgeryId : dto.surgeryId,
+                clinicUuid : dto.clinicUuid,
+                doctorUuid : dto.doctorUuid,
+                treatmentid: dto.treatmentid
             }
         });
 
@@ -49,9 +60,10 @@ export class ManageSurgeries implements IManageSurgeries{
 
     async deleteSurgeriesImages(id: string) {
 
+        console.log("id",id);
     const images = await this.prisma.clinicSurgeryImage.findMany({
         where: {
-            surgeryId: id,
+            id: id,
         },
         select: { imageUrl: true }, // or filename if that's what you store
     });
@@ -71,7 +83,7 @@ export class ManageSurgeries implements IManageSurgeries{
 
 
     const deletesurgeries = await this.prisma.clinicSurgeryImage.deleteMany({
-        where: { surgeryId: id },
+        where: { id: id },
     });
 
     return {
@@ -81,6 +93,50 @@ export class ManageSurgeries implements IManageSurgeries{
     };
 }
 
+
+
+    async getTreatments() {
+        const getData = await this.prisma.treatment.findMany({});
+
+      
+
+        return {
+            status : 200,
+            data : getData
+        }
+    }
+
+
+    async getDoctors(clinicuuid: string) {
+
+        const getdoctorsiid = await this.prisma.clinicDoctor.findMany({
+            where : {
+                clinicUuid : clinicuuid
+            }
+        });
+
+        const idsarray = getdoctorsiid.map((data)=> data.doctorUuid);
+
+        const  doctorsdetaislname = await this.prisma.doctor.findMany({
+            where : {
+                uuid : {
+                    in : idsarray
+                }
+            },
+            select:{
+                firstname : true,
+                lastname : true,
+                uuid : true
+            }
+        });
+
+        return {
+            status : 200,
+            data : doctorsdetaislname
+        }
+
+
+    }
 
 
 

@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtStrategy } from '../JwtStrategy/jwt.strategy';
 import { CLINIC_AUTH_SERVICE_V1 } from '../constant/clinic.constant';
 import { clinicAuthBusiness } from './business/clinicauth.business';
+import { EmailService } from 'src/EmailServices/email.service';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { clinicAuthBusiness } from './business/clinicauth.business';
     },
     PrismaService,
     JwtStrategy,
-    clinicAuthBusiness
+    clinicAuthBusiness,
+    EmailService
   ],
 
   exports: [CLINIC_AUTH_SERVICE_V1],

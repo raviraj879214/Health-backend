@@ -1,0 +1,6 @@
+
+
+
+
+
+export const PACKAGE_STEP_SIX_CONSTANT = 'PACKAGE_STEP_SIX_CONSTANT';
