@@ -220,6 +220,7 @@ model Clinic {
   priorityLevel  Int                  @default(0)
   promotionEnd   DateTime?
   isActive       Boolean              @default(true)
+  websiteurl     String?
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
   clinic_code    String?              @unique
@@ -752,4 +753,27 @@ model PackageDoctor {
   doctors   Doctor  @relation("DoctorsuuidFk", fields: [doctorId], references: [uuid])
   
   createdAt DateTime @default(now())
+}
+
+
+model Country {
+  id        Int     @id @default(autoincrement())
+  name      String
+  code      String  @unique  // ISO code (IN, US, UK, etc.)
+  cities    City[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model City {
+  id        Int     @id @default(autoincrement())
+  name      String
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([countryId])
 }

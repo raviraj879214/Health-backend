@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post, Put, Version } from "@nestjs/common";
 import { PARTNER_REGISTER_CONSTANT } from "../constant/partnerregister.constant";
 import { PartnerRegisterServices } from "./partnerregister.services";
-import { partnerRegisterCreateDto } from "./dto/partnerregister.update.dto";
+import { PartnerRegisterClinicDetails, partnerRegisterCreateDto } from "./dto/partnerregister.update.dto";
 
 
 
@@ -49,8 +49,29 @@ export class PartnerRegisterController{
     }
 
 
+         @Get("/get-clinic-details/:uuid")
+      @Version("1")
+      async getClinicDetails(@Param("uuid") uuid:string){
+
+        return await this.partnerRegister.getClinicDetails(uuid);
+      }
+
+      @Post("/insert-clinic-details")
+      @Version("1")
+      async insertClinicDetails(@Body() dto:PartnerRegisterClinicDetails){
+        console.log("dto",dto);
+
+        
+        return await this.partnerRegister.insertClinicDetails(dto);
+      }
 
 
+      @Get("/get-country-state")
+      @Version("1")
+      async getCountryCitys(){
+
+        return await this.partnerRegister.getCountryCity();
+      }
 
 
 

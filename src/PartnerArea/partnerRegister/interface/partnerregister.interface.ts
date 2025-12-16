@@ -1,4 +1,4 @@
-import { partnerRegisterCreateDto } from "../v1/dto/partnerregister.update.dto";
+import { PartnerRegisterClinicDetails, partnerRegisterCreateDto } from "../v1/dto/partnerregister.update.dto";
 
 
 
@@ -19,7 +19,12 @@ export interface IPartnerRegister{
     insertClinicUserDetails(dto:partnerRegisterCreateDto);
 
 
+    getClinicDetails(uuid:string);
 
+    insertClinicDetails(dto:PartnerRegisterClinicDetails);
+
+
+    getCountryCity();
 
 
 
