@@ -14,6 +14,7 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     'https://health-ui-three.vercel.app',
     'http://localhost:3000', // add more origins here
+    
   ];
 
   const origin = req.headers.origin;
