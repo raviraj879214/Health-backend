@@ -16,6 +16,9 @@ async function main() {
     { name: 'Manage Specialty', description: 'Description for Manage Specialty' },
     { name: 'Manage Notification', description: 'Description for Manage Notification' },
     { name: 'Manage Seo', description: 'Description for Manage Seo' },
+    { name: 'Manage Clinic', description: 'Description for Manage Clinic' },
+    { name: 'Manage Doctor Details', description: 'Description for Manage Doctor Details' },
+    { name: 'Manage Payout', description: 'Description for Manage Doctor Details' },
   ];
 
   console.log("⏳ Seeding modules...");
@@ -309,13 +312,25 @@ const specializations = [
       name: 'booking_confirmation',
       subject: 'Your Booking is Confirmed',
       body: `<p>Your booking has been successfully confirmed.</p>`,
+    },
+    {
+      name: 'otp_verification',
+      subject: 'Your One-Time Password',
+      body: `
+        <h2>OTP Verification</h2>
+        <h1 style="letter-spacing: 4px;">{{OTP}}</h1>
+        <p>This OTP is valid for <strong>5 minutes</strong>.</p>
+        <p>If you did not request this, please ignore this email.</p>
+      `,
     }
   ];
+
+
 
   // for (const template of emailTemplates) {
   //   await prisma.emailTemplate.upsert({
   //     where: { name: template.name },
-  //     update: {}, // Do nothing if exists
+  //     update: {}, 
   //     create: template,
   //   });
   // }

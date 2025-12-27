@@ -1,0 +1,6 @@
+
+
+
+
+
+export const  PATIENT_QUERIES = 'PATIENT_QUERIES';

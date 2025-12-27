@@ -4,6 +4,7 @@ import { PARTNER_REGISTER_CONSTANT } from "../constant/partnerregister.constant"
 import { PartnerRegisterServices } from "./partnerregister.services";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -23,7 +24,8 @@ import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
                    useClass : PartnerRegisterServices
                },
                PrismaService,
-               JwtAuthGuard
+               JwtAuthGuard,
+               EmailService
        ],
        exports:[PARTNER_REGISTER_CONSTANT]
 })

@@ -1,0 +1,8 @@
+
+
+
+
+
+
+
+export const MANAGE_CLINIC_CONSTANT ='MANAGE_CLINIC_CONSTANT';

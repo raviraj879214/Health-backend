@@ -4,6 +4,9 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { PartnerRegister } from "src/common/enum/PartnerRegister";
 import * as bcrypt from 'bcrypt';
 import { PartnerRegisterClinicDetails, partnerRegisterCreateDto } from "./dto/partnerregister.update.dto";
+import { EmailService } from "src/EmailServices/email.service";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
 
 
 
@@ -14,27 +17,18 @@ import { PartnerRegisterClinicDetails, partnerRegisterCreateDto } from "./dto/pa
 @Injectable()
 export class PartnerRegisterServices implements IPartnerRegister{
 
-    constructor(private readonly prisma:PrismaService){}
-
+    constructor(private readonly prisma:PrismaService, private emailservice : EmailService){}
 
     async validateEmailAndOtp(email:string) {
-
-
-
 
         const checkEmail = await this.prisma.clinicUser.findFirst({
             where :{
                 email : email,       
             }
         });
-        
         console.log("email",email);
-
-
         if(!checkEmail){
-
            const randomOtp = Math.floor(1000 + Math.random() * 9000);
-
             const hash = await bcrypt.hash("Aalpha@100", 10);
             const createEmail =  await this.prisma.clinicUser.create({
                 data : {
@@ -52,7 +46,31 @@ export class PartnerRegisterServices implements IPartnerRegister{
         }
         else if(checkEmail?.isOtpVerify == false && checkEmail.status == PartnerRegister.PENDING){
 
-            const randomOtp = Math.floor(1000 + Math.random() * 9000);
+                let randomOtp: string;
+                if (process.env.NODE_ENV === 'local') {
+                    randomOtp = '0000';
+                } else {
+                    randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+                }
+
+
+
+
+                const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PartnerOTPEmail },});
+
+                const otptext = `${randomOtp}`;
+
+                const emailText = emailTemplate?.body.replace('${randomOtp}', otptext);
+
+
+                const htmlContent = EmailTemplate.getTemplate(emailText);
+
+                await this.emailservice.sendEmail(
+                        email,
+                        emailTemplate?.subject!,  
+                        "",            
+                        htmlContent  
+                );
 
              return {
                 status : "Email Created and sent otp to registered email",
@@ -84,10 +102,20 @@ export class PartnerRegisterServices implements IPartnerRegister{
     }
 
 
+
+
+
+
+
+
+
+
+
     async updateOtpServices(dto: partnerRegisterCreateDto) {
         
+        console.log("dto.uuid",dto.uuid);
         const updatData = await this.prisma.clinicUser.update({
-            where : {uuid : dto.uuid},
+            where : {uuid : String(dto.uuid)},
             data : {
                 isOtpVerify : dto.isOtpVerify
             }
@@ -120,7 +148,7 @@ export class PartnerRegisterServices implements IPartnerRegister{
          const hashed = await bcrypt.hash(dto.password!, 10);
      
         const updateData = await this.prisma.clinicUser.update({
-            where : {uuid : dto.uuid},
+            where : {uuid : String(dto.uuid)},
             data : {
                 firstname: String(dto.firstname),
                 lastname : String(dto.lastname), 
@@ -187,8 +215,8 @@ export class PartnerRegisterServices implements IPartnerRegister{
                 data : {
                     name : dto.name,
                     websiteurl : dto.websiteurl,
-                    country : dto.country,
-                    city : dto.city
+                    // country : dto.country,
+                    // city : dto.city
                 }
             });
 
@@ -209,8 +237,8 @@ export class PartnerRegisterServices implements IPartnerRegister{
                     name: dto.name,
                     websiteurl: dto.websiteurl,
                     clinicUserUuid : dto.uuid,
-                    country : dto.country,
-                    city : dto.city,
+                    // country : dto.country,
+                    // city : dto.city,
                     userId : 1
                 },
             });

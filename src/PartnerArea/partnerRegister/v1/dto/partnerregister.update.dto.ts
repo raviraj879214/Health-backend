@@ -8,7 +8,7 @@ import { IsString, IsNotEmpty, IsOptional, IsUrl, IsUUID, isString } from 'class
 
 export class partnerRegisterCreateDto{
     isOtpVerify?:boolean;
-    uuid?:string;
+    uuid?:String;
     firstname?:String;
     lastname?:string;
     password?:string;
@@ -34,8 +34,8 @@ export class PartnerRegisterClinicDetails {
   country:string;
 
     @IsString()
-   @IsOptional()
-  city:string;
+    @IsOptional()
+    city:string;
 
 
 

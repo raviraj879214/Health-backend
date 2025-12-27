@@ -1,5 +1,5 @@
 export class EmailTemplate {
-  static getTemplate(emailText: string): string {
+  static getTemplate(emailText?: string): string {
     return `
       <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb; padding:30px 0; font-family:Arial, sans-serif;">
         <tr>
@@ -19,10 +19,9 @@ export class EmailTemplate {
 
               <!-- MAIN BODY -->
               <tr>
-                <td style="padding:35px 40px; font-size:16px; color:#444; line-height:1.7;">
+                <td style="padding:15px 30px; font-size:16px; color:#444;">
                   ${emailText}
 
-                  <br><br>
                   If you have any questions, feel free to reply to this email.<br>
                   We're always here to help ❤️
                 </td>

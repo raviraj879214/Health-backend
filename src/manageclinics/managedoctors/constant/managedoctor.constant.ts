@@ -1,0 +1,5 @@
+
+
+
+
+export const MANAGE_DOCTOR_CONSTANT = 'MANAGE_DOCTOR_CONSTANT';

@@ -271,6 +271,8 @@ export class ClinicService implements IClinicAuthService{
             htmlContent  
       );
 
+      
+
       return{
         status : 200,
         message : "A password reset email has been sent to your registered email address. Please check your inbox and follow the instructions to reset your password. If you don’t see the email within a few minutes, remember to check your spam or junk folder."

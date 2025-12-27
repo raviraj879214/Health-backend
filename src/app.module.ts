@@ -45,6 +45,11 @@ import { ManagePackageProcedureModule } from './PartnerArea/packages/packagestep
 import { PackageStepSixModule } from './PartnerArea/packages/packagestepsix/v1/packagestepsix.module';
 import { ManagePackageDoctorModule } from './PartnerArea/packages/packagestepseven/v1/packagestepfive.module';
 import { PartnerRegisterModule } from './PartnerArea/partnerRegister/v1/partnerregister.module';
+import { ManageClinicModule } from './manageclinics/manage-clinics/v1/manageclinic.module';
+import { ManageDoctorModule } from './manageclinics/managedoctors/v1/managedoctor.module';
+import { ManagePatietnQueriesModule } from './patientqueries/v1/patientqueries.module';
+import { StripeConnectModule } from './PartnerArea/stripe-connect/v1/stripeconnect.module';
+import { ManagePayoutModule } from './manageclinics/managepayouts/v1/manageapyout.module';
 
 
 
@@ -69,8 +74,8 @@ import { PartnerRegisterModule } from './PartnerArea/partnerRegister/v1/partnerr
     RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule, CategoryModule  , PatientModule,
     ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule,ManageBannerModule,Accreditations,EmailModule,ClinicDescriptionModule , DoctorModule , DoctorSpecilizationModule,DoctorSpecialty,
     DoctorTreatment ,DoctorDecription , ClinicDoctorAddressModule , ManageClinicSpecializationModule , ManageClinicSpecialityModule , ManageClinicTreatmentModule,BoostPackagesModule,
-    PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule
-  
+    PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
+    ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule
     
   ],
   
