@@ -1,0 +1,7 @@
+
+
+
+
+
+
+export const HOMEPAGE_BANNER_CONSTANT = 'HOMEPAGE_BANNER_CONSTANT';

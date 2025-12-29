@@ -50,6 +50,9 @@ import { ManageDoctorModule } from './manageclinics/managedoctors/v1/managedocto
 import { ManagePatietnQueriesModule } from './patientqueries/v1/patientqueries.module';
 import { StripeConnectModule } from './PartnerArea/stripe-connect/v1/stripeconnect.module';
 import { ManagePayoutModule } from './manageclinics/managepayouts/v1/manageapyout.module';
+import { BoostClinicListingPackagesModule } from './PartnerArea/boost-clinic-package/v1/clinicboostpackage.module';
+import { ManageClinicListingModule } from './patient-user-area/cliniclisting/v1/cliniclisting.module';
+import { HomePageBannerModule } from './patient-user-area/homepage/banner/v1/banner.module';
 
 
 
@@ -75,7 +78,7 @@ import { ManagePayoutModule } from './manageclinics/managepayouts/v1/manageapyou
     ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule,ManageBannerModule,Accreditations,EmailModule,ClinicDescriptionModule , DoctorModule , DoctorSpecilizationModule,DoctorSpecialty,
     DoctorTreatment ,DoctorDecription , ClinicDoctorAddressModule , ManageClinicSpecializationModule , ManageClinicSpecialityModule , ManageClinicTreatmentModule,BoostPackagesModule,
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
-    ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule
+    ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
     
   ],
   

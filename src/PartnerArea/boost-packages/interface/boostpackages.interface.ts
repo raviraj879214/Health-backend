@@ -7,6 +7,8 @@ export interface IBoostPackages{
 
     getBoostPackages();
 
+    
+
     getClinicPackage(clinicuserid:string);
 
 

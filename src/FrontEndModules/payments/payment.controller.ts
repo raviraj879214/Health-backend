@@ -20,6 +20,18 @@ export class PaymentController {
   }
 
 
+  @Post('create-clinic-listing-session')
+  @Version("1")
+  async createClinicListingSession(@Body() body: { amount: number; metadata?: Record<string, any> }) {
+    const { amount, metadata = {} } = body;
+    const successUrl = `${process.env.Front_End_APP_URL}/partner/clinic-boost-package`;
+    const cancelUrl = `${process.env.Front_End_APP_URL}/partner/clinic-boost-package`;
+    console.log("metadata",metadata);
+    const session = await this.paymentService.createCheckoutSession(amount, metadata, successUrl, cancelUrl);
+    return { url: session.url, id: session.id };
+  }
+
+
 
   @Post('create-account')
   @Version("1")

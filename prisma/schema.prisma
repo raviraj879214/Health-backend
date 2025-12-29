@@ -201,6 +201,11 @@ model ClinicUser {
   clinics          Clinic[]
 }
 
+
+
+
+
+
 model Clinic {
   id                  Int                    @id @default(autoincrement())
   userId              Int
@@ -238,11 +243,13 @@ model Clinic {
   clinics             ClinicSpecialization[]
   clinicsSpecialty    ClinicSpecialty[]
   clinicTreatments    ClinicTreatment[]
-  queries     PatientQuery[]
-
-
-  
+  queries             PatientQuery[]
+  cliniclistingboosts ClinicListingBoost[]
 }
+
+
+
+
 
 
 
@@ -550,10 +557,10 @@ model ClinicPackage {
   packages          PackageSpecialization[]
   package           PackageSpecialty[]
   packagestreatment PackageTreatment[]
-    queries     PatientQuery[]
-
-
+  queries     PatientQuery[]
 }
+
+
 
 model BoostPackage {
   id           String        @id @default(uuid()) @db.Uuid
@@ -563,7 +570,33 @@ model BoostPackage {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   clinics      ClinicBoost[]
+  cliniclistingboost ClinicListingBoost[]
 }
+
+
+
+model ClinicListingBoost {
+  id              String        @id @default(uuid()) @db.Uuid
+  clinicId String        @db.Uuid
+  boostPackageId  String        @db.Uuid
+  startAt         DateTime      @default(now())
+  endAt           DateTime
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  clinicuserid    String?
+  boostPackage    BoostPackage  @relation(fields: [boostPackageId], references: [id])
+  clinics         Clinic @relation(fields: [clinicId], references: [uuid])
+
+}
+
+
+
+
+
+
+
+
 
 model ClinicBoost {
   id              String        @id @default(uuid()) @db.Uuid
@@ -577,6 +610,7 @@ model ClinicBoost {
   clinicuserid    String?
   boostPackage    BoostPackage  @relation(fields: [boostPackageId], references: [id])
   clinicPackage   ClinicPackage @relation(fields: [clinicPackageId], references: [id])
+
 }
 
 model PackageSpecialization {
