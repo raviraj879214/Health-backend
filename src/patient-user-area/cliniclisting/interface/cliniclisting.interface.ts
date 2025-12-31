@@ -10,4 +10,14 @@ export interface IClinicListing{
 
 
 
+    getClinicDetails(clinicId:string);
+
+
+
+    getGoogleReviews(clinicId:string);
+
+    
+
+
+
 }

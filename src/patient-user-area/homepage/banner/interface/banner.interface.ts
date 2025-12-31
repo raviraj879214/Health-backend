@@ -1,3 +1,4 @@
+import { BannerCreateClinicDto } from "../v1/dto/banner.create.dto";
 
 
 
@@ -6,10 +7,16 @@
 
 export interface IHomePageBanner{
 
-    getSpecialization();
+    getSpecialization(limit:number);
 
     getSpecialty();
 
-    getTreatmetnt();
+    getTreatmetnt(isFeatured?:string);
+
+
+    getTopRatedClinicListing(dto:BannerCreateClinicDto);
+
+
+    getPopularClinicListing(dto:BannerCreateClinicDto);
 
 }

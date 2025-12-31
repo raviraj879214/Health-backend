@@ -1,6 +1,7 @@
-import { Controller, Get, Inject, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Query, Version } from "@nestjs/common";
 import { HOMEPAGE_BANNER_CONSTANT } from "../constant/banner.constant";
 import { HomePageBannerServices } from "./banner.service";
+import { BannerCreateClinicDto } from "./dto/banner.create.dto";
 
 
 
@@ -9,31 +10,47 @@ import { HomePageBannerServices } from "./banner.service";
 
 
 @Controller("/api/homepage-banner")
-export class HomepageBannerController{
-    constructor(@Inject(HOMEPAGE_BANNER_CONSTANT) private readonly homepageBannerService:HomePageBannerServices){}
+export class HomepageBannerController {
+   constructor(@Inject(HOMEPAGE_BANNER_CONSTANT) private readonly homepageBannerService: HomePageBannerServices) { }
 
 
 
-    @Get("get-specialization")
-    @Version("1")
-    async getSpecialization(){
+   @Get("get-specialization")
+   @Version("1")
+   async getSpecialization(@Query("limit") limit: number) {
 
-       return await this.homepageBannerService.getSpecialization();
-    }
+      return await this.homepageBannerService.getSpecialization(limit);
+   }
 
-    @Get("get-specialty")
-    @Version("1")
-    async getSpecialty(){
+   @Get("get-specialty")
+   @Version("1")
+   async getSpecialty() {
 
-       return await this.homepageBannerService.getSpecialty();
-    }
+      return await this.homepageBannerService.getSpecialty();
+   }
 
-    @Get("get-treatment")
-    @Version("1")
-    async getTreatment(){
+   @Get("get-treatment")
+   @Version("1")
+   async getTreatment(@Query("isFeatured") isFeatured?:string) {
+      const featured = isFeatured?.toLowerCase() === 'true';
+      return await this.homepageBannerService.getTreatmetnt(isFeatured);
+   }
+   
 
-       return await this.homepageBannerService.getTreatmetnt();
-    }
+
+   
+   @Post('get-clinic-list')
+   @Version('1')
+   async getTopRatedClinicListing(@Body() dto: BannerCreateClinicDto) {
+      return await this.homepageBannerService.getTopRatedClinicListing(dto);
+   }
+
+   @Post('get-clinic-list-popular')
+   @Version('1')
+   async getPopularClinicListing(@Body() dto: BannerCreateClinicDto) {
+      return await this.homepageBannerService.getPopularClinicListing(dto);
+   }
+
 
 
 

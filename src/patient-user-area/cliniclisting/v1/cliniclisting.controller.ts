@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Query, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Query, Version } from "@nestjs/common";
 import { CLINIC_LISTING_CONSTANT } from "../constant/cliniclisting.constant";
 import { ClinicListingServices } from "./cliniclisting.service";
 import { ClinicListCreateDto } from "./dto/cliniclisting.update.dto";
@@ -15,10 +15,25 @@ export class ClinicListingController{
     @Post('get-clinic-list')
     @Version('1')
     async getClinicListing(@Body() dto:ClinicListCreateDto) {
-
-        
         return await this.clincilistingService.getClinicList(dto);
     }
+
+
+    @Get('get-clinic-details/:id')
+    @Version("1")
+    async getClinicDetails(@Param("id") id:string){
+
+        return await this.clincilistingService.getClinicDetails(id);
+    }
+
+    @Get('get-clinic-review/:id')
+    @Version("1")
+    async getGoogleReviews(@Param("id") id:string){
+
+        return await this.clincilistingService.getGoogleReviews(id);
+    }
+
+
 
 
 

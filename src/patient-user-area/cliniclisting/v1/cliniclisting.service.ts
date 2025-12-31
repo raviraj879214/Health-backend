@@ -96,46 +96,68 @@ export class ClinicListingServices implements IClinicListing{
             };
         }
 
-        const clinics = await this.prisma.clinic.findMany({
-            where: whereClause,
-            include: {
-                cliniclistingboosts: {
-                    where: {
-                        isActive: true,
-                        endAt: {
-                            gt: new Date(),
-                        },
-                        
-                    },
-                   
-                    include: {
-                        boostPackage: true,
-                    },
-                },
-                country: true,
-                city: true,
-            },
-             skip: dto.skip,
-                    take: dto.limit,
-        });
+
+      const clinics = await this.prisma.clinic.findMany({
+  where: whereClause,
+  include: {
+    cliniclistingboosts: {
+      where: {
+        isActive: true,
+        endAt: { gt: new Date() },
+      },
+      include: {
+        boostPackage: true, // no priority needed
+      },
+    },
+    country: true,
+    city: true,
+    ratingSummary: true,
+    packages :true
+  },
+  skip: dto.skip,
+  take: dto.limit,
+});
+
+const formatted = clinics
+  .map((clinic) => {
+    const boosts = clinic.cliniclistingboosts;
+    const isBoosted = boosts.length > 0;
+
+    const rating = clinic.ratingSummary?.averageRating
+      ? Number(clinic.ratingSummary.averageRating)
+      : 0;
+
+    return {
+      ...clinic,
+      boosts: boosts.map(b => ({
+        boostId: b.boostPackage.id,
+        boostName: b.boostPackage.name,
+        startAt: b.startAt,
+        endAt: b.endAt,
+      })),
+      _isBoosted: isBoosted,
+      _rating: rating,
+    };
+  })
+  .sort((a, b) => {
+    // 1️⃣ Boosted clinics first
+    if (a._isBoosted && !b._isBoosted) return -1;
+    if (!a._isBoosted && b._isBoosted) return 1;
+
+    // 2️⃣ Ratings >= 3 first, low ratings at bottom
+    const aLow = a._rating < 3 ? 1 : 0;
+    const bLow = b._rating < 3 ? 1 : 0;
+    if (aLow !== bLow) return aLow - bLow;
+
+    // 3️⃣ Sort by rating DESC within boosted/normal and high-rated
+    if (b._rating !== a._rating) return b._rating - a._rating;
+
+    // 4️⃣ Random order for same rating
+    return Math.random() - 0.5;
+  });
 
 
-        const formatted = clinics
-            .map((clinic) => ({
-                ...clinic,
-                boosts: clinic.cliniclistingboosts.map((b) => ({
-                    boostId: b.boostPackage.id,
-                    boostName: b.boostPackage.name,
-                    startAt: b.startAt,
-                    endAt: b.endAt,
-                })),
-            }))
-            .sort((a, b) => {
-               
-                if (a.boosts.length && !b.boosts.length) return -1;
-                if (!a.boosts.length && b.boosts.length) return 1;
-                return Math.random() - 0.5;
-            });
+            
 
             const clinicuuid = formatted.map((item)=> item.uuid);
 
@@ -165,6 +187,100 @@ export class ClinicListingServices implements IClinicListing{
 
     }
 
+
+
+    async getClinicDetails(clinicId: string) {
+
+
+        const getClinicDetails = await this.prisma.clinic.findUnique({
+            where :{
+                uuid : clinicId
+            },
+            include:{
+                city : true,
+                country : true,
+                ratingSummary : true,
+                packages : true,
+                googleReviews : true,
+                
+                clinicDoctors : {
+                    include :{
+                        doctor :{
+                            include :{
+                                specializations : {
+                                    include:{
+                                        specialization : true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                
+            }
+        });
+
+        
+        const clinicImges = await this.prisma.clinicImages.findMany({
+            where :{
+                clinicuuid : getClinicDetails?.uuid
+            }
+        });
+
+        const description = await this.prisma.clinicDescription.findFirst({
+            where: {
+                clinicuuid: getClinicDetails?.uuid,
+            },
+        });
+
+        const surgeryimages = await this.prisma.clinicSurgeryImage.findMany({
+            where :{
+                clinicUuid : getClinicDetails?.uuid
+            }
+        });
+
+
+        const accreditaions = await this.prisma.clinicAccreditation.findMany({
+            where:{
+                clinicuuid : clinicId
+            },
+            include:{
+                accreditation :true
+            }
+        })
+
+
+        
+
+
+        return{
+            status : 200,
+            data : getClinicDetails,
+            bannerimages : clinicImges,
+            description:description,
+            surgeryimages : surgeryimages,
+            accreditaions:accreditaions
+        }
+
+        
+    }
+
+
+
+
+    async getGoogleReviews(clinicId: string) {
+        
+        const data = await this.prisma.googleReview.findMany({
+            where :{
+                clinicUuid : clinicId
+            }
+        });
+
+        return {
+            status: 200,
+            data : data
+        }
+    }
 
 
 

@@ -245,6 +245,69 @@ model Clinic {
   clinicTreatments    ClinicTreatment[]
   queries             PatientQuery[]
   cliniclistingboosts ClinicListingBoost[]
+  
+  googleAccount       ClinicGoogleAccount?
+  googleReviews       GoogleReview[]
+  ratingSummary       ClinicRatingSummary?
+}
+
+
+
+model ClinicGoogleAccount {
+  id               Int      @id @default(autoincrement())
+
+  clinicUuid       String   @unique @db.Uuid
+
+  googleAccountId  String
+  googleLocationId String
+  googlePlaceId    String?
+
+  accessToken      String?
+  refreshToken     String?
+  tokenExpiry      DateTime?
+
+  lastSyncedAt     DateTime?
+  isConnected      Boolean  @default(true)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  clinic           Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+}
+
+
+model GoogleReview {
+  id             Int      @id @default(autoincrement())
+
+  clinicUuid     String   @db.Uuid
+
+  googleReviewId String   @unique
+
+  authorName     String?
+  rating         Int
+  comment        String?
+  reviewTime     DateTime
+
+  replyText      String?
+  replyTime      DateTime?
+
+  createdAt      DateTime @default(now())
+
+  clinic         Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+
+  @@index([clinicUuid])
+}
+
+
+model ClinicRatingSummary {
+  clinicUuid     String   @id @db.Uuid
+
+  averageRating  Decimal  @db.Decimal(2, 1)
+  totalReviews   Int
+
+  updatedAt      DateTime @updatedAt
+
+  clinic         Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
 }
 
 
@@ -506,6 +569,7 @@ model Treatment {
   id                String             @id @default(uuid()) @db.Uuid
   name              String             @unique
   description       String?
+  isFeatured        Boolean            @default(false)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   clinicTreatments  ClinicTreatment[]
@@ -567,8 +631,12 @@ model BoostPackage {
   name         String
   durationDays Int
   price        Decimal       @db.Decimal(10, 2)
+  description  String?
+  placement    Int @default(2)
+  type         Int @default(0)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+
   clinics      ClinicBoost[]
   cliniclistingboost ClinicListingBoost[]
 }

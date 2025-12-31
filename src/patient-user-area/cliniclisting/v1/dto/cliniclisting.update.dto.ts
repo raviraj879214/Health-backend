@@ -26,6 +26,8 @@ export class ClinicListCreateDto {
   specialty : Specialty[];
   treatment : Treatment[];
 
+  
+
   skip: number = 0;   
   limit: number = 1; 
   total?: number;   
