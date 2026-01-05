@@ -53,9 +53,9 @@ export class RolesGuard implements CanActivate {
       },
     });
 
-    console.log("payload.roleId",payload.roleId);
-    console.log("requiredModule",requiredModule);
-    console.log("roleModule",roleModule);
+    // console.log("payload.roleId",payload.roleId);
+    // console.log("requiredModule",requiredModule);
+    // console.log("roleModule",roleModule);
     
 
 

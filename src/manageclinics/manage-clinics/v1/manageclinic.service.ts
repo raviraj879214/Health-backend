@@ -1,6 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { IManageClinic } from "../interface/manageclinic.interface";
 import { PrismaService } from "src/prisma/prisma.service";
+import { SendMessageCreateDto } from "./dto/manageclinic.update.dto";
+import { EmailService } from "src/EmailServices/email.service";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
+import { ClinicStatus } from "src/common/enum/ClinicStatus";
 
 
 
@@ -9,7 +16,12 @@ import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class ManageClinicServices implements IManageClinic{
-    constructor(private readonly prisma:PrismaService){}
+    constructor(
+        private readonly prisma:PrismaService,
+        private emailservice : EmailService,
+        private readonly universalNotification:UniversalNotification
+
+    ){}
 
 
 
@@ -53,6 +65,10 @@ export class ManageClinicServices implements IManageClinic{
                 where : {
                     uuid : clinicuuid
                 },
+                include:{
+                    city:true,
+                    country:true
+                }
             });
             return {
                 status : 200,
@@ -616,6 +632,171 @@ export class ManageClinicServices implements IManageClinic{
         }
     }
 
+
+
+    async sendMessageToClinic(dto: SendMessageCreateDto) {
+
+        
+        const getClinicDetails = await this.prisma.clinic.findUnique({
+            where:{
+                uuid : dto.clinicId!
+            }
+        });
+
+        const bodyexternal = "Hi the clinic" + getClinicDetails?.name;
+
+
+        if(dto.type === "send_message")
+        {
+            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.NewMessageFromAdmin },});
+            const emailText = emailTemplate?.body;
+            const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
+            await this.emailservice.sendEmail(
+                    getClinicDetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + emailTemplate?.subject!,  
+                    "",            
+                    htmlContent  
+            );
+
+            let payload : WebhookNotificationDto ={
+                title : "New message from admin",
+                area: "clinic",
+                message : dto.messagetext,
+                id : getClinicDetails?.uuid
+            }
+
+            await this.universalNotification.HandleNotification(payload);
+        }
+        else if(dto.type === "send_approve"){
+            await this.prisma.clinic.update({
+                where :{
+                    uuid : getClinicDetails?.uuid
+                },
+                data:{
+                    status : ClinicStatus.ACTIVE,
+                    reasonText : dto.messagetext
+                }
+            });
+
+            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.NewMessageFromAdmin },});
+            const emailText = emailTemplate?.body;
+          const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
+            await this.emailservice.sendEmail(
+                    getClinicDetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Admin Approved account Successfully",  
+                    "",            
+                    htmlContent  
+            );
+
+            let payload : WebhookNotificationDto ={
+                title : "Admin Approved account Successfully",
+                area: "clinic",
+                message : dto.messagetext,
+                id : getClinicDetails?.uuid
+            }
+            await this.universalNotification.HandleNotification(payload);
+        }
+        else if(dto.type === "send_block"){
+            await this.prisma.clinic.update({
+                where :{
+                    uuid : getClinicDetails?.uuid
+                },
+                data:{
+                    status : ClinicStatus.BLOCKED,
+                    reasonText : dto.messagetext
+                }
+            });
+
+            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.NewMessageFromAdmin },});
+            const emailText = emailTemplate?.body;
+            const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
+            await this.emailservice.sendEmail(
+                    getClinicDetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Admin Approved account Successfully",  
+                    "",            
+                    htmlContent  
+            );
+
+            let payload : WebhookNotificationDto ={
+                title : "Admin Blocked account",
+                area: "clinic",
+                message : dto.messagetext,
+                id : getClinicDetails?.uuid
+            }
+            await this.universalNotification.HandleNotification(payload);
+        }
+         else if(dto.type === "send_reject"){
+            await this.prisma.clinic.update({
+                where :{
+                    uuid : getClinicDetails?.uuid
+                },
+                data:{
+                    status : ClinicStatus.REJECTED,
+                    reasonText : dto.messagetext
+                }
+            });
+
+            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.NewMessageFromAdmin },});
+            const emailText = emailTemplate?.body;
+            const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
+            await this.emailservice.sendEmail(
+                    getClinicDetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Admin Approved account Successfully",  
+                    "",            
+                    htmlContent  
+            );
+
+            let payload : WebhookNotificationDto ={
+                title : "Admin Rejected account",
+                area: "clinic",
+                message : dto.messagetext,
+                id : getClinicDetails?.uuid
+            }
+            await this.universalNotification.HandleNotification(payload);
+        }
+        else if(dto.type === "send_unreject"){
+            await this.prisma.clinic.update({
+                where :{
+                    uuid : getClinicDetails?.uuid
+                },
+                data:{
+                    status : ClinicStatus.ACTIVE,
+                    reasonText : dto.messagetext
+                }
+            });
+
+            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.NewMessageFromAdmin },});
+            const emailText = emailTemplate?.body;
+            const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
+            await this.emailservice.sendEmail(
+                    getClinicDetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Admin Approved account Successfully",  
+                    "",            
+                    htmlContent  
+            );
+
+            let payload : WebhookNotificationDto ={
+                title : "Admin Un-Blocked account Successfully",
+                area: "clinic",
+                message : dto.messagetext,
+                id : getClinicDetails?.uuid
+            }
+            await this.universalNotification.HandleNotification(payload);
+        }
+        
+
+
+
+
+        return{
+            status : true
+        }
+
+
+
+
+
+    }
 
 
 

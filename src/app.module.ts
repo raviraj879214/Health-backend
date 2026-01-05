@@ -14,7 +14,6 @@ import { join } from 'node:path';
 import { TagsModule } from './tags/v1/tags,module';
 import { SeoModule } from './seo/v1/seo.module';
 import { ConfigModule } from '@nestjs/config';
-import { NotificationsModule } from './notifications/v1/notifications.module';
 import { CategoryModule } from './manage-category/v1/category.module';
 import { PatientModule } from './manage-patients/v1/patients.module';
 import { ListingPackageModule } from './manage-listing-packages/v1/listing.module';
@@ -53,6 +52,8 @@ import { ManagePayoutModule } from './manageclinics/managepayouts/v1/manageapyou
 import { BoostClinicListingPackagesModule } from './PartnerArea/boost-clinic-package/v1/clinicboostpackage.module';
 import { ManageClinicListingModule } from './patient-user-area/cliniclisting/v1/cliniclisting.module';
 import { HomePageBannerModule } from './patient-user-area/homepage/banner/v1/banner.module';
+import { NotificationModule } from './notification/notification.module';
+import { PatietnQueryModule } from './patient-user-area/patientquery/v1/patientquery.module';
 
 
 
@@ -74,11 +75,12 @@ import { HomePageBannerModule } from './patient-user-area/homepage/banner/v1/ban
 
     
     
-    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , NotificationsModule, CategoryModule  , PatientModule,
+    RoleModule, ModulesModule , RoleModulesModule , UsersModule , AuthModule , TestModule , EmailtemplateModule , AdminUserModule , ActivityModule , BlogModule, TagsModule ,SeoModule , CategoryModule  , PatientModule,
     ListingPackageModule , PaymentModule , PurchasedPackagesModule , ClinicAuthModule , ManageClinichModule , ManageSurgeriesModule,ManageBannerModule,Accreditations,EmailModule,ClinicDescriptionModule , DoctorModule , DoctorSpecilizationModule,DoctorSpecialty,
     DoctorTreatment ,DoctorDecription , ClinicDoctorAddressModule , ManageClinicSpecializationModule , ManageClinicSpecialityModule , ManageClinicTreatmentModule,BoostPackagesModule,
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
     ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
+    ,NotificationModule,PatietnQueryModule
     
   ],
   

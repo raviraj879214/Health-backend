@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import getRawBody from 'raw-body';
 
@@ -66,6 +66,14 @@ app.enableCors({
    app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
+
+
+//   app.useGlobalPipes(
+//   new ValidationPipe({
+//     whitelist: true,
+//     forbidNonWhitelisted: true,
+//   }),
+// );
 
 
 //  app.use('/api/webhook', async (req, res, next) => {

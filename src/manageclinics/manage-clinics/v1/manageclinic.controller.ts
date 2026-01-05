@@ -3,6 +3,7 @@ import { MANAGE_CLINIC_CONSTANT } from "../constant/manageclinic.constamt";
 import { ManageClinicServices } from "./manageclinic.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { ModuleAccess } from "src/common/decorators/module-access.decorator";
+import { SendMessageCreateDto } from "./dto/manageclinic.update.dto";
 
 
 
@@ -278,13 +279,25 @@ export class ManageClinicController{
       @ModuleAccess("Manage Clinic")
       async getPackagesDetails(@Param('id') id: string){
            
-
          return await this.manageClinicService.getpackagesDetails(id);
       }
-      
-
-
+   
       //end
+
+
+      //make an action
+         @Post("/make-an-action")
+         @Version("1")
+         @ModuleAccess("Manage Clinic")
+         async makeAnAction(@Body() dto:SendMessageCreateDto){
+            
+            return await this.manageClinicService.sendMessageToClinic(dto);
+            
+         }
+         
+      //end
+
+
 
 
 

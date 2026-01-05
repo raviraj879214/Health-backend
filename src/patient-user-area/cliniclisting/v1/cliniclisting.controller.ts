@@ -2,6 +2,7 @@ import { Body, Controller, Get, Inject, Param, Post, Query, Version } from "@nes
 import { CLINIC_LISTING_CONSTANT } from "../constant/cliniclisting.constant";
 import { ClinicListingServices } from "./cliniclisting.service";
 import { ClinicListCreateDto } from "./dto/cliniclisting.update.dto";
+import { PostQueryCreateDto } from "./dto/cliniclisting.create.dto";
 
 
 
@@ -33,6 +34,21 @@ export class ClinicListingController{
         return await this.clincilistingService.getGoogleReviews(id);
     }
 
+
+    @Post("raise-post-query")
+    @Version("1")
+    async raiseQuery(@Body() dto:PostQueryCreateDto){
+
+        console.log(dto);
+        
+        return await this.clincilistingService.postQuery(dto);
+    }
+
+
+
+
+
+    
 
 
 

@@ -1,3 +1,4 @@
+import { SendMessageCreateDto } from "../v1/dto/manageclinic.update.dto";
 
 
 
@@ -53,7 +54,17 @@ export interface IManageClinic{
      getPackages(page: number, limit: number);
      getpackagesDetails(id:string);   
 
-    //wnd
+    //end
+
+
+
+    //make an action 
+      sendMessageToClinic(dto:SendMessageCreateDto);
+      
+
+    //
+    
+
 
 
     

@@ -2,6 +2,15 @@ import { Injectable } from "@nestjs/common";
 import { IClinicListing } from "../interface/cliniclisting.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ClinicListCreateDto } from "./dto/cliniclisting.update.dto";
+import { PostQueryCreateDto } from "./dto/cliniclisting.create.dto";
+import { ClinicListingBusiness } from "./business/cliniclisting.business.";
+import { EmailService } from "src/EmailServices/email.service";
+import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+
+
 
 
 
@@ -9,7 +18,12 @@ import { ClinicListCreateDto } from "./dto/cliniclisting.update.dto";
 
 @Injectable()
 export class ClinicListingServices implements IClinicListing{
-    constructor(private readonly prisma:PrismaService){}
+    constructor(
+        private readonly prisma:PrismaService,
+        private readonly clincibusniess:ClinicListingBusiness,
+        private emailservice : EmailService,
+        private readonly universalNotification:UniversalNotification
+    ){}
 
     
 
@@ -283,6 +297,73 @@ const formatted = clinics
     }
 
 
+
+    async postQuery(dto: PostQueryCreateDto) {
+
+        console.log(dto);
+        if (!dto) {
+            throw new Error('Request body is empty or invalid');
+        }
+
+        const patientquery = await this.prisma.patientQuery.findFirst({
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+
+        const patiennewcode = await this.clincibusniess.patientcode(patientquery?.querycode ?? undefined);
+
+
+
+       
+        const createData = await this.prisma.patientQuery.create({
+            data: {
+                patientName: dto.patientName || '',
+                phoneNumber: dto.phoneNumber || '',
+                message: dto.message || '',
+                clinicId: dto.clinicId || '',
+                packageId: dto.packageId || '',
+                email: dto.email || '',
+                subject: dto.subject || '',
+                telegramUsername: dto.telegramUsername || '',
+                whatsappNumber: dto.whatsappNumber || '',
+                city: dto.city || '',
+                postalCode: dto.postalCode || '',
+                state: dto.state || '',
+                streetAddress: dto.streetAddress || '',
+                querycode: patiennewcode
+            }
+        });
+
+
+        const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PatientPostFrontendSide },});
+        const emailText = emailTemplate?.body.replace('${patientreviewid}', createData.querycode!);
+        const htmlContent = EmailTemplate.getTemplate(emailText);
+        
+        await this.emailservice.sendEmail(
+                createData.email!,
+                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + emailTemplate?.subject! +"-" + createData.querycode,  
+                "",            
+                htmlContent  
+        );
+        let payload : WebhookNotificationDto ={
+            title : "Patient Query Received",
+            area: "admin",
+            message : `New Query received from patients ${createData?.querycode}` ,
+        }
+        await this.universalNotification.HandleNotification(payload);
+        return {
+            status: 201,
+            data: createData
+        };
+    }
+
+
+
+
+
+    
 
 
 
