@@ -35,13 +35,14 @@ export class PartnerRegisterServices implements IPartnerRegister{
        
 
         if(checkEmail && checkEmail?.status !== PartnerRegister.PENDING){
+            console.log("1");
             return{
                 status : 401,
                 message : "Email Already exist"
             }
         }
         else if(!checkEmail){
-
+console.log("2");
 
 
            let randomOtp: string;
@@ -60,6 +61,25 @@ export class PartnerRegisterServices implements IPartnerRegister{
                 }
             });
 
+
+             const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PartnerOTPEmail },});
+
+                const otptext = `${randomOtp}`;
+
+                const emailText = emailTemplate?.body.replace('${randomOtp}', otptext);
+
+
+                const htmlContent = EmailTemplate.getTemplate(emailText);
+
+                await this.emailservice.sendEmail(
+                        email,
+                        emailTemplate?.subject!,  
+                        "",            
+                        htmlContent  
+                );
+
+
+                
             return {
                 status : "Email Created and sent otp to registered email",
                 data:  createEmail,
@@ -68,7 +88,7 @@ export class PartnerRegisterServices implements IPartnerRegister{
 
         }
         else if(checkEmail?.isOtpVerify == false && checkEmail.status == PartnerRegister.PENDING){
-
+                    console.log("3");
                 let randomOtp: string;
                 if (process.env.NODE_ENV === 'local') {
                     randomOtp = '0000';
@@ -102,14 +122,14 @@ export class PartnerRegisterServices implements IPartnerRegister{
             }
         }
         else if(checkEmail?.isOtpVerify == true && checkEmail.status == PartnerRegister.PENDING){
-
+            console.log("4");
             return {
                 status : 200,
                 data:  checkEmail
             }
         }
         else if(checkEmail.email === email && checkEmail.status !== PartnerRegister.PENDING){
-
+console.log("5");
             return {
                 status : 404,
                 message : "This email is already registered. Please log in to continue."
