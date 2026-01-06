@@ -70,6 +70,7 @@ export class DoctorServices implements IDoctorServices{
     
 
     async createUpdateDoctor(dto: DoctorUpdateDto) {
+
         console.log("existDoctor",dto.doctoruuid);
 
         if(dto.doctoruuid !== "null"){
@@ -111,6 +112,25 @@ export class DoctorServices implements IDoctorServices{
         }
         else{
 
+           const checkcrm = await this.prisma.doctor.findFirst({
+                    where: {
+                        crm: String(dto.crm || "")
+                    }
+            });
+
+
+            if(checkcrm){
+                
+                return{
+                    status : 401
+                }
+            }
+
+
+            
+
+
+
              const doctorCreate = await this.prisma.doctor.create({
                 data :{
                     firstname : dto.firstname,
@@ -142,8 +162,9 @@ export class DoctorServices implements IDoctorServices{
                 status : 201,
                 message : "Doctor created successfully",
                 data : doctorCreate
-                
             }
+
+
         }
     }
 

@@ -8,4 +8,7 @@ export interface IPatietnQuery{
 
     sendEmailOtp(email:string);
 
+
+    getCordinatorDetails(clinicid:string);
+
 }

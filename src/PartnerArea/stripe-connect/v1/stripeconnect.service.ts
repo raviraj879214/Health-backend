@@ -27,9 +27,7 @@ export class StripeConnectService implements IStripeConnect{
 
             const getData = await this.prisma.clinic.findUnique({
                 where :{uuid : id,
-                    isStripeVerify :{
-                        not : "ACTIVE"
-                    }
+                    isStripeVerify :null
                 }
             });
 

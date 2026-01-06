@@ -19,15 +19,31 @@ export class PartnerRegisterServices implements IPartnerRegister{
 
     constructor(private readonly prisma:PrismaService, private emailservice : EmailService){}
 
+
+
     async validateEmailAndOtp(email:string) {
 
         const checkEmail = await this.prisma.clinicUser.findFirst({
             where :{
-                email : email,       
+                email : email,   
+                status : 0
             }
         });
-        console.log("email",email);
+
+        if(checkEmail == null){
+             return {
+                status : 404,
+                data:  checkEmail
+            }
+        }
+
+
+
+
+        console.log("checkEmail",checkEmail);
+
         if(!checkEmail){
+
            const randomOtp = Math.floor(1000 + Math.random() * 9000);
             const hash = await bcrypt.hash("Aalpha@100", 10);
             const createEmail =  await this.prisma.clinicUser.create({
@@ -95,7 +111,7 @@ export class PartnerRegisterServices implements IPartnerRegister{
         else{
 
              return {
-                status : 200,
+                status : 404,
                 data:  checkEmail
             }
         }

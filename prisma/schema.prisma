@@ -49,11 +49,16 @@ model User {
   address      String?
   country      String?
   phone        String?
+  whatsappNumber String?
+  telegramNumber String?
+  messengerID  String?
   postalcode   String?
   state        String?
   activityLogs ActivityLog[]
   role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  coordinatedClinics Clinic[] @relation("ClinicCoordinator")
 }
+
 
 model ActivityLog {
   id          Int      @id @default(autoincrement())
@@ -229,6 +234,10 @@ model Clinic {
   status              String?
   commission          String?
   cityId              String?
+  cordinatorid        Int?
+
+  cordinator          User?     @relation("ClinicCoordinator",fields: [cordinatorid],references: [id],onDelete: SetNull)
+
   countryId           String?
   stripeaccountid     String?
   onboardingUrl       String?
@@ -434,6 +443,7 @@ model Doctor {
   specialtys          DoctorSpecialty[]
   doctorTreatments    DoctorTreatment[]
   packagesDoctor      PackageDoctor[]        @relation("DoctorsuuidFk")
+  patientQueries      PatientQuery[]
 }
 
 model ClinicDoctor {
@@ -814,13 +824,24 @@ model PatientQuery {
   postalCode        String?
 
 
-  clinicId    String   @db.Uuid
-  packageId   String?  @db.Uuid   
+  clinicId    String?   @db.Uuid
+  packageId   String?   @db.Uuid   
+  doctorid    String?   @db.Uuid
 
-  clinic      Clinic          @relation(fields: [clinicId], references: [uuid])
-  package     ClinicPackage?  @relation(fields: [packageId], references: [id])
+
+  clinic      Clinic?          @relation(fields: [clinicId], references: [uuid])
+  package     ClinicPackage?   @relation(fields: [packageId], references: [id])
+  doctor      Doctor?          @relation(fields: [doctorid], references: [uuid])
+
+
   paymentDetails    PatientQueryPaymentDetails[]
   createdAt   DateTime @default(now())
+
+
+  treatmentName         String?
+  whatMatterMostName    String?
+  medicalReportsValue   String?
+  procedureTimeValue    String?
 }
 
 model PatientQueryPaymentDetails{

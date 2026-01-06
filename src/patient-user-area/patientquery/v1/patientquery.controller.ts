@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Version } from "@nestjs/common";
 import { PATIENTQUERYCONSTANT } from "../constant/patinetquery.constant";
 import { PatientQueryServices } from "./patientquery.service";
 import { PatientQueryEmailVerify } from "./dto/patientquery.create.dto";
@@ -27,6 +27,15 @@ export class PatientQueryController{
     {
         return await this.patietnQueryServices.sendEmailOtp(dto.email);
     }
+
+
+    @Get("get-cordinator-details/:clinicid")
+    @Version("1")
+    async getCordinatorDetails(@Param("clinicid") clinicid:string){
+
+        return await this.patietnQueryServices.getCordinatorDetails(clinicid);
+    }
+
 
 
 

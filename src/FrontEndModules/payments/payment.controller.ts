@@ -161,7 +161,7 @@ async createShareableLink(@Body() body: {
 }) {
 
 
-  console.log("body.displaytext",body.displaytext);
+  console.log("body.displaytext",body.commission);
   const stripe = this.paymentService.client;
 
   const product = await stripe.products.create({
@@ -196,7 +196,7 @@ async createShareableLink(@Body() body: {
     after_completion: {
       type: 'redirect',
         redirect: {
-          url: `http://localhost:3000/consultation-success/${paymentetailid.id}`, 
+          url: `${process.env.FRONT_END_PUBLI_URL}/consultation-success/${paymentetailid.id}`, 
         },
    },
   });

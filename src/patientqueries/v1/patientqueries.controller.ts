@@ -37,10 +37,66 @@ export class PatientQueriesController{
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
         async insertFinalDealPrice(@Body() dto:PatientQueryCreateDto){
-
-
             return await this.patientQueriesService.insertFinalDealPrice(dto);
         }
+
+
+        @Get("get-clinic-list")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async getClinicDetails(){
+            return await this.patientQueriesService.getClinicList();
+        }
+
+        @Post("assign-clinic-query")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async assignClinicQuery(@Body("clinicid") clinicid:string,@Body("queryid") queryid:string){
+            return await this.patientQueriesService.assignClinicToPatientQuery(clinicid,queryid);
+        } 
+
+
+        @Get("get-packages-list/:id")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async getPackagesList(@Param("id") id:string){
+            return await this.patientQueriesService.getPackagesList(id);
+        }
+
+
+
+        @Post("assign-package-query")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async assignPackageQuery(@Body("packageid") packageid:string,@Body("queryid") queryid:string){
+
+            console.log("packageid",packageid);
+            console.log("queryid",queryid);
+            return await this.patientQueriesService.assignPackageToQuery(packageid,queryid);
+        } 
+
+
+        @Get("get-doctor-list/:id")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async getDoctorList(@Param("id") id:string){
+            return await this.patientQueriesService.getDoctorList(id);
+        }
+
+
+        @Post("assign-doctor-query")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async assignDoctorQuery(@Body("doctorid") doctorid:string,@Body("queryid") queryid:string){
+
+            console.log("doctorid",doctorid);
+            console.log("queryid",queryid);
+            return await this.patientQueriesService.assignDoctorToQuery(doctorid,queryid);
+        } 
+
+
+        
+        
 
 
 

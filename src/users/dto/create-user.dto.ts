@@ -21,4 +21,19 @@ export class CreateUserDto {
   Bio : string
 
 
+
+
+  @IsString()
+  whatsappNumber : string
+
+  @IsString()
+  telegramNumber : string
+
+  @IsString()
+  messengerID : string
+
+
+
+
+
 }

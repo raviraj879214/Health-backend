@@ -322,8 +322,8 @@ const formatted = clinics
                 patientName: dto.patientName || '',
                 phoneNumber: dto.phoneNumber || '',
                 message: dto.message || '',
-                clinicId: dto.clinicId || '',
-                packageId: dto.packageId || '',
+                clinicId: dto.clinicId || null,
+                packageId: dto.packageId || null,
                 email: dto.email || '',
                 subject: dto.subject || '',
                 telegramUsername: dto.telegramUsername || '',
@@ -332,12 +332,16 @@ const formatted = clinics
                 postalCode: dto.postalCode || '',
                 state: dto.state || '',
                 streetAddress: dto.streetAddress || '',
-                querycode: patiennewcode
+                querycode: patiennewcode,
+                whatMatterMostName : dto.whatMatterMostName,
+                medicalReportsValue: dto.medicalReportsValue,
+                treatmentName : dto.treatmentName,
+                procedureTimeValue:dto.procedureTimeValue
             }
         });
 
-
-        const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PatientPostFrontendSide },});
+        if(createData.email){
+            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PatientPostFrontendSide },});
         const emailText = emailTemplate?.body.replace('${patientreviewid}', createData.querycode!);
         const htmlContent = EmailTemplate.getTemplate(emailText);
         
@@ -347,6 +351,13 @@ const formatted = clinics
                 "",            
                 htmlContent  
         );
+        }
+        
+
+
+
+
+
         let payload : WebhookNotificationDto ={
             title : "Patient Query Received",
             area: "admin",
@@ -357,6 +368,8 @@ const formatted = clinics
             status: 201,
             data: createData
         };
+
+
     }
 
 

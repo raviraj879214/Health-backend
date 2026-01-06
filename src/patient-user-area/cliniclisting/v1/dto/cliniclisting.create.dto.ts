@@ -20,4 +20,9 @@ export class PostQueryCreateDto {
     postalCode?: string;
     state?: string;
     streetAddress?: string;
+    treatmentName: string;
+    whatMatterMostName:string;
+    medicalReportsValue:string;
+    procedureTimeValue: string;
+    
 }

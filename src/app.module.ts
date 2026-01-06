@@ -54,6 +54,7 @@ import { ManageClinicListingModule } from './patient-user-area/cliniclisting/v1/
 import { HomePageBannerModule } from './patient-user-area/homepage/banner/v1/banner.module';
 import { NotificationModule } from './notification/notification.module';
 import { PatietnQueryModule } from './patient-user-area/patientquery/v1/patientquery.module';
+import { ManageCordinatorModule } from './RolesManagement/managecordinator/v1/managecordinator.module';
 
 
 
@@ -80,7 +81,7 @@ import { PatietnQueryModule } from './patient-user-area/patientquery/v1/patientq
     DoctorTreatment ,DoctorDecription , ClinicDoctorAddressModule , ManageClinicSpecializationModule , ManageClinicSpecialityModule , ManageClinicTreatmentModule,BoostPackagesModule,
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
     ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
-    ,NotificationModule,PatietnQueryModule
+    ,NotificationModule,PatietnQueryModule,ManageCordinatorModule
     
   ],
   

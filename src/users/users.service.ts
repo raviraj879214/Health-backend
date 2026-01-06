@@ -29,8 +29,11 @@ async createUser(dto: CreateUserDto) {
               firstname: dto.firstname,
               roleId : Number(dto.roleId),
               lastname: dto.lastname,
-              Bio: dto.Bio, // adjust casing to match your Prisma schema
+              Bio: dto.Bio, 
               password: hashedPassword,
+              whatsappNumber : dto.whatsappNumber,
+              telegramNumber : dto.telegramNumber,
+              messengerID : dto.messengerID
             },
           });
 

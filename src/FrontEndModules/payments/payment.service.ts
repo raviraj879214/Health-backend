@@ -73,6 +73,7 @@ export class PaymentService {
   async insertPatientQueryPaymentDetails(packageprice:string,finalprice:string,generatedlink:string,generatedamount:string,patientQueryId:string,commission:string,paymentLinkid:string)
   {
 
+      console.log("body.displaytext",commission);
     const platformfee = ((Number(generatedamount) * Number(commission))/100);
     const vendorfee = (Number(generatedamount) - ((Number(generatedamount) * Number(commission))/100));
 
