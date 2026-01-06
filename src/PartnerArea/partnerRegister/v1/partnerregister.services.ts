@@ -32,20 +32,15 @@ export class PartnerRegisterServices implements IPartnerRegister{
 
         
 
-       if (!checkEmail) {
-            return {
-                status: 404,
-                message: 'Email already exist',
-            };
-      }
+       
 
-
-
-
-
-        console.log("checkEmail",checkEmail);
-
-        if(!checkEmail){
+        if(checkEmail?.status !== PartnerRegister.PENDING){
+            return{
+                status : 401,
+                message : "Email Already exist"
+            }
+        }
+        else if(!checkEmail){
 
            const randomOtp = Math.floor(1000 + Math.random() * 9000);
             const hash = await bcrypt.hash("Aalpha@100", 10);
