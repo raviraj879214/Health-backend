@@ -34,7 +34,7 @@ export class PartnerRegisterServices implements IPartnerRegister{
 
        
 
-        if(checkEmail?.status !== PartnerRegister.PENDING){
+        if(checkEmail && checkEmail?.status !== PartnerRegister.PENDING){
             return{
                 status : 401,
                 message : "Email Already exist"
@@ -42,7 +42,16 @@ export class PartnerRegisterServices implements IPartnerRegister{
         }
         else if(!checkEmail){
 
-           const randomOtp = Math.floor(1000 + Math.random() * 9000);
+
+
+           let randomOtp: string;
+                if (process.env.NODE_ENV === 'local') {
+                    randomOtp = '0000';
+                } else {
+                    randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+                }
+
+
             const hash = await bcrypt.hash("Aalpha@100", 10);
             const createEmail =  await this.prisma.clinicUser.create({
                 data : {
