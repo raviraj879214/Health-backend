@@ -6,17 +6,21 @@ import * as util from 'util';
 export class EmailService {
   private transporter;
 
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASSWORD, // App password
-      },
-      logger: true, // Nodemailer logs
-      debug: true,  // Show SMTP traffic
-    });
-  }
+ constructor() {
+  this.transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,         // SSL port
+    secure: true,      // true for port 465
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASSWORD, // App password if 2FA enabled
+    },
+    logger: true,
+    debug: true,
+    connectionTimeout: 10000, // optional, 10 seconds
+  });
+}
+
 
   async sendEmail(to: string, subject: string, text: string, html?: string) {
     const mailOptions = {
