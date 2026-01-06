@@ -45,6 +45,10 @@ export class ManageClinicService implements IManageClinicService{
 
 
         async updateClinicName(dto: ManageClinicDto) {
+
+            console.log("dto",dto);
+
+
         const clinic = await this.prisma.clinic.findUnique({
             where: { uuid: dto.clinicuuid },
         });
@@ -58,7 +62,15 @@ export class ManageClinicService implements IManageClinicService{
 
         const updated = await this.prisma.clinic.update({
             where: { uuid: dto.clinicuuid },
-            data: { name: dto.name }
+            data: { 
+                name: dto.name,
+                email : dto.email,
+                address : dto.address,
+                phone : dto.phone,
+                websiteurl : dto.websiteurl
+                
+
+             }
         });
 
             return { status: 200, message : "Clinic name updated successfully" , data: updated };

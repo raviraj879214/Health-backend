@@ -37,7 +37,7 @@ export class ManageClinicController{
     @Put("update-clinics-name")
     @Version("1")
     async UpdateClinicName(@Body() dto: ManageClinicDto){
-
+        
         return this.manageClinicService.updateClinicName(dto);
 
     }

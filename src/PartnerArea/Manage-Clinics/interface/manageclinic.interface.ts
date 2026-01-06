@@ -13,4 +13,5 @@ export interface IManageClinicService{
     updateClinicName(dto : ManageClinicDto);
     
     
+    
 }

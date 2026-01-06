@@ -42,7 +42,7 @@ export class PartnerRegisterServices implements IPartnerRegister{
             }
         }
         else if(!checkEmail){
-console.log("2");
+                console.log("2");
 
 
            let randomOtp: string;
@@ -79,7 +79,7 @@ console.log("2");
                 );
 
 
-                
+
             return {
                 status : "Email Created and sent otp to registered email",
                 data:  createEmail,
@@ -129,7 +129,7 @@ console.log("2");
             }
         }
         else if(checkEmail.email === email && checkEmail.status !== PartnerRegister.PENDING){
-console.log("5");
+                console.log("5");
             return {
                 status : 404,
                 message : "This email is already registered. Please log in to continue."

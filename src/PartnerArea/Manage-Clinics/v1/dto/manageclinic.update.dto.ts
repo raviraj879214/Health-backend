@@ -11,6 +11,37 @@ export class ManageClinicDto{
     name : string;
 
 
+    @IsOptional()
+    email : string;
+
+
+     @IsOptional()
+    address : string;
+
+
+       @IsOptional()
+     phone : string;
+
+     
+
+      @IsOptional()
+     websiteurl : string;
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
 
 
 }
