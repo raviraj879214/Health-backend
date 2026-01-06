@@ -30,12 +30,15 @@ export class PartnerRegisterServices implements IPartnerRegister{
             }
         });
 
-        if(checkEmail == null){
-             return {
-                status : 404,
-                data:  checkEmail
-            }
-        }
+        
+
+       if (!checkEmail) {
+            return {
+                status: 404,
+                message: 'Email already exist',
+            };
+      }
+
 
 
 
