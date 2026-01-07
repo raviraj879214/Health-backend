@@ -8,16 +8,16 @@ export class EmailService {
 
  constructor() {
   this.transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,         // SSL port
-    secure: true,      // true for port 465
+    host: "smtp-relay.sendinblue.com",
+    port: 465,         
+    secure: true,     
     auth: {
       user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASSWORD, // App password if 2FA enabled
+      pass: process.env.GMAIL_PASSWORD, 
     },
     logger: true,
     debug: true,
-    connectionTimeout: 10000, // optional, 10 seconds
+    connectionTimeout: 10000, 
   });
 }
 
@@ -35,24 +35,27 @@ export class EmailService {
       const info = await this.transporter.sendMail(mailOptions);
       console.log('✅ Email sent successfully');
       console.log(info);
+
       return info;
+
+
+      // return true;
     } catch (error) {
-      // Use console.log instead of console.error
+
       console.log('❌ Error sending email');
 
-      // Exact error message
+
       console.log('Message:', error.message);
 
-      // Stack trace
+
       console.log('Stack:', error.stack);
 
-      // Full error object (all hidden properties too)
       console.log(
         'Full Error Object:',
         util.inspect(error, { showHidden: true, depth: null }),
       );
 
-      throw error; // optional
+      throw error;
     }
   }
 }
