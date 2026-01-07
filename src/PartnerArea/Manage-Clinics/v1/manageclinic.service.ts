@@ -33,7 +33,11 @@ export class ManageClinicService implements IManageClinicService{
    async getClinicDetails(id) {
         if (!id) return { status: 400, message: "Invalid Clinic Id" };
         const data = await this.prisma.clinic.findFirst({
-            where: { uuid: id }
+            where: { uuid: id },
+            include:{
+                country : true,
+                city : true
+            }
         });
         return {
             status: 200,

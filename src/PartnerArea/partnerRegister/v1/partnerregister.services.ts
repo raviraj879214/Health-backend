@@ -258,8 +258,9 @@ export class PartnerRegisterServices implements IPartnerRegister{
                 data : {
                     name : dto.name,
                     websiteurl : dto.websiteurl,
-                    // country : dto.country,
-                    // city : dto.city
+                    email : dto.clinicemail,
+                    countryId : dto.country,
+                    cityId : dto.city
                 }
             });
 

@@ -38,6 +38,10 @@ export class PartnerRegisterClinicDetails {
     city:string;
 
 
+        @IsString()
+    @IsOptional()
+    clinicemail:string;
+
 
   
 }
