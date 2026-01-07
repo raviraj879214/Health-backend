@@ -22,6 +22,14 @@ export class ManageClinicDto{
        @IsOptional()
      phone : string;
 
+       @IsOptional()
+     whatsappNumber : string;
+
+
+       @IsOptional()
+     telegramNumber : string;
+
+
      
 
       @IsOptional()

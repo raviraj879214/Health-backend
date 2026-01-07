@@ -49,6 +49,17 @@ export class ManageClinicController{
      }
 
 
+     @Get("get-clinic-accreditation/:clinicuuid")
+     @Version("1")
+     @ModuleAccess("Manage Clinic")
+     async getClinicAccreditaion(@Param("clinicuuid") clinicuuid:string){
+
+
+        return await this.manageClinicService.getAccreditations(clinicuuid);
+     }
+
+
+
      @Get("get-clinic-surgery-images/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")

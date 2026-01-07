@@ -46,6 +46,7 @@ export class PatientQueriesServices implements IPatientQueries{
                 id : id
             },
             include:{
+                
                 clinic : true,
                 package : true,
                 doctor : true,
@@ -54,6 +55,7 @@ export class PatientQueriesServices implements IPatientQueries{
                         createdAt : "desc"
                     }
                 }
+            
             }
         });
 

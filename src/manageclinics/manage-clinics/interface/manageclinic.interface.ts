@@ -11,6 +11,7 @@ export interface IManageClinic{
     getClinicBannerImages(clinicuuid:string);
     getSurgeryImages(clinicuuid:string);
     getClinicDescription(clinicuuid:string);
+    getAccreditations(clinicuuid:string);
 
 
     //clinic specialty
@@ -60,8 +61,7 @@ export interface IManageClinic{
 
     //make an action 
       sendMessageToClinic(dto:SendMessageCreateDto);
-      
-
+    
     //
     
 

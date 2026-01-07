@@ -7,6 +7,7 @@ import { PartnerRegisterClinicDetails, partnerRegisterCreateDto } from "./dto/pa
 import { EmailService } from "src/EmailServices/email.service";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
+import { ClinicStatus } from "src/common/enum/ClinicStatus";
 
 
 
@@ -260,7 +261,8 @@ export class PartnerRegisterServices implements IPartnerRegister{
                     websiteurl : dto.websiteurl,
                     email : dto.clinicemail,
                     countryId : dto.country,
-                    cityId : dto.city
+                    cityId : dto.city,
+                    status : ClinicStatus.PENDING
                 }
             });
 

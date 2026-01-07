@@ -219,6 +219,8 @@ model Clinic {
   address             String?
   state               String?
   phone               String?
+  whatsappNumber      String?
+  telegramNumber      String?
   email               String?
   imageUrl            String?
   priorityLevel       Int                    @default(0)
@@ -231,7 +233,7 @@ model Clinic {
   clinicUserId        Int?
   clinicUserUuid      String?
   websiteurl          String?
-  status              String?
+  status              String? @default("0")
   commission          String?
   cityId              String?
   cordinatorid        Int?

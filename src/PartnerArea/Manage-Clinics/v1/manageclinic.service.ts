@@ -71,7 +71,9 @@ export class ManageClinicService implements IManageClinicService{
                 email : dto.email,
                 address : dto.address,
                 phone : dto.phone,
-                websiteurl : dto.websiteurl
+                websiteurl : dto.websiteurl,
+                whatsappNumber : dto.whatsappNumber,
+                telegramNumber: dto.telegramNumber
                 
 
              }

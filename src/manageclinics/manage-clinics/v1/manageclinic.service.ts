@@ -791,13 +791,27 @@ export class ManageClinicServices implements IManageClinic{
         return{
             status : true
         }
-
-
-
-
-
     }
 
+
+
+    async getAccreditations(clinicuuid: string) {
+        const getData =await this.prisma.clinicAccreditation.findMany({
+            where :{
+                clinicuuid: clinicuuid
+            },
+            include:{
+                accreditation : true
+            }
+        });
+
+
+
+        return{
+            status : 200,
+            data : getData
+        }
+    }
 
 
 
