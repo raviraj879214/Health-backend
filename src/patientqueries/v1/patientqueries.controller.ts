@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { PATIENT_QUERIES } from "../constant/patientqueries.constant";
 import { PatientQueriesServices } from "./patientqueries.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { ModuleAccess } from "src/common/decorators/module-access.decorator";
 import { PatientQueryCreateDto } from "./dto/patientqueries.create.dto";
+import type { AuthRequest } from "src/common/decorators/auth-request.interface";
 
 
 
@@ -18,10 +19,14 @@ export class PatientQueriesController{
         @Get("get-patient-queries")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async getPatientQuereis(@Query('page') page: string,@Query('limit') limit: string){
+        async getPatientQuereis(@Query('page') page: string,@Query('limit') limit: string,@Req() request: AuthRequest){
+
+            const userId = request.user?.sub;
+           
             const pageNumber = parseInt(page) || 0;
             const pageSize = parseInt(limit) || 0;
-            return await this.patientQueriesService.getPateintQueries(pageNumber,pageSize);
+
+            return await this.patientQueriesService.getPateintQueries(pageNumber,pageSize,Number(userId));
         }
 
 

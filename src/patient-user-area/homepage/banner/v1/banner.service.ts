@@ -3,6 +3,7 @@ import { IHomePageBanner } from "../interface/banner.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { BannerCreateClinicDto } from "./dto/banner.create.dto";
 import { take } from "rxjs";
+import { ClinicStatus } from "src/common/enum/ClinicStatus";
 
 
 
@@ -90,6 +91,8 @@ async getTopRatedClinicListing(dto: BannerCreateClinicDto) {
   const shuffle = (arr: any[]) => arr.sort(() => Math.random() - 0.5);
   const clinicUuids = new Set<string>();
 
+
+
   // ---------- FILTERS ----------
   if (dto.specialization?.length) {
     const ids = dto.specialization.map(s => s.id.toString());
@@ -115,10 +118,14 @@ async getTopRatedClinicListing(dto: BannerCreateClinicDto) {
     data.forEach(i => clinicUuids.add(i.clinicUuid));
   }
 
+
+
   const whereClause: any = {
+    status : ClinicStatus.ACTIVE,
     isActive: true,
     ...(clinicUuids.size > 0 && { uuid: { in: [...clinicUuids] } }),
   };
+
 
   // ---------- FETCH CLINICS ----------
   const clinics = await this.prisma.clinic.findMany({
@@ -232,6 +239,7 @@ async getPopularClinicListing(dto: BannerCreateClinicDto) {
   }
 
   const whereClause: any = {
+    status : ClinicStatus.ACTIVE,
     isActive: true,
     ...(clinicUuids.size && { uuid: { in: [...clinicUuids] } }),
   };
@@ -303,6 +311,26 @@ async getPopularClinicListing(dto: BannerCreateClinicDto) {
     limit,
   };
 }
+
+
+
+    async getPlaces() {
+        const getPlaces = await this.prisma.clinic.findMany({
+          where:{
+            citycep : {
+              notIn : null
+            }
+          },
+          select:{
+            citycep : true
+          }
+        });
+
+        return{
+          status : 200,
+          data : getPlaces
+        }
+    }
 
 
 

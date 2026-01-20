@@ -4,7 +4,9 @@ import { PatientQueryCreateDto } from "../v1/dto/patientqueries.create.dto";
 
 export interface IPatientQueries{
 
-    getPateintQueries(page: number, limit: number);
+    getPateintQueries(page: number, limit: number, adminid:number);
+
+
     getPatientQueryDetails(id:string);
     insertFinalDealPrice(dto:PatientQueryCreateDto);
 

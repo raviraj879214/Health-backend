@@ -3,6 +3,8 @@ import { Injectable } from "@nestjs/common";
 import { IPackageStepOneService } from "../interface/packagestepone.interface"
 import { PrismaService } from "src/prisma/prisma.service"
 import { PackageOneUpdateDto } from "./dto/packagestepone.update.dto";
+import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
+import { PackageVisibiltyStatus } from "src/common/enum/packageVisibiltyStatus";
 
 
 
@@ -13,12 +15,18 @@ export class PackageStepOneServices implements IPackageStepOneService{
     constructor(private readonly prisma:PrismaService){}
 
     async getPackageList(clinicuuid: string) {
+
         const getData = await this.prisma.clinicPackage.findMany({
             where : {
-                clinicId : clinicuuid
+                clinicId : clinicuuid,
+                OR:[
+                    {status : PackageVerifyStatus.EDIT},
+                    {status : PackageVerifyStatus.VERIFIED}
+                ]
             },
             include :{
                 packagesDoctor : {
+                   
                    include:{
                     doctors : true
                    }

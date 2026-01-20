@@ -39,26 +39,26 @@ model RoleModule {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  password     String
-  roleId       Int
-  Bio          String?
-  firstname    String?
-  lastname     String?
-  address      String?
-  country      String?
-  phone        String?
-  whatsappNumber String?
-  telegramNumber String?
-  messengerID  String?
-  postalcode   String?
-  state        String?
-  activityLogs ActivityLog[]
-  role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  coordinatedClinics Clinic[] @relation("ClinicCoordinator")
+  id                 Int            @id @default(autoincrement())
+  email              String         @unique
+  password           String
+  roleId             Int
+  Bio                String?
+  firstname          String?
+  lastname           String?
+  address            String?
+  country            String?
+  phone              String?
+  postalcode         String?
+  state              String?
+  messengerID        String?
+  telegramNumber     String?
+  whatsappNumber     String?
+  activityLogs       ActivityLog[]
+  coordinatedClinics Clinic[]       @relation("ClinicCoordinator")
+  PatientQuery       PatientQuery[]
+  role               Role           @relation(fields: [roleId], references: [id], onDelete: Cascade)
 }
-
 
 model ActivityLog {
   id          Int      @id @default(autoincrement())
@@ -110,20 +110,6 @@ model SeoPages {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
   seopage       String?
-}
-
-model Notification {
-  id           Int      @id @default(autoincrement())
-  userId       Int?
-  message      String   @db.Text
-  isRead       Boolean  @default(false)
-  type         String?  @db.VarChar(50)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  uuid         String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  globaluserid String?
-
-  @@index([userId])
 }
 
 model Subscription {
@@ -203,13 +189,9 @@ model ClinicUser {
   lastname         String?
   isOtpVerify      Boolean   @default(false)
   status           Int       @default(0)
+  phoneVerify      Int?
   clinics          Clinic[]
 }
-
-
-
-
-
 
 model Clinic {
   id                  Int                    @id @default(autoincrement())
@@ -219,8 +201,6 @@ model Clinic {
   address             String?
   state               String?
   phone               String?
-  whatsappNumber      String?
-  telegramNumber      String?
   email               String?
   imageUrl            String?
   priorityLevel       Int                    @default(0)
@@ -233,100 +213,85 @@ model Clinic {
   clinicUserId        Int?
   clinicUserUuid      String?
   websiteurl          String?
-  status              String? @default("0")
-  commission          String?
+  status              String?                @default("0")
   cityId              String?
-  cordinatorid        Int?
-
-  cordinator          User?     @relation("ClinicCoordinator",fields: [cordinatorid],references: [id],onDelete: SetNull)
-
   countryId           String?
-  stripeaccountid     String?
+  commission          String?
   onboardingUrl       String?
+  stripeaccountid     String?
   isStripeVerify      String?
   reasonText          String?
+  cordinatorid        Int?
+  telegramNumber      String?
+  whatsappNumber      String?
+  cep                 String?
+  citycep             String?
+  cnpj                String?
+  complement          String?
+  latitude            Decimal?               @db.Decimal
+  longitude           Decimal?               @db.Decimal
+  neighborhood        String?
+  street              String?
+  phoneVerify         Int                    @default(0)
+  TermsID             String?
+  CheckedTime         DateTime?              @db.Timestamp(6)
   city                City?                  @relation(fields: [cityId], references: [id])
   clinicUser          ClinicUser?            @relation(fields: [clinicUserId], references: [id])
+  cordinator          User?                  @relation("ClinicCoordinator", fields: [cordinatorid], references: [id])
   country             Country?               @relation(fields: [countryId], references: [id])
   clinicDoctors       ClinicDoctor[]
   clinicDoctorAddress ClinicDoctorAddress[]
+  googleAccount       ClinicGoogleAccount?
+  cliniclistingboosts ClinicListingBoost[]
   orders              ClinicListingOrder[]
   packages            ClinicPackage[]
+  ratingSummary       ClinicRatingSummary?
   clinics             ClinicSpecialization[]
   clinicsSpecialty    ClinicSpecialty[]
   clinicTreatments    ClinicTreatment[]
-  queries             PatientQuery[]
-  cliniclistingboosts ClinicListingBoost[]
-  
-  googleAccount       ClinicGoogleAccount?
   googleReviews       GoogleReview[]
-  ratingSummary       ClinicRatingSummary?
+  queries             PatientQuery[]
 }
 
-
-
 model ClinicGoogleAccount {
-  id               Int      @id @default(autoincrement())
-
-  clinicUuid       String   @unique @db.Uuid
-
+  id               Int       @id @default(autoincrement())
+  clinicUuid       String    @unique @db.Uuid
   googleAccountId  String
   googleLocationId String
   googlePlaceId    String?
-
   accessToken      String?
   refreshToken     String?
   tokenExpiry      DateTime?
-
   lastSyncedAt     DateTime?
-  isConnected      Boolean  @default(true)
-
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  clinic           Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+  isConnected      Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  clinic           Clinic    @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
 }
 
-
 model GoogleReview {
-  id             Int      @id @default(autoincrement())
-
-  clinicUuid     String   @db.Uuid
-
-  googleReviewId String   @unique
-
+  id             Int       @id @default(autoincrement())
+  clinicUuid     String    @db.Uuid
+  googleReviewId String    @unique
   authorName     String?
   rating         Int
   comment        String?
   reviewTime     DateTime
-
   replyText      String?
   replyTime      DateTime?
-
-  createdAt      DateTime @default(now())
-
-  clinic         Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+  createdAt      DateTime  @default(now())
+  clinic         Clinic    @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
 
   @@index([clinicUuid])
 }
 
-
 model ClinicRatingSummary {
-  clinicUuid     String   @id @db.Uuid
-
-  averageRating  Decimal  @db.Decimal(2, 1)
-  totalReviews   Int
-
-  updatedAt      DateTime @updatedAt
-
-  clinic         Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+  clinicUuid    String   @id @db.Uuid
+  averageRating Decimal  @db.Decimal(2, 1)
+  totalReviews  Int
+  updatedAt     DateTime @updatedAt
+  clinic        Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
 }
-
-
-
-
-
-
 
 model ClinicImages {
   id         Int      @id @default(autoincrement())
@@ -338,8 +303,6 @@ model ClinicImages {
   updatedAt  DateTime @updatedAt
   sort       String?
 }
-
-
 
 model ClinicSurgeryImage {
   uuid        String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -439,6 +402,8 @@ model Doctor {
   createdAt           DateTime               @default(now())
   fullDescription     String?
   updatedAt           DateTime               @updatedAt
+  DoctorVerify        Int?                   @default(0)
+  Reason              String?
   clinicDoctors       ClinicDoctor[]
   clinicDoctorAddress ClinicDoctorAddress[]
   specializations     DoctorSpecialization[]
@@ -582,9 +547,9 @@ model Treatment {
   id                String             @id @default(uuid()) @db.Uuid
   name              String             @unique
   description       String?
-  isFeatured        Boolean            @default(false)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  isFeatured        Boolean            @default(false)
   clinicTreatments  ClinicTreatment[]
   doctorTreatments  DoctorTreatment[]
   packageTreatments PackageTreatment[]
@@ -626,6 +591,8 @@ model ClinicPackage {
   briefdescription  String?
   discountedprice   String?
   fulldescription   String?
+  Visibilty         Int?                    @default(0)
+  status            Int?                    @default(0)
   boosts            ClinicBoost[]
   clinic            Clinic                  @relation(fields: [clinicId], references: [uuid])
   packagesDoctor    PackageDoctor[]         @relation("PackageDoctors")
@@ -634,50 +601,36 @@ model ClinicPackage {
   packages          PackageSpecialization[]
   package           PackageSpecialty[]
   packagestreatment PackageTreatment[]
-  queries     PatientQuery[]
+  queries           PatientQuery[]
 }
 
-
-
 model BoostPackage {
-  id           String        @id @default(uuid()) @db.Uuid
-  name         String
-  durationDays Int
-  price        Decimal       @db.Decimal(10, 2)
-  description  String?
-  placement    Int @default(2)
-  type         Int @default(0)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-
-  clinics      ClinicBoost[]
+  id                 String               @id @default(uuid()) @db.Uuid
+  name               String
+  durationDays       Int
+  price              Decimal              @db.Decimal(10, 2)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  description        String?
+  placement          Int                  @default(2)
+  type               Int                  @default(0)
+  clinics            ClinicBoost[]
   cliniclistingboost ClinicListingBoost[]
 }
 
-
-
 model ClinicListingBoost {
-  id              String        @id @default(uuid()) @db.Uuid
-  clinicId String        @db.Uuid
-  boostPackageId  String        @db.Uuid
-  startAt         DateTime      @default(now())
-  endAt           DateTime
-  isActive        Boolean       @default(true)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  clinicuserid    String?
-  boostPackage    BoostPackage  @relation(fields: [boostPackageId], references: [id])
-  clinics         Clinic @relation(fields: [clinicId], references: [uuid])
-
+  id             String       @id @default(uuid()) @db.Uuid
+  clinicId       String       @db.Uuid
+  boostPackageId String       @db.Uuid
+  startAt        DateTime     @default(now())
+  endAt          DateTime
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  clinicuserid   String?
+  boostPackage   BoostPackage @relation(fields: [boostPackageId], references: [id])
+  clinics        Clinic       @relation(fields: [clinicId], references: [uuid])
 }
-
-
-
-
-
-
-
-
 
 model ClinicBoost {
   id              String        @id @default(uuid()) @db.Uuid
@@ -691,7 +644,6 @@ model ClinicBoost {
   clinicuserid    String?
   boostPackage    BoostPackage  @relation(fields: [boostPackageId], references: [id])
   clinicPackage   ClinicPackage @relation(fields: [clinicPackageId], references: [id])
-
 }
 
 model PackageSpecialization {
@@ -804,63 +756,75 @@ model City {
   @@index([countryId])
 }
 
-
-
 model PatientQuery {
-  id         String   @id @default(uuid()) @db.Uuid
-
-  patientName String
-  message     String
-  email             String?
-  phoneNumber       String
-  whatsappNumber    String?
-  telegramUsername  String?
-  countryCode       String?
-  subject           String?
-  status            Int @default(0)
-  finalPrice        String?
-  querycode         String?
-  streetAddress     String?
-  city              String?
-  state             String?
-  postalCode        String?
-
-
-  clinicId    String?   @db.Uuid
-  packageId   String?   @db.Uuid   
-  doctorid    String?   @db.Uuid
-
-
-  clinic      Clinic?          @relation(fields: [clinicId], references: [uuid])
-  package     ClinicPackage?   @relation(fields: [packageId], references: [id])
-  doctor      Doctor?          @relation(fields: [doctorid], references: [uuid])
-
-
-  paymentDetails    PatientQueryPaymentDetails[]
-  createdAt   DateTime @default(now())
-
-
-  treatmentName         String?
-  whatMatterMostName    String?
-  medicalReportsValue   String?
-  procedureTimeValue    String?
+  id                  String                       @id @default(uuid()) @db.Uuid
+  patientName         String
+  phoneNumber         String
+  message             String
+  clinicId            String?                      @db.Uuid
+  packageId           String?                      @db.Uuid
+  createdAt           DateTime                     @default(now())
+  countryCode         String?
+  email               String?
+  status              Int                          @default(0)
+  subject             String?
+  telegramUsername    String?
+  whatsappNumber      String?
+  finalPrice          String?
+  querycode           String?
+  city                String?
+  postalCode          String?
+  state               String?
+  streetAddress       String?
+  medicalReportsValue String?
+  procedureTimeValue  String?
+  treatmentName       String?
+  whatMatterMostName  String?
+  doctorid            String?                      @db.Uuid
+  cordinatorid        Int?
+  clinic              Clinic?                      @relation(fields: [clinicId], references: [uuid])
+  User                User?                        @relation(fields: [cordinatorid], references: [id])
+  doctor              Doctor?                      @relation(fields: [doctorid], references: [uuid])
+  package             ClinicPackage?               @relation(fields: [packageId], references: [id])
+  paymentDetails      PatientQueryPaymentDetails[]
 }
 
-model PatientQueryPaymentDetails{
-  id                String   @id @default(uuid()) @db.Uuid
-  packageprice      String?
-  finalprice        String?
-  generatedlink     String?
-  generatedamount   String?
-  commission        String?
-  platformfee       String?
-  vendorfee         String?
-  paymentLinkid    String?
-  status             Int      @default(0)
-
-  patientQueryId    String   @db.Uuid
-  patientQuery      PatientQuery @relation(fields: [patientQueryId], references: [id])
-
-  createdAt   DateTime @default(now())
+model PatientQueryPaymentDetails {
+  id              String       @id @default(uuid()) @db.Uuid
+  packageprice    String?
+  finalprice      String?
+  generatedlink   String?
+  generatedamount String?
+  status          Int          @default(0)
+  patientQueryId  String       @db.Uuid
+  createdAt       DateTime     @default(now())
+  commission      String?
+  platformfee     String?
+  vendorfee       String?
+  paymentLinkid   String?
+  patientQuery    PatientQuery @relation(fields: [patientQueryId], references: [id])
 }
 
+model terms_and_conditions {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  version    Int
+  name       String    @db.VarChar(255)
+  content    String
+  is_active  Boolean?  @default(false)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model Notification {
+  id           Int      @id @default(autoincrement())
+  userId       Int?
+  message      String
+  isRead       Boolean  @default(false)
+  type         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  uuid         String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  globaluserid String?
+
+  @@index([userId])
+}

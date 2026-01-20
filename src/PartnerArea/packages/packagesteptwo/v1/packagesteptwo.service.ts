@@ -4,6 +4,10 @@ import { IManagePackageSpecialization } from "../interface/packagesteptwo.interf
 import { SuggestedType } from "src/common/enum/SuggestedCategoryType";
 import { SuggestedCategoryStatus } from "src/common/enum/SuggestedCategoryStatus";
 import { PackageSpecializationUpdateDto } from "./dto/packagesteptwo.update.dto";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -11,7 +15,10 @@ import { PackageSpecializationUpdateDto } from "./dto/packagesteptwo.update.dto"
 @Injectable()
 export class ManagePackageSpecializationsServices implements IManagePackageSpecialization{
 
-        constructor(private readonly prisma:PrismaService){}
+        constructor(private readonly prisma:PrismaService,
+          private readonly universalNotification:UniversalNotification,
+                        private emailservice : EmailService
+        ){}
 
 
         async getSpecializations() {
@@ -101,7 +108,25 @@ export class ManagePackageSpecializationsServices implements IManagePackageSpeci
                               packageId: dto.packageId!,
                             }
                           });
-                
+
+
+                                const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: dto.clinicuuid },});
+                                const packagdetails = await this.prisma.clinicPackage.findUnique({where:{id : dto.packageId}});
+                                const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+                                let payload : WebhookNotificationDto ={
+                                    title : `New Specialty Request for Clinic Package - ${dto.othertext}`,
+                                    area: "admin",
+                                    message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has requested for new specialty ${dto.othertext} for package ${packagdetails?.title} please make an appropriate action`
+                                }
+                                await this.universalNotification.HandleNotification(payload);
+
+                                const emailText =  `Hi Admin, <br/>Clinic: <b>${clinicdetails?.name ?? 'Unknown clinic'}</b> has requested for new specialty <b> ${dto.othertext}</b> for package <b>${packagdetails?.title}</b> please make an appropriate action<br/>`;
+                                const htmlContent = EmailTemplate.getTemplate(emailText);
+                                await this.emailservice.sendEmail(adminemail?.email!,`${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Specialty Request for Clinic Package - ${dto.othertext}`,  "",htmlContent);
+  
+
+
+
                           return {
                             status: 200,
                             data: doctorSpecialization,

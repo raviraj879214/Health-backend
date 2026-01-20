@@ -20,11 +20,17 @@ export interface Treatment {
   name: string;
 }
 
+export interface Places {
+  id: string;
+  name: string;
+}
+
 
 export class ClinicListCreateDto {
   specialization: Specialization[];
   specialty : Specialty[];
   treatment : Treatment[];
+   places :  Places[];
 
   
 

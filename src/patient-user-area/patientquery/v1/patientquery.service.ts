@@ -4,7 +4,8 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
 import { EmailService } from "src/EmailServices/email.service";
-
+import Twilio from 'twilio';
+import type { Twilio as TwilioClient } from 'twilio';
 
 
 
@@ -12,9 +13,15 @@ import { EmailService } from "src/EmailServices/email.service";
 @Injectable()
 export class PatientQueryServices implements IPatietnQuery{
 
+    private client: TwilioClient;
+
+
     constructor(private readonly prisma:PrismaService,
-         private emailservice : EmailService
-    ){}
+         private emailservice : EmailService,
+         
+    ){
+        this.client = Twilio(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
+    }
 
 
     async getSpecialties() {
@@ -40,10 +47,10 @@ export class PatientQueryServices implements IPatietnQuery{
             
 
             const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PatientEmailVerify },});
-            const emailText = emailTemplate?.body;
-            const htmlContent = EmailTemplate.getTemplate(emailText).replace("${otp}",otp.toString());
+            const emailText = `Hi, your OTP for email verification is ${otp}. Please use this to verify your email.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
 
-            await this.emailservice.sendEmail(email,`${emailTemplate?.subject}`,  "",htmlContent);
+            await this.emailservice.sendEmail(email,`Email Verification`,  "",htmlContent);
 
             
             return{
@@ -74,6 +81,42 @@ export class PatientQueryServices implements IPatietnQuery{
             data : data
         }
     }
+
+
+
+
+
+    async sendOtp(phone: string, otp: string) {
+            try {
+                const message = await this.client.messages.create({
+                    body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
+                    from: process.env.TWILIO_PHONE_NUMBER,
+                    to: phone,
+                });
+
+            return { 
+                success: true,
+                 sid: message.sid,
+                 otp: otp
+             };
+            } catch (error) {
+                    return { success: false, error: error.message };
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

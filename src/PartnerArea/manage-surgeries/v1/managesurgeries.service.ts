@@ -23,7 +23,7 @@ export class ManageSurgeries implements IManageSurgeries{
             }
         });
 
-        console.log("surgeriesdata",surgeriesdata);
+       // console.log("surgeriesdata",surgeriesdata);
 
         return {
             status : 200,
@@ -60,7 +60,7 @@ export class ManageSurgeries implements IManageSurgeries{
 
     async deleteSurgeriesImages(id: string) {
 
-        console.log("id",id);
+        //console.log("id",id);
     const images = await this.prisma.clinicSurgeryImage.findMany({
         where: {
             id: id,

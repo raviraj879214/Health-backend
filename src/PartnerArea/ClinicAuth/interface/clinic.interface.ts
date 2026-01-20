@@ -30,6 +30,9 @@ export interface IClinicAuthService{
     checkresetTokenExist(token:string,email:string);
 
 
+    updatePassword(id:string,oldpassword:string,newpassword:string);
+
+
 
 
 

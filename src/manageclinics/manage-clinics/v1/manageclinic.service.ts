@@ -25,16 +25,19 @@ export class ManageClinicServices implements IManageClinic{
 
 
 
-    async getClinicListing(page: number, limit: number) {
+    async getClinicListing(page: number, limit: number,clinicuuid:string) {
         const totalCount = await this.prisma.clinic.count();
 
         const getData = await this.prisma.clinic.findMany({
             include:{
+                clinicUser:true,
                 city: true,
                 country : true,
                 clinicDoctors : {
+                    where:{
+                        clinicUuid : clinicuuid
+                    },
                     include : {
-                        
                         doctor : true
                     }
                 }
@@ -66,6 +69,7 @@ export class ManageClinicServices implements IManageClinic{
                     uuid : clinicuuid
                 },
                 include:{
+                    clinicUser :  true,
                     city:true,
                     country:true
                 }
@@ -137,7 +141,7 @@ export class ManageClinicServices implements IManageClinic{
     }
 
     
-    async acceptSpecailty(id: string) {
+    async acceptSpecailty(id: string, clinicuuid: string) {
 
         const getSuggestedSpecialty =await this.prisma.specializationRequest.findFirst({
             where : {
@@ -161,6 +165,27 @@ export class ManageClinicServices implements IManageClinic{
             }
         });
 
+
+           const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Specialty Request Accepted - ${getSuggestedSpecialty?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `${clinicdetails?.name} has submitted a request has been accepted. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `${clinicdetails?.name} has submitted a request has been accepted. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Specialty Request Accepted - ${getSuggestedSpecialty?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
+
+
         return{
             status : 200,
             message : "Category approved successfully"
@@ -171,9 +196,9 @@ export class ManageClinicServices implements IManageClinic{
 
 
 
-    async rejectSpecailty(id: string) {
+    async rejectSpecailty(id: string, clinicuuid: string) {
 
-
+        const assign = await this.prisma.specializationRequest.findFirst({where:{id:id}});
          await this.prisma.clinicSpecialization.deleteMany({
             where :{
                 suggestedCategoryId : id
@@ -186,6 +211,28 @@ export class ManageClinicServices implements IManageClinic{
                 id : id
             }
         });
+
+
+
+
+
+         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Specialty Request Rejected - ${assign?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `${clinicdetails?.name} has submitted a request has been rejected. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `${clinicdetails?.name} has submitted a request has been rejected. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Specialty Request rejected - ${assign?.name}`,  
+                    "",            
+                    htmlContent  
+            );
 
 
        
@@ -225,8 +272,33 @@ export class ManageClinicServices implements IManageClinic{
             data:{
                 specializationId: assignid,
                 clinicUuid:clinicuuid
+            },
+            include:{
+                specialization : true
             }
         });
+
+
+
+
+         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Specialty assigned - ${assign?.specialization?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has assigned  ${assign?.specialization?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has assigned  ${assign?.specialization?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Specialty Assigned - ${assign?.specialization?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
 
         return{
             status : 201,
@@ -236,17 +308,39 @@ export class ManageClinicServices implements IManageClinic{
 
     async unassignSpecialty(unassignid: string, clinicuuid: string) {
 
+        const assign = await this.prisma.clinicSpecialization.findFirst({where:{specializationId :unassignid},include:{specialization:true}});
+
         const DeletSpecialty = await this.prisma.clinicSpecialization.deleteMany({
             where : {
                 specializationId : unassignid
             }
         });
 
+
+         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Specialty Un-assigned - ${assign?.specialization?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has Un-assigned  ${assign?.specialization?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has Un-assigned  ${assign?.specialization?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Specialty Un-Assigned - ${assign?.specialization?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
+
+
         return{
             status  : 200,
             message : "Removed successfully"
         }
-
     }
 
 
@@ -273,7 +367,7 @@ export class ManageClinicServices implements IManageClinic{
     }
 
     
-    async acceptSubSpecailty(id: string) {
+    async acceptSubSpecailty(id: string, clinicuuid: string) {
 
         const getSuggestedSpecialty =await this.prisma.specializationRequest.findFirst({
             where : {
@@ -297,6 +391,28 @@ export class ManageClinicServices implements IManageClinic{
             }
         });
 
+
+          const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Sub-Specialty Request Accepted - ${getSuggestedSpecialty?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `${clinicdetails?.name} has submitted a request has been accepted. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `${clinicdetails?.name} has submitted a request has been accepted. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Sub-Specialty Request Accepted - ${getSuggestedSpecialty?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
+
+
+
         return{
             status : 200,
             message : "Category approved successfully"
@@ -307,9 +423,9 @@ export class ManageClinicServices implements IManageClinic{
 
 
 
-    async rejectSubSpecailty(id: string) {
+    async rejectSubSpecailty(id: string, clinicuuid: string) {
 
-
+            const assign = await this.prisma.specializationRequest.findFirst({where:{id:id}});
          await this.prisma.clinicSpecialty.deleteMany({
             where :{
                 suggestedCategoryId : id
@@ -323,6 +439,26 @@ export class ManageClinicServices implements IManageClinic{
             }
         });
 
+
+
+
+        const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Sub-Specialty Request Rejected - ${assign?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `${clinicdetails?.name} has submitted a request has been rejected. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `${clinicdetails?.name} has submitted a request has been rejected. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Sub-Specialty Request rejected - ${assign?.name}`,  
+                    "",            
+                    htmlContent  
+            );
 
        
 
@@ -361,12 +497,47 @@ export class ManageClinicServices implements IManageClinic{
 
         try {
             
-             const assign = await this.prisma.clinicSpecialty.create({
+        const assign = await this.prisma.clinicSpecialty.create({
             data:{
                 specialtyId : assignid,
                 clinicUuid:clinicuuid
+            },
+            include:{
+                specialty:true
             }
         });
+
+
+
+
+
+         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Sub-Specialty assigned - ${assign?.specialty?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has assigned  ${assign?.specialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has assigned  ${assign?.specialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Sub-Specialty Assigned - ${assign?.specialty?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
+
+
+
+
+
+
+
+
+
 
         return{
             status : 201,
@@ -380,31 +551,43 @@ export class ManageClinicServices implements IManageClinic{
 
     }
 
+
     async unassignSubSpecialty(unassignid: string, clinicuuid: string) {
 
+        const assign = await this.prisma.clinicSpecialty.findFirst({where:{specialtyId :unassignid},include:{specialty:true}});
         const DeletSpecialty = await this.prisma.clinicSpecialty.deleteMany({
             where : {
                 specialtyId : unassignid
             }
         });
 
+         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Sub-Specialty Un-assigned - ${assign?.specialty?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has Un-assigned  ${assign?.specialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has Un-assigned  ${assign?.specialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Sub-Specialty Un-Assigned - ${assign?.specialty?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
         return{
             status  : 200,
             message : "Removed successfully"
         }
-
     }
 
 
 
-
-
-
-    
-
-
-
- async getClinicTreatment(clinicuuid: string) {
+    async getClinicTreatment(clinicuuid: string) {
         
         const getData = await this.prisma.clinicTreatment.findMany({
             where : {
@@ -423,7 +606,7 @@ export class ManageClinicServices implements IManageClinic{
     }
 
     
-    async acceptTreatment(id: string) {
+    async acceptTreatment(id: string, clinicuuid: string) {
 
         const getSuggestedSpecialty =await this.prisma.specializationRequest.findFirst({
             where : {
@@ -447,6 +630,25 @@ export class ManageClinicServices implements IManageClinic{
             }
         });
 
+
+        const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Treatment accepted - ${getSuggestedSpecialty?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has accepted  ${getSuggestedSpecialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has accepted  ${getSuggestedSpecialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Treatment Accepted - ${getSuggestedSpecialty?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
         return{
             status : 200,
             message : "Category approved successfully"
@@ -454,12 +656,9 @@ export class ManageClinicServices implements IManageClinic{
     }
 
 
+    async rejectTreatment(id: string, clinicuuid: string) {
 
-
-
-    async rejectTreatment(id: string) {
-
-
+        const getSuggestedSpecialty = await this.prisma.specializationRequest.findFirst({where :{id : id}});
          await this.prisma.clinicTreatment.deleteMany({
             where :{
                 suggestedCategoryId : id
@@ -474,6 +673,24 @@ export class ManageClinicServices implements IManageClinic{
         });
 
 
+        
+        const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Treatment rejected - ${getSuggestedSpecialty?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has rejected  ${getSuggestedSpecialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has rejected  ${getSuggestedSpecialty?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Treatment Rejected - ${getSuggestedSpecialty?.name}`,  
+                    "",            
+                    htmlContent  
+            );
        
 
 
@@ -515,8 +732,35 @@ export class ManageClinicServices implements IManageClinic{
             data:{
                 treatmentid : assignid,
                 clinicUuid:clinicuuid
+            },
+            include:{
+                treatment : true
             }
         });
+
+
+          const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Treatment assigned - ${assign?.treatment?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has assigned  ${assign?.treatment?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has assigned  ${assign?.treatment?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Treatment Assigned - ${assign?.treatment?.name}`,  
+                    "",            
+                    htmlContent  
+            );
+
+
+
+
+
 
         return{
             status : 201,
@@ -532,11 +776,31 @@ export class ManageClinicServices implements IManageClinic{
 
     async unassignTreatment(unassignid: string, clinicuuid: string) {
 
+        const assign= await this.prisma.clinicTreatment.findFirst({where:{treatmentid : unassignid},include:{treatment:true}});
         const DeletSpecialty = await this.prisma.clinicTreatment.deleteMany({
             where : {
                 treatmentid : unassignid
             }
         });
+
+
+         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },include:{clinicUser:true}});
+            let payload : WebhookNotificationDto ={
+                    title : `The Treatment Un-assigned - ${assign?.treatment?.name}`,
+                    area: "",
+                    id : clinicdetails?.clinicUserUuid!,
+                    message: `Admin has Un-assigned  ${assign?.treatment?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`
+            }
+            await this.universalNotification.HandleNotification(payload);
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+            const emailText = `Admin has Un-assigned  ${assign?.treatment?.name} to  ${clinicdetails?.name} clinic. please visit your clinic dashbaord.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    clinicdetails?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The Treatment Un-Assigned - ${assign?.treatment?.name}`,  
+                    "",            
+                    htmlContent  
+            );
 
         return{
             status  : 200,
@@ -659,15 +923,17 @@ export class ManageClinicServices implements IManageClinic{
             );
 
             let payload : WebhookNotificationDto ={
-                title : "New message from admin",
+                title : "New message " + ` | ${process.env.NEXT_PUBLIC_PROJECT_NAME}`,
                 area: "clinic",
                 message : dto.messagetext,
-                id : getClinicDetails?.uuid
+                id : String(getClinicDetails?.clinicUserUuid)
             }
 
             await this.universalNotification.HandleNotification(payload);
+
         }
-        else if(dto.type === "send_approve"){
+        else if(dto.type === "send_active"){
+
             await this.prisma.clinic.update({
                 where :{
                     uuid : getClinicDetails?.uuid
@@ -683,20 +949,23 @@ export class ManageClinicServices implements IManageClinic{
           const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
             await this.emailservice.sendEmail(
                     getClinicDetails?.email!,
-                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Admin Approved account Successfully",  
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Activated Clinic Successfully",  
                     "",            
                     htmlContent  
             );
 
             let payload : WebhookNotificationDto ={
-                title : "Admin Approved account Successfully",
+                title : "Activated Clinic Successfully - " +  `${getClinicDetails?.name}`,
                 area: "clinic",
                 message : dto.messagetext,
-                id : getClinicDetails?.uuid
+                id : String(getClinicDetails?.clinicUserUuid)
             }
             await this.universalNotification.HandleNotification(payload);
+
+
         }
-        else if(dto.type === "send_block"){
+        else if(dto.type === "send_inactive"){
+
             await this.prisma.clinic.update({
                 where :{
                     uuid : getClinicDetails?.uuid
@@ -712,18 +981,19 @@ export class ManageClinicServices implements IManageClinic{
             const htmlContent = EmailTemplate.getTemplate(bodyexternal + dto.messagetext + "<br/>");
             await this.emailservice.sendEmail(
                     getClinicDetails?.email!,
-                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Admin Approved account Successfully",  
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + "Deactivated Clinic",  
                     "",            
                     htmlContent  
             );
 
             let payload : WebhookNotificationDto ={
-                title : "Admin Blocked account",
+                title : "Deactivated Clinic - " +  `${getClinicDetails?.name}`,
                 area: "clinic",
                 message : dto.messagetext,
-                id : getClinicDetails?.uuid
+                id : String(getClinicDetails?.clinicUserUuid)
             }
             await this.universalNotification.HandleNotification(payload);
+
         }
          else if(dto.type === "send_reject"){
             await this.prisma.clinic.update({
@@ -750,7 +1020,7 @@ export class ManageClinicServices implements IManageClinic{
                 title : "Admin Rejected account",
                 area: "clinic",
                 message : dto.messagetext,
-                id : getClinicDetails?.uuid
+                id : String(getClinicDetails?.clinicUserUuid)
             }
             await this.universalNotification.HandleNotification(payload);
         }
@@ -779,7 +1049,7 @@ export class ManageClinicServices implements IManageClinic{
                 title : "Admin Un-Blocked account Successfully",
                 area: "clinic",
                 message : dto.messagetext,
-                id : getClinicDetails?.uuid
+                id : String(getClinicDetails?.clinicUserUuid)
             }
             await this.universalNotification.HandleNotification(payload);
         }
@@ -812,12 +1082,6 @@ export class ManageClinicServices implements IManageClinic{
             data : getData
         }
     }
-
-
-
-
-
-
 
 
 

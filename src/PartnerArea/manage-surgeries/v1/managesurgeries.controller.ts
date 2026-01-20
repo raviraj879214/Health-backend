@@ -32,10 +32,10 @@ export class ManageSurgeriesController{
 
             const file = requestbody.file;
             const image_url = file ? `${file.filename}` : null;
-            console.log("imagePath",image_url);
+            // console.log("imagePath",image_url);
             const { surgeryid = '',type = '' , doctorUuid ='' , clinicUuid = '',treatmentid ='' } = requestbody.body ?? {};
-            console.log("treatmentid",treatmentid);
-            console.log("type",type);
+           // console.log("treatmentid",treatmentid);
+//console.log("type",type);
 
            const dto: ManageSurgeriesCreateDto = {
                 imageUrl: image_url ?? undefined,

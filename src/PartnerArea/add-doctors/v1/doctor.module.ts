@@ -7,6 +7,8 @@ import { JwtStrategy } from "src/PartnerArea/ClinicAuth/JwtStrategy/jwt.strategy
 import { FileModule } from "src/common/middleware/modules/file.module";
 import { UploadMiddleware } from "src/common/middleware/upload.middleware";
 import { join } from "path";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -14,7 +16,7 @@ import { join } from "path";
 
 
 @Module({
-     imports : [FileModule],
+     imports : [FileModule,UniversalNotificationnModule],
     controllers:[DoctorController],
     providers :[
         {
@@ -22,7 +24,8 @@ import { join } from "path";
             useClass : DoctorServices
         },
         PrismaService,
-        JwtStrategy
+        JwtStrategy,
+        EmailService
 
     ],
     exports:[DOCTOR_CONSTANT_SERVICES]

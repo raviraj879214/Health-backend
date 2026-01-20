@@ -16,6 +16,9 @@ export class ClinicListingController{
     @Post('get-clinic-list')
     @Version('1')
     async getClinicListing(@Body() dto:ClinicListCreateDto) {
+
+         console.log("dto",dto);
+         
         return await this.clincilistingService.getClinicList(dto);
     }
 

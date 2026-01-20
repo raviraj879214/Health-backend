@@ -35,19 +35,32 @@ export class HomepageBannerController {
       const featured = isFeatured?.toLowerCase() === 'true';
       return await this.homepageBannerService.getTreatmetnt(isFeatured);
    }
+
+   @Get("get-places")
+   @Version("1")
+   async getPlaces(@Query("isFeatured") isFeatured?:string) {
+      
+      return await this.homepageBannerService.getPlaces();
+   }
    
+
+
 
 
    
    @Post('get-clinic-list')
    @Version('1')
    async getTopRatedClinicListing(@Body() dto: BannerCreateClinicDto) {
+        
+
       return await this.homepageBannerService.getTopRatedClinicListing(dto);
    }
 
    @Post('get-clinic-list-popular')
    @Version('1')
    async getPopularClinicListing(@Body() dto: BannerCreateClinicDto) {
+   console.log("dto");
+
       return await this.homepageBannerService.getPopularClinicListing(dto);
    }
 

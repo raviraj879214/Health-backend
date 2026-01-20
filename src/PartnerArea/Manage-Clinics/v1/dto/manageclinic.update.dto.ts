@@ -2,54 +2,72 @@ import { IsOptional } from "class-validator";
 
 
 
-export class ManageClinicDto{
+export class ManageClinicDto {
 
-    clinicuuid : string;
+  clinicuuid: string;
 
-    
-    @IsOptional()
-    name : string;
+  @IsOptional()
+  name: string;
+
+  @IsOptional()
+  email: string;
+
+  @IsOptional()
+  address: string;
 
 
-    @IsOptional()
-    email : string;
+  @IsOptional()
+  phone: string;
 
+  @IsOptional()
+  whatsappNumber: string;
+
+
+  @IsOptional()
+  telegramNumber: string;
+
+
+
+
+  @IsOptional()
+  websiteurl: string;
+
+
+
+  @IsOptional()
+  cep: string;
+
+
+  @IsOptional()
+  street: string;
+
+
+  @IsOptional()
+  complement: string;
+
+  @IsOptional()
+  neighborhood: string;
+
+  @IsOptional()
+  citycep: string;
+
+
+  @IsOptional()
+  state: string;
+
+
+
+}
+
+
+
+export class ClinicGoogleMap{
+    uuid: string;
 
      @IsOptional()
-    address : string;
+    latitude: string;
 
-
-       @IsOptional()
-     phone : string;
-
-       @IsOptional()
-     whatsappNumber : string;
-
-
-       @IsOptional()
-     telegramNumber : string;
-
-
-     
-
-      @IsOptional()
-     websiteurl : string;
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-
-
-
+    @IsOptional()
+    longitude: string;
 
 }

@@ -34,6 +34,38 @@ export class ManagePackageDoctorController{
 
 
 
+    @UseGuards(JwtAuthGuard)
+    @Post("submit-package")
+    @Version("1")
+    async submitPackage(@Body() dto:{packageid:string}){
+
+        
+        return await this.managePackageDoctor.submitPackage(dto.packageid);
+    }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("update-visibilty")
+    @Version("1")
+    async updateVisibity(@Body() dto:{packageid:string,status:string}){
+            console.log("status package",dto);
+        
+        return await this.managePackageDoctor.updateVisibilty(dto.packageid,Number(dto.status));
+    }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get("/get-doctors/:clinicuuid")
+    @Version("1")
+    async getDoctors(@Param("clinicuuid") clinicuuid:string){
+        console.log("doctor from package",clinicuuid);
+        return await this.managePackageDoctor.getDoctors(clinicuuid);
+    }
+
+    
+
 
 
 }

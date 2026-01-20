@@ -4,6 +4,10 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { SuggestedType } from "src/common/enum/SuggestedCategoryType";
 import { SuggestedCategoryStatus } from "src/common/enum/SuggestedCategoryStatus";
 import { DoctorSpecialtyUpdateDto } from "./dto/doctorspecialty.update.dto";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { EmailService } from "src/EmailServices/email.service";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
 
 
 
@@ -14,7 +18,11 @@ import { DoctorSpecialtyUpdateDto } from "./dto/doctorspecialty.update.dto";
 @Injectable()
 export class DoctorSpecilatyService implements IDoctorSpecialty {
 
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly universalNotification:UniversalNotification,
+    private emailservice : EmailService
+  ) { }
 
 
   async getSpecialty() {
@@ -129,7 +137,42 @@ export class DoctorSpecilatyService implements IDoctorSpecialty {
                 doctorUuid: dto.doctorUuid,
               }
             });
+
+
+
+
+
+
+
+
+             const clinicdetails = await this.prisma.clinic.findUnique({
+                            where: { uuid: dto.clinicuuid },
+                      });
+                      const doctordetails =await this.prisma.doctor.findUnique({
+                          where : {
+                            uuid : dto.doctorUuid
+                          }
+                       });
+            
+                      let payload : WebhookNotificationDto ={
+                                  title : `New Sub-specialty Request - ${dto.othertext}`,
+                                  area: "admin",
+                                 message: `${clinicdetails?.name} has submitted a request to add a new sub-specialty for Dr. ${doctordetails?.firstname} ${doctordetails?.lastname}. Kindly review and proceed with the appropriate action.`
+                      }
   
+                       await this.universalNotification.HandleNotification(payload);
+
+                       const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+                        console.log("adminemail?.email",adminemail?.email);
+                        await this.universalNotification.HandleNotification(payload);
+                        const emailText = `${clinicdetails?.name} has submitted a request to add a new sub-specialty for Dr. ${doctordetails?.firstname} ${doctordetails?.lastname}. Kindly review and proceed with the appropriate action.`
+                        const htmlContent = EmailTemplate.getTemplate(emailText);
+                        await this.emailservice.sendEmail(
+                                adminemail?.email!,
+                                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `New Sub-Specialty Request - ${dto.othertext}`,  
+                                "",            
+                                htmlContent  
+                        );
   
            
             return {

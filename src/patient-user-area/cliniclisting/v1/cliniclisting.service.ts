@@ -9,6 +9,7 @@ import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { ClinicStatus } from "src/common/enum/ClinicStatus";
 
 
 
@@ -38,6 +39,7 @@ export class ClinicListingServices implements IClinicListing{
 
         //get specialization filter
        const specializationIds: string[] = dto.specialization.map(s => s.id.toString());
+
        const clinicuuidsspecializationids = await this.prisma.clinicSpecialization.findMany({
             where : {
                 specializationId :{
@@ -86,11 +88,31 @@ export class ClinicListingServices implements IClinicListing{
        //specialty ends here 
 
 
+        //get places filter starts 
+
+        const placesids: string[] = dto.places.map(s => s.id.toString());
+            const clinicuuidsplacesids = await this.prisma.clinic.findMany({
+                    where : {
+                        citycep :{
+                            in : placesids
+                        }
+                    }
+            });
+        clinicuuidsplacesids.map((item)=>{
+                clinicuuids.push(item.uuid);
+        });
+
+
+        console.log("places clinicuuidsplacesids",clinicuuidsplacesids);
+
+       //specialty ends here 
+
+
 
 
 
         const whereClause: any = {
-            isActive: true,
+            status : ClinicStatus.ACTIVE
         };
 
       
@@ -112,25 +134,27 @@ export class ClinicListingServices implements IClinicListing{
 
 
       const clinics = await this.prisma.clinic.findMany({
-  where: whereClause,
-  include: {
-    cliniclistingboosts: {
-      where: {
-        isActive: true,
-        endAt: { gt: new Date() },
-      },
-      include: {
-        boostPackage: true, // no priority needed
-      },
-    },
-    country: true,
-    city: true,
-    ratingSummary: true,
-    packages :true
-  },
-  skip: dto.skip,
-  take: dto.limit,
-});
+            where: whereClause,
+            include: {
+                cliniclistingboosts: {
+                where: {
+                    isActive: true,
+                    endAt: { gt: new Date() },
+                },
+                include: {
+                    boostPackage: true, // no priority needed
+                },
+                },
+                country: true,
+                city: true,
+                ratingSummary: true,
+                packages :true
+            },
+            skip: dto.skip,
+            take: dto.limit,
+        });
+
+
 
 const formatted = clinics
   .map((clinic) => {
@@ -183,18 +207,31 @@ const formatted = clinics
                 }
             });
 
-            const total = await this.prisma.clinic.count({
-                where: whereClause,
+        const total = await this.prisma.clinic.count({where: whereClause,});
+
+        const result = await this.prisma.clinicPackage.aggregate({
+                _min: {
+                    discountedprice: true,
+                },
+                _max: {
+                    discountedprice: true,
+                },
                 });
 
+                const minPrice = result._min.discountedprice;
+                const maxPrice = result._max.discountedprice;
 
-            return (
-           {
-            data: formatted,
-            clinicimages,
-            total,       
-            skip: dto.skip,
-            limit: dto.limit
+
+
+        return (
+            {
+                data: formatted,
+                clinicimages,
+                total,
+                skip: dto.skip,
+                limit: dto.limit,
+                minPrice : minPrice,
+                maxPrice : maxPrice
             }
         );
 
@@ -336,40 +373,83 @@ const formatted = clinics
                 whatMatterMostName : dto.whatMatterMostName,
                 medicalReportsValue: dto.medicalReportsValue,
                 treatmentName : dto.treatmentName,
-                procedureTimeValue:dto.procedureTimeValue
+                procedureTimeValue:dto.procedureTimeValue,
+                cordinatorid : Number(dto.cordinatorid)
             }
         });
 
+
+
         if(createData.email){
-            const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PatientPostFrontendSide },});
-        const emailText = emailTemplate?.body.replace('${patientreviewid}', createData.querycode!);
-        const htmlContent = EmailTemplate.getTemplate(emailText);
-        
-        await this.emailservice.sendEmail(
-                createData.email!,
-                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + emailTemplate?.subject! +"-" + createData.querycode,  
-                "",            
-                htmlContent  
-        );
+            const emailText = `We’ve received your query. Our coordinator will go through it and contact you shortly. Please hold on for a bit. Your query code is ${createData.querycode}.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                    createData.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `Query submitted successfully` +"-" + createData.querycode,  
+                    "",            
+                    htmlContent  
+            );
         }
+
+        //admin email 
+            const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+            const emailText = `A new query has been received from a patient. Please log in to the dashboard to review the query. Query Code: ${createData.querycode}.`;
+            const htmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                   adminemail?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `New Query Received Successfully` +"-" + createData.querycode,  
+                    "",            
+                    htmlContent  
+            );
+        //end
+
+        //cordinator email
+
+            const cordinatoremail = await this.prisma.user.findFirst({where :{id : Number(dto.cordinatorid)},select:{email : true}});
+            const cordinatoremailText = `A new query has been received from a patient. Please log in to the dashboard to review the query. Query Code: ${createData.querycode}.`;
+            const cordinatorhtmlContent = EmailTemplate.getTemplate(emailText);
+            await this.emailservice.sendEmail(
+                   cordinatoremail?.email!,
+                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `New Query Received Successfully` +"-" + createData.querycode,  
+                    "",            
+                    cordinatorhtmlContent  
+            );
+
+        //end
+
+
         
 
 
 
 
 
-        let payload : WebhookNotificationDto ={
+        let payload : WebhookNotificationDto = {
             title : "Patient Query Received",
             area: "admin",
             message : `New Query received from patients ${createData?.querycode}` ,
         }
         await this.universalNotification.HandleNotification(payload);
+
+        let payloadcordinator : WebhookNotificationDto = {
+            title : "Patient Query Received",
+            area: "",
+            id : dto.cordinatorid,
+            message : `New Query received from patients ${createData?.querycode}` ,
+        }
+        await this.universalNotification.HandleNotification(payloadcordinator);
+
+
+
+
+
+
+
+
         return {
             status: 201,
             data: createData
         };
-
-
     }
 
 

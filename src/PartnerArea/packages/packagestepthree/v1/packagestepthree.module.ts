@@ -4,11 +4,14 @@ import { PACKAGE_STEP_THREE_CONSTANT } from "../constant/packagestepthree.consta
 import { ManagePackageSpecialtyServices } from "./packagestepthree.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers :[ManagePackageSpecialityController],
     providers:[
             {
@@ -16,7 +19,8 @@ import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
                 useClass : ManagePackageSpecialtyServices
             },
             PrismaService,
-            JwtAuthGuard
+            JwtAuthGuard,
+            EmailService
     ],
     exports :[PACKAGE_STEP_THREE_CONSTANT]
 })

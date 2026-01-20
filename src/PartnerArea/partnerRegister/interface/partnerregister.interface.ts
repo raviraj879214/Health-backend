@@ -23,14 +23,20 @@ export interface IPartnerRegister{
 
     insertClinicDetails(dto:PartnerRegisterClinicDetails);
 
+    insertMoreClinicDetails(dto:PartnerRegisterClinicDetails);
+
 
     getCountryCity();
 
+    sendOtp(phone: string, otp: string)
+
+    verifyOtp(clinicid:string,phoneverify:string);
+    
+
+    accepttermsCondition(dto:PartnerRegisterClinicDetails);
 
 
+    getTermsCondition(name:string);
 
-
-
-
-
+    
 }

@@ -21,12 +21,16 @@ export class ManageClinicController{
      @Get("/get-clinic-listing")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async getClinicListing(@Query('page') page: string,@Query('limit') limit: string){
+     async getClinicListing(@Query('page') page: string,@Query('limit') limit: string,@Query('clinicuuid') clinicuuid: string){
          const pageNumber = parseInt(page) || 0;
          const pageSize = parseInt(limit) || 0;
+
          
-        return await this.manageClinicService.getClinicListing(pageNumber,pageSize);
+        return await this.manageClinicService.getClinicListing(pageNumber,pageSize,clinicuuid);
      }
+
+
+
 
 
      @Get("get-clinic-details/:clinicuuid")
@@ -99,21 +103,21 @@ export class ManageClinicController{
      }
 
 
-     @Get("accept-clinic-specialty/:id")
+     @Get("accept-clinic-specialty/:id/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async acceptClinicSpecialty(@Param("id") id:string){
+     async acceptClinicSpecialty(@Param("id") id:string,@Param("clinicuuid") clinicuuid:string){
 
-        return await this.manageClinicService.acceptSpecailty(id);
+        return await this.manageClinicService.acceptSpecailty(id,clinicuuid);
 
      }
 
-     @Get("reject-clinic-specialty/:id")
+     @Get("reject-clinic-specialty/:id/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async rejectClinicSpecialty(@Param("id") id:string){
+     async rejectClinicSpecialty(@Param("id") id:string,@Param("clinicuuid") clinicuuid:string){
 
-        return await this.manageClinicService.rejectSpecailty(id);
+        return await this.manageClinicService.rejectSpecailty(id,clinicuuid);
      }
 
 
@@ -157,21 +161,21 @@ export class ManageClinicController{
      }
 
 
-     @Get("accept-clinic-sub-specialty/:id")
+     @Get("accept-clinic-sub-specialty/:id/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async acceptClinicSubSpecialty(@Param("id") id:string){
+     async acceptClinicSubSpecialty(@Param("id") id:string,@Param("clinicuuid") clinicuuid:string){
 
-        return await this.manageClinicService.acceptSubSpecailty(id);
+        return await this.manageClinicService.acceptSubSpecailty(id,clinicuuid);
 
      }
 
-     @Get("reject-clinic-sub-specialty/:id")
+     @Get("reject-clinic-sub-specialty/:id/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async rejectClinicSubSpecialty(@Param("id") id:string){
+     async rejectClinicSubSpecialty(@Param("id") id:string,@Param("clinicuuid") clinicuuid:string){
 
-        return await this.manageClinicService.rejectSubSpecailty(id);
+        return await this.manageClinicService.rejectSubSpecailty(id,clinicuuid);
      }
 
 
@@ -216,21 +220,21 @@ export class ManageClinicController{
      }
 
 
-     @Get("accept-clinic-treatment/:id")
+     @Get("accept-clinic-treatment/:id/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async acceptTreatment(@Param("id") id:string){
+     async acceptTreatment(@Param("id") id:string,@Param("clinicuuid") clinicuuid:string){
 
-        return await this.manageClinicService.acceptTreatment(id);
+        return await this.manageClinicService.acceptTreatment(id,clinicuuid);
 
      }
 
-     @Get("reject-clinic-treatment/:id")
+     @Get("reject-clinic-treatment/:id/:clinicuuid")
      @Version("1")
      @ModuleAccess("Manage Clinic")
-     async rejectTreatment(@Param("id") id:string){
+     async rejectTreatment(@Param("id") id:string,@Param("clinicuuid") clinicuuid:string){
 
-        return await this.manageClinicService.rejectTreatment(id);
+        return await this.manageClinicService.rejectTreatment(id,clinicuuid);
      }
 
 

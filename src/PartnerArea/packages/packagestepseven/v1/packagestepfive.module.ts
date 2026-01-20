@@ -4,6 +4,8 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { PACKAGE_STEP_DOCTOR_CONSTANT } from "../constant/packagestepfive.constant";
 import { ManagePackageDoctorServices } from "./packagestepfive.service";
+import { EmailService } from "src/EmailServices/email.service";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 
 
 
@@ -11,6 +13,7 @@ import { ManagePackageDoctorServices } from "./packagestepfive.service";
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers :[ManagePackageDoctorController],
     providers:[
             {
@@ -18,7 +21,8 @@ import { ManagePackageDoctorServices } from "./packagestepfive.service";
                 useClass : ManagePackageDoctorServices
             },
             PrismaService,
-            JwtAuthGuard
+            JwtAuthGuard,
+            EmailService
     ],
     exports :[PACKAGE_STEP_DOCTOR_CONSTANT]
 })

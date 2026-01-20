@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { WebhookNotificationDto } from './webhook-notification.dto';
 
@@ -12,16 +12,17 @@ export class WebhookController {
   @Post('notify')
   async handleNotification(@Body() body: WebhookNotificationDto) {
     
-    console.log('Webhook received:', body);
 
     return this.notificationService.handleIncomingNotification(body);
   }
 
 
-  @Get("get-notify")
-  async getNotifications(){
+  @Get("get-notify/:userid")
+  async getNotifications(@Param("userid") userid:string){
 
-    return await this.notificationService.getNotifications();
+
+
+    return await this.notificationService.getNotifications(userid);
   }
 
 

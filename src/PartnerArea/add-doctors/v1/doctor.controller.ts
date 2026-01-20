@@ -4,7 +4,7 @@ import { DoctorServices } from "./doctor.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { DoctorCreateDto } from "./dto/doctor.create.dto";
 import type { DoctorRequest } from "./dto/doctorrequest";
-import { DoctorUpdateDto } from "./dto/doctor.update.dto";
+import { DoctorAddress, DoctorUpdateDto } from "./dto/doctor.update.dto";
 
 
 
@@ -55,8 +55,6 @@ export class DoctorController {
      async getDoctorDetails(@Param("doctoruuid") doctoruuid:string){
 
          console.log("doctoruuid",doctoruuid);
-
-
         return await this.doctorServices.getDoctorDetails(doctoruuid);
      }
      
@@ -78,6 +76,53 @@ export class DoctorController {
 
         return this.doctorServices.assignDoctorsClinic(dto);
     }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get("get-clinic-address/:clinicuuid")
+    @Version("1")
+    async getClinicAddress(@Param("clinicuuid") clinicuuid:string) {
+        return this.doctorServices.getClinicAddress(clinicuuid);
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("update-clinic-address")
+    @Version("1")
+    async updateClinicAddress(@Body() dto:DoctorAddress) {
+      
+        return await this.doctorServices.updateDoctorAddress(dto);
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("get-doctor-address")
+    @Version("1")
+    async getDoctorAddress(@Body() dto:{clinicuuid:string,doctoruuid:string}) {
+      
+       return await this.doctorServices.getDoctorAddress(dto.clinicuuid,dto.doctoruuid);
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("submit-doctor")
+    @Version("1")
+    async submitDoctors(@Body() dto:{clinicuuid:string,doctoruuid:string}) {
+        
+        console.log("final submit",dto);
+       return await this.doctorServices.submitDoctor(dto.clinicuuid,dto.doctoruuid);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,6 +17,10 @@ export interface Treatment {
   id: number;
   name: string;
 }
+export interface Places {
+  id: string;
+  name: string;
+}
 
 
 
@@ -26,6 +30,7 @@ export  class BannerCreateClinicDto{
       specialization: Specialization[];
       specialty : Specialty[];
       treatment : Treatment[];
+      places :  Places[];
 
 
 

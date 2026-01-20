@@ -11,15 +11,56 @@ export class PatientQueriesServices implements IPatientQueries{
     constructor(private readonly prisma:PrismaService){}
 
 
-    async getPateintQueries(page: number, limit: number) {
+    async getPateintQueries(page: number, limit: number,adminid:number) {
+
+
+        const AdminDetails = await this.prisma.user.findUnique({
+            where :{
+                id : adminid
+            },
+            include:{
+                role : true
+            }
+        });
+
+        var cordinatorid = 0;
+
+        if(AdminDetails?.role.name === "Cordinator"){
+            cordinatorid = AdminDetails.id;
+        }
+        else{
+            const coordinator = await this.prisma.user.findFirst({
+                where: {
+                    id : adminid,
+                    role: {
+                      name: "Super Admin",
+                    },
+                },
+                select: {
+                    id: true,
+                },
+                });
+
+            const coordinatorId = coordinator?.id;
+        }
+
+
+        const queryWhere: any = {};
+        if (cordinatorid > 0) {
+            queryWhere.cordinatorid = adminid;
+        }
+        
 
         const totalCount = await this.prisma.patientQuery.count();
 
+
         const getData = await this.prisma.patientQuery.findMany({
+            where: queryWhere,
                include:{
                 package : true,
                 clinic : true,
-                doctor : true
+                doctor : true,
+                User : true,
                },
             orderBy:{
                 createdAt : 'desc'

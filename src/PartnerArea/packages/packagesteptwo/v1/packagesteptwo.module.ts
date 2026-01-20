@@ -4,12 +4,15 @@ import { ManagePackageSpecializationsServices } from "./packagesteptwo.service";
 import { PACKAGE_TWO_CONSTATNT } from "../constant/packagesteptwo.constant";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers :[ManagePackageSpecializationController],
     providers:[
             {
@@ -17,7 +20,8 @@ import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
                 useClass : ManagePackageSpecializationsServices
             },
             PrismaService,
-            JwtAuthGuard
+            JwtAuthGuard,
+            EmailService
     ],
     exports :[PACKAGE_TWO_CONSTATNT]
 })

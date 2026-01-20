@@ -4,12 +4,15 @@ import { DOCTOR_SPECIALIZATION_SERVICE_CONSTANT } from "../constant/doctorspecia
 import { DoctorSpecializationService } from "./doctorspecialization.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtStrategy } from "src/PartnerArea/ClinicAuth/JwtStrategy/jwt.strategy";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers:[DoctorSpecializationController],
     providers:[
         {
@@ -17,7 +20,8 @@ import { JwtStrategy } from "src/PartnerArea/ClinicAuth/JwtStrategy/jwt.strategy
             useClass : DoctorSpecializationService
         },
         PrismaService,
-        JwtStrategy
+        JwtStrategy,
+        EmailService
     ],
   exports: [DOCTOR_SPECIALIZATION_SERVICE_CONSTANT],
 

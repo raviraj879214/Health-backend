@@ -4,6 +4,8 @@ import { MANAGE_SPECIALTY_CONSTANT } from "../constant/managespecialty.constant"
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { ManageSpecialtyServices } from "./managespecialty.service";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -12,6 +14,7 @@ import { ManageSpecialtyServices } from "./managespecialty.service";
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers :[ManageClinicSpecialityController],
     providers:[
             {
@@ -19,7 +22,8 @@ import { ManageSpecialtyServices } from "./managespecialty.service";
                 useClass : ManageSpecialtyServices
             },
             PrismaService,
-            JwtAuthGuard
+            JwtAuthGuard,
+            EmailService
     ],
     exports :[MANAGE_SPECIALTY_CONSTANT]
 })

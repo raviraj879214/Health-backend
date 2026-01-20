@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { IClinicAuthService } from "../interface/clinic.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import * as bcrypt from 'bcrypt';
@@ -323,6 +323,45 @@ export class ClinicService implements IClinicAuthService{
 
 
 
+    async updatePassword(id:string,oldpassword: string, newpassword: string) {
+
+      const clinicuser = await this.prisma.clinicUser.findFirst({
+        where :{uuid : (id)}
+      });
+      const isValid = await bcrypt.compare(oldpassword, clinicuser?.passwordHash!);
+      if (!isValid) {
+         return {
+          status : 401 ,
+          message : "Please enter old password correctly"
+        }
+      }
+      else{
+
+        const hashed = await bcrypt.hash(newpassword, 10);
+
+        await this.prisma.clinicUser.update({
+          where :{
+            uuid : clinicuser?.uuid
+          },
+          data:{
+            passwordHash : hashed
+          }
+        });
+
+        return {
+          staus : 200 ,
+          message : "Password updated successfully"
+        }
+      }
+
+
+
+
+     
+
+
+      
+    }
 
 
 

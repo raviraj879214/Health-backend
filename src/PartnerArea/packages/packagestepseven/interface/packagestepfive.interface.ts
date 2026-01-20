@@ -11,4 +11,15 @@ export interface IPackageStepFiveServices{
            
     selectDoctor(dto:PackageStepDoctorUpdateDto);
 
+
+    submitPackage(packageid:string);
+
+    updateVisibilty(packageid:string,status:number);
+
+     getDoctors(clinicuuid:string);
+
+
+
+    
+
 }

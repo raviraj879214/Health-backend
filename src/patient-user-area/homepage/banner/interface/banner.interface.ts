@@ -13,6 +13,7 @@ export interface IHomePageBanner{
 
     getTreatmetnt(isFeatured?:string);
 
+    getPlaces();
 
     getTopRatedClinicListing(dto:BannerCreateClinicDto);
 

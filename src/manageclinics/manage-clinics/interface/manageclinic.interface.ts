@@ -6,7 +6,7 @@ import { SendMessageCreateDto } from "../v1/dto/manageclinic.update.dto";
 
 export interface IManageClinic{
 
-    getClinicListing(page: number, limit: number);
+    getClinicListing(page: number, limit: number,clinicuuid:string);
     getClinicDetails(clinicuuid:string);
     getClinicBannerImages(clinicuuid:string);
     getSurgeryImages(clinicuuid:string);
@@ -17,8 +17,8 @@ export interface IManageClinic{
     //clinic specialty
         getSpecialty(clinicuuid:string);
         getClinicSpecialty(clinicuuid:string);
-        acceptSpecailty(id:string);
-        rejectSpecailty(id:string);
+        acceptSpecailty(id:string,clinicuuid:string);
+        rejectSpecailty(id:string,clinicuuid:string);
         assignSpecialty(assignid:string,clinicuuid:string);
         unassignSpecialty(unassignid:string,clinicuuid:string);
     //end
@@ -27,8 +27,8 @@ export interface IManageClinic{
     //clinic specialty
         getSubSpecialty(clinicuuid:string);
         getClinicSubSpecialty(clinicuuid:string);
-        acceptSubSpecailty(id:string);
-        rejectSubSpecailty(id:string);
+        acceptSubSpecailty(id:string,clinicuuid:string);
+        rejectSubSpecailty(id:string,clinicuuid:string);
         assignSubSpecialty(assignid:string,clinicuuid:string);
         unassignSubSpecialty(unassignid:string,clinicuuid:string);
     //end
@@ -38,8 +38,8 @@ export interface IManageClinic{
     //clinic treatment
         getTreatment(clinicuuid:string);
         getClinicTreatment(clinicuuid:string);
-        acceptTreatment(id:string);
-        rejectTreatment(id:string);
+        acceptTreatment(id:string,clinicuuid: string);
+        rejectTreatment(id:string,clinicuuid: string);
         assignTreatment(assignid:string,clinicuuid:string);
         unassignTreatment(unassignid:string,clinicuuid:string);
     //end

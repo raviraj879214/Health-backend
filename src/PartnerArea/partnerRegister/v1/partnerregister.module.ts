@@ -5,6 +5,7 @@ import { PartnerRegisterServices } from "./partnerregister.services";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { EmailService } from "src/EmailServices/email.service";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 
 
 
@@ -17,6 +18,7 @@ import { EmailService } from "src/EmailServices/email.service";
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers:[PartnerRegisterController],
     providers:[
                {

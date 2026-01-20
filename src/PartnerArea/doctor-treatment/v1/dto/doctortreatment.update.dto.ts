@@ -11,6 +11,7 @@ export class DoctorTreatmentDtoUpdate{
     doctorUuid:string;
     treatmentid:string;
     othertext:string;
+    clinicuuid:string;
 
     
 }

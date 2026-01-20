@@ -117,13 +117,22 @@ export class ClinicAuthController {
   }
 
 
+  @UseGuards(JwtAuthGuard)
+  @Post("update-password")
+  @Version("1")
+  async updatePassword(@Req() req,@Body("oldpassword") oldpassword:string,@Body("newpassword") newpassword:string){
+    console.log("req.user.id",req.user.id);
+
+
+    return this.auth.updatePassword(req.user.id,oldpassword,newpassword);
+  }
+
+
 
 
   @Post("/partner-forgot-password")
   @Version("1")
   async partnerForgotPassword(@Body("email") email:string) {
-    
-
     return this.auth.partnerForgot(email);
   }
 
@@ -153,9 +162,6 @@ export class ClinicAuthController {
     @Post("/partner-reset-password")
     @Version("1")
     async partnerResetPasswords(@Body("email") email: string,@Body("password") password: string) {
-
-
-
       return this.auth.resetPassword(email,password);
     }
 

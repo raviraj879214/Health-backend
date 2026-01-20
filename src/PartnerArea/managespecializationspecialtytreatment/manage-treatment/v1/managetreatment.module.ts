@@ -4,6 +4,8 @@ import { MANAGE_CLINIC_TREATMENT } from "../constant/managetreatment.constant";
 import { ManageClinicTreatmentServices } from "./managetreatment.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -13,6 +15,7 @@ import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
     controllers :[ManageClinicTreatmentController],
     providers:[
             {
@@ -20,7 +23,8 @@ import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
                 useClass : ManageClinicTreatmentServices
             },
             PrismaService,
-            JwtAuthGuard
+            JwtAuthGuard,
+            EmailService
     ],
     exports :[MANAGE_CLINIC_TREATMENT]
 })

@@ -9,6 +9,7 @@ export class DoctorSpecialtyUpdateDto{
     doctorUuid:string;
     specialtyId:string;
     othertext:string;
+    clinicuuid:string;
 
 
 }

@@ -3,7 +3,7 @@ import { Controller, Get, Inject, UseGuards, Version , Request, Param, Body, Pos
 import { MANAGE_CLINIC_SERVICES_V1 } from "../constant/manage.clinic.constant";
 import { ManageClinicService } from "./manageclinic.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
-import { ManageClinicDto } from "./dto/manageclinic.update.dto";
+import { ClinicGoogleMap, ManageClinicDto } from "./dto/manageclinic.update.dto";
 
 
 
@@ -30,17 +30,28 @@ export class ManageClinicController{
     @Version("1")
     async GetClinicsDetails(@Param("id") id: string)
     {
-        return this.manageClinicService.getClinicDetails(id);  
+        
+
+            return this.manageClinicService.getClinicDetails(id); 
     }
 
     @UseGuards(JwtAuthGuard)
     @Put("update-clinics-name")
     @Version("1")
     async UpdateClinicName(@Body() dto: ManageClinicDto){
-        
         return this.manageClinicService.updateClinicName(dto);
-
     }
+
+
+
+    @Post("update-clinics-map")
+    @Version("1")
+    async UpdateClinicMap(@Body() dto: ClinicGoogleMap){
+        return this.manageClinicService.updateClinicMap(dto);
+    }
+
+
+
 
 
 

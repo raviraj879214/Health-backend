@@ -45,6 +45,7 @@ async handleIncomingNotification(payload: WebhookNotificationDto) {
       ...payload,
       id: String(payload.id),
     };
+    
   }
   
 
@@ -75,15 +76,22 @@ async handleIncomingNotification(payload: WebhookNotificationDto) {
 
 
 
-async getNotifications(){
+async getNotifications(id:string){
 
-  const getData = await this.prisma.notification.findMany({});
+  const getData = await this.prisma.notification.findMany({
+    where:{
+      globaluserid : id
+    }
+  });
+
 
   return{
     data : getData,
     status : 200
   }
+
 }
+
 
 
 }

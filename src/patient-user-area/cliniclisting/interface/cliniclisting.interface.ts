@@ -11,7 +11,6 @@ export interface IClinicListing{
     getClinicDetails(clinicId:string);
     getGoogleReviews(clinicId:string);
 
-    
     postQuery(dto:PostQueryCreateDto);
 
 

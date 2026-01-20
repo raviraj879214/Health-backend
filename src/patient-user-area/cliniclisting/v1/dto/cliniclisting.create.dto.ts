@@ -24,5 +24,6 @@ export class PostQueryCreateDto {
     whatMatterMostName:string;
     medicalReportsValue:string;
     procedureTimeValue: string;
+    cordinatorid:string;
     
 }

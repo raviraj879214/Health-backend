@@ -1,4 +1,4 @@
-import { ManageClinicDto } from "../v1/dto/manageclinic.update.dto";
+import { ClinicGoogleMap, ManageClinicDto } from "../v1/dto/manageclinic.update.dto";
 
 
 
@@ -12,6 +12,8 @@ export interface IManageClinicService{
 
     updateClinicName(dto : ManageClinicDto);
     
+
+    updateClinicMap(dto:ClinicGoogleMap)
     
     
 }

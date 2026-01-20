@@ -5,6 +5,8 @@ import { DoctorSpecilatyService } from "./doctorspecialty.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtStrategy } from "src/PartnerArea/ClinicAuth/JwtStrategy/jwt.strategy";
 import { DoctorSpecialtyController } from "./doctorspecialty.controller";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -13,7 +15,7 @@ import { DoctorSpecialtyController } from "./doctorspecialty.controller";
 
 
 @Module({
-
+    imports:[UniversalNotificationnModule],
     controllers : [DoctorSpecialtyController],
     providers:[
         {
@@ -21,7 +23,8 @@ import { DoctorSpecialtyController } from "./doctorspecialty.controller";
             useClass : DoctorSpecilatyService
         },
         PrismaService,
-        JwtStrategy
+        JwtStrategy,
+        EmailService
     ],
     exports :[DOCTOR_SPECIALTY_SERVICE_CONSTANT]
 })

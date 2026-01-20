@@ -8,7 +8,7 @@ export class EmailService {
 
  constructor() {
   this.transporter = nodemailer.createTransport({
-    host: "smtp-relay.sendinblue.com",
+    host: "smtp.gmail.com",
     port: 465,         
     secure: true,     
     auth: {
@@ -32,14 +32,14 @@ export class EmailService {
     };
 
     try {
-      // const info = await this.transporter.sendMail(mailOptions);
-      // console.log('✅ Email sent successfully');
-      // console.log(info);
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully');
+      console.log(info);
 
-      // return info;
+      return info;
 
 
-       return true;
+      //  return true;
     } catch (error) {
 
       console.log('❌ Error sending email');

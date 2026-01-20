@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { IManageClinicService } from "../interface/manageclinic.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ManageClinicBusiness } from "./business/manageclinic.business";
-import { ManageClinicDto } from "./dto/manageclinic.update.dto";
+import { ClinicGoogleMap, ManageClinicDto } from "./dto/manageclinic.update.dto";
 
 
 
@@ -11,14 +11,11 @@ import { ManageClinicDto } from "./dto/manageclinic.update.dto";
 @Injectable()
 export class ManageClinicService implements IManageClinicService{
 
-    constructor(
-        private readonly prisma : PrismaService,
-        private readonly manageClinicBusiness : ManageClinicBusiness
-    ){}
+    constructor(private readonly prisma : PrismaService,private readonly manageClinicBusiness : ManageClinicBusiness){}
 
 
 
-    async get(id) {
+    async get(id:string) {
         const data = await this.prisma.clinic.findMany({
             where : {
                 clinicUserUuid : id
@@ -30,14 +27,10 @@ export class ManageClinicService implements IManageClinicService{
         }
     }
 
-   async getClinicDetails(id) {
+   async getClinicDetails(id:string) {
         if (!id) return { status: 400, message: "Invalid Clinic Id" };
-        const data = await this.prisma.clinic.findFirst({
-            where: { uuid: id },
-            include:{
-                country : true,
-                city : true
-            }
+        const data = await this.prisma.clinic.findUnique({
+            where: { uuid: id }
         });
         return {
             status: 200,
@@ -48,10 +41,9 @@ export class ManageClinicService implements IManageClinicService{
 
 
 
-        async updateClinicName(dto: ManageClinicDto) {
+    async updateClinicName(dto: ManageClinicDto) {
 
-            console.log("dto",dto);
-
+        console.log("dto",dto);
 
         const clinic = await this.prisma.clinic.findUnique({
             where: { uuid: dto.clinicuuid },
@@ -59,28 +51,57 @@ export class ManageClinicService implements IManageClinicService{
 
         if (!clinic) {
             return {
-            status: 404,
-            message: "Clinic not found"
+                status: 404,
+                message: "Clinic not found"
             };
         }
 
         const updated = await this.prisma.clinic.update({
             where: { uuid: dto.clinicuuid },
-            data: { 
+            data: {
                 name: dto.name,
-                email : dto.email,
-                address : dto.address,
-                phone : dto.phone,
-                websiteurl : dto.websiteurl,
-                whatsappNumber : dto.whatsappNumber,
-                telegramNumber: dto.telegramNumber
-                
-
-             }
+                email: dto.email,
+                address: dto.address,
+                websiteurl: dto.websiteurl,
+                cep: dto.cep,
+                street: dto.street,
+                complement: dto.complement,
+                neighborhood: dto.neighborhood,
+                citycep: dto.citycep,
+                state: dto.state,
+            }
         });
 
-            return { status: 200, message : "Clinic name updated successfully" , data: updated };
+        console.log("updates",clinic);
+
+
+        return { status: 200, message: "Clinic name updated successfully", data: updated };
+    }
+
+
+
+
+    async updateClinicMap(dto: ClinicGoogleMap) {
+    
+        console.log("updateClinicMap",dto);
+
+        const updateData = await this.prisma.clinic.update({
+            where:{
+                uuid : dto.uuid
+            },
+            data :{
+                latitude : dto.latitude,
+                longitude : dto.longitude
+            }
+        });
+        
+        console.log("updateData",updateData);
+
+        return{
+            status : true
         }
+    }
+
 
 
 
