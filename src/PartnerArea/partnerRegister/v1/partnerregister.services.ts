@@ -406,6 +406,32 @@ export class PartnerRegisterServices implements IPartnerRegister {
                     isStripeVerify : getstripedetails?.isStripeVerify
                 }
             });
+
+
+        const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: createClinic.uuid },include:{clinicUser:true} });
+        let payload: WebhookNotificationDto = {
+            title: "New Partner Registered",
+            area: "admin",
+            message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner. The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.`
+        }
+        await this.universalNotification.HandleNotification(payload);
+
+
+         const adminemail = await this.prisma.user.findFirst({where:{role:{name : "SuperAdmin"}}});
+        const adminemailText = `Hi,<br/><br/>
+                            ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
+                            The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.<br/>`;
+        const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
+        await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
+
+
+
+
+
+
+
+
+
         }
         
         return{
@@ -530,7 +556,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
         const adminemailText = `Hi,<br/><br/>
                             ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
                             The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.<br/>`;
-        const adminhtmlContent = EmailTemplate.getTemplate(emailText);
+        const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
         await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
 
 
