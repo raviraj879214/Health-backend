@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { PATIENT_QUERIES } from "../constant/patientqueries.constant";
 import { PatientQueriesServices } from "./patientqueries.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
@@ -98,6 +98,22 @@ export class PatientQueriesController{
             console.log("queryid",queryid);
             return await this.patientQueriesService.assignDoctorToQuery(doctorid,queryid);
         } 
+
+
+
+
+        @Put("assign-to-clinic-query")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async assignToClinicQuery(@Body("patientqueryid") patientqueryid:string,@Body("status") status:string){
+
+            console.log(patientqueryid,status);
+
+            return await this.patientQueriesService.assignQueryToClinic(patientqueryid,status);
+
+        } 
+
+
 
 
         

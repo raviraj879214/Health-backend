@@ -1084,6 +1084,22 @@ export class ManageClinicServices implements IManageClinic{
     }
 
 
+    async saveCommssion(id: string, commission: string) {
+        const updateCommsion = await this.prisma.clinic.update({
+            where: {
+                uuid: id,
+            },
+            data: {
+                commission: String(commission),
+            },
+        });
+
+        return {
+            status: 200,
+            data: updateCommsion,
+        };
+    }
+
 
 
 }

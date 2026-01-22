@@ -63,7 +63,9 @@ export interface IManageClinic{
       sendMessageToClinic(dto:SendMessageCreateDto);
     
     //
-    
+
+
+    saveCommssion(id:string,commission:string);
 
 
 

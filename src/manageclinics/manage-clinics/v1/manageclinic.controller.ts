@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, UseGuards, Version } from "@nestjs/common";
 import { MANAGE_CLINIC_CONSTANT } from "../constant/manageclinic.constamt";
 import { ManageClinicServices } from "./manageclinic.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
@@ -311,6 +311,19 @@ export class ManageClinicController{
          }
          
       //end
+
+
+         @Put("set-commission")
+         @Version("1")
+         @ModuleAccess("Manage Clinic")
+         async saveCommssion(@Body() body: { id: string; commission: string }) {
+            const { id, commission } = body;
+
+            console.log("commission", id, commission);
+
+            return this.manageClinicService.saveCommssion(id, commission);
+         }
+
 
 
 

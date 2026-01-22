@@ -5,6 +5,8 @@ import { PATIENT_QUERIES } from "../constant/patientqueries.constant";
 import { PatientQueriesController } from "./patientqueries.controller";
 import { PatientQueriesServices } from "./patientqueries.service";
 import { Module } from "@nestjs/common";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { EmailService } from "src/EmailServices/email.service";
 
 
 
@@ -16,8 +18,9 @@ import { Module } from "@nestjs/common";
             provide : PATIENT_QUERIES,
             useClass : PatientQueriesServices
         },
-        RolesGuard, JwtService , PrismaService
+        RolesGuard, JwtService , PrismaService,EmailService
      ],
      exports: [PATIENT_QUERIES],
+      imports:[UniversalNotificationnModule],
 })
 export class ManagePatietnQueriesModule{}

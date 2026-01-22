@@ -2,13 +2,20 @@ import { Injectable } from "@nestjs/common";
 import { IPatientQueries } from "../interface/patientqueries.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { PatientQueryCreateDto } from "./dto/patientqueries.create.dto";
+import { EmailService } from "src/EmailServices/email.service";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
 
 
 
 
 @Injectable()
 export class PatientQueriesServices implements IPatientQueries{
-    constructor(private readonly prisma:PrismaService){}
+    constructor(private readonly prisma:PrismaService,
+         private emailservice : EmailService,
+         private readonly universalNotification:UniversalNotification
+    ){}
 
 
     async getPateintQueries(page: number, limit: number,adminid:number) {
@@ -225,7 +232,51 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
+    async  assignQueryToClinic(patientqueryid: string, status: string) {
 
+        const update = await this.prisma.patientQuery.update({
+            where:{
+                id : patientqueryid
+            },
+            data :{
+                status : Number(status)
+            }
+        });
+
+
+
+
+                   const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: update.clinicId! },include:{clinicUser:true}});
+                    let payload : WebhookNotificationDto ={
+                            title : `The New Request Received To Clinic - ${clinicdetails?.name}`,
+                            area: "",
+                            id : clinicdetails?.clinicUserUuid!,
+                            message: `${clinicdetails?.name} has received a new request ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`
+                    }
+
+
+                    await this.universalNotification.HandleNotification(payload);
+                    const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+                    const emailText = `${clinicdetails?.name} has received a new request  ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`;
+                    const htmlContent = EmailTemplate.getTemplate(emailText);
+                    await this.emailservice.sendEmail(
+                            clinicdetails?.email!,
+                            `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The New Request Received To Clinic - ${clinicdetails?.name}`,  
+                            "",            
+                            htmlContent  
+                    );
+
+
+
+
+
+
+
+        return{
+            status : 200,
+            data : update
+        }
+    }
 
 
 
