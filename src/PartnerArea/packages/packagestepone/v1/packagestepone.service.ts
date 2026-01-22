@@ -20,8 +20,8 @@ export class PackageStepOneServices implements IPackageStepOneService{
             where : {
                 clinicId : clinicuuid,
                 OR:[
-                    {status : PackageVerifyStatus.EDIT},
-                    {status : PackageVerifyStatus.VERIFIED}
+                    {status : PackageVerifyStatus.VERIFIED},
+                    {status : PackageVerifyStatus.PENDING}
                 ]
             },
             include :{

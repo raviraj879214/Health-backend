@@ -87,6 +87,9 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
 
 
     async submitPackage(packageid: string) {
+
+
+
         const updateData = await this.prisma.clinicPackage.update({
             where: {
                 id: packageid
@@ -104,15 +107,16 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
          const packagdetails = await this.prisma.clinicPackage.findUnique({ where: { id: packageid } });
          const adminemail = await this.prisma.user.findFirst({ where: { role: { name: "SuperAdmin" } }, select: { email: true } });
         let payload: WebhookNotificationDto = {
-            title: "Package Info Added",
+            title: "New Package Created/Updated",
             area: "admin",
             message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} created/updated package successfully,sent for approval please visit clinic and make approval`
         }
+
         await this.universalNotification.HandleNotification(payload);
 
         const emailText = `Hi Admin, <br/><br/>  <b>${clinicdetails?.name ?? 'Unknown clinic'}</b> created/updated package successfully,sent for approval please visit clinic and make approval <br/><br/>`
         const htmlContent = EmailTemplate.getTemplate(emailText);
-        await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | Package Info Added`, "", htmlContent);
+        await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Package Created`, "", htmlContent);
 
 
 
@@ -126,7 +130,7 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
 
     async updateVisibilty(packageid: string,status:number) {
         
-             const updateData = await this.prisma.clinicPackage.update({
+        const updateData = await this.prisma.clinicPackage.update({
             where:{
                 id : packageid
             },
@@ -136,44 +140,44 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
         });
 
 
-                            return{
-                                status : 200
-                            }
-                    }
+            return{
+                status : 200
+            }
+        }
 
 
 
 
-                     async getDoctors(clinicuuid: string) {
-                        
-                                    const assignments = await this.prisma.clinicDoctor.findMany({
-                                    where: {
-                                        clinicUuid: clinicuuid,
-                                    },
-                                    });
-                    
-                              
-                                    const doctorUuids = assignments.map((a) => a.doctorUuid);
-                    
-                                 
-                                const assignedDoctors = await this.prisma.doctor.findMany({
-                                    where: {
-                                        uuid: {
-                                            in: doctorUuids,
-                                        },
-                                         OR: [
-                                            { DoctorVerify: DoctorVerifyStatus.VERIFIED },
-                                        ],
-                                    },
-                                 });
-                    
-                    
-                             return {
-                                status : 200,
-                                message : "fetch doctors successfully",
-                                data : assignedDoctors
-                             }
-                        }
+    async getDoctors(clinicuuid: string) {
+
+        const assignments = await this.prisma.clinicDoctor.findMany({
+            where: {
+                clinicUuid: clinicuuid,
+            },
+        });
+
+
+        const doctorUuids = assignments.map((a) => a.doctorUuid);
+
+
+        const assignedDoctors = await this.prisma.doctor.findMany({
+            where: {
+                uuid: {
+                    in: doctorUuids,
+                },
+                OR: [
+                    { DoctorVerify: DoctorVerifyStatus.VERIFIED },
+                ],
+            },
+        });
+
+
+        return {
+            status: 200,
+            message: "fetch doctors successfully",
+            data: assignedDoctors
+        }
+    }
 
 
 
