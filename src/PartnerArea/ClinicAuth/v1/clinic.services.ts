@@ -197,6 +197,8 @@ export class ClinicService implements IClinicAuthService{
                   firstname: dto.firstname,
                   lastname: dto.lastname,
                   phone: dto.phone,
+                  whatsappNumber : dto.whatsappnumber,
+                  telegramNumber : dto.telegramnumber
                 }
               });
           return {

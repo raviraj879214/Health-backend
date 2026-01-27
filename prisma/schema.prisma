@@ -190,6 +190,8 @@ model ClinicUser {
   isOtpVerify      Boolean   @default(false)
   status           Int       @default(0)
   phoneVerify      Int?
+  whatsappNumber   String?
+  telegramNumber   String?
   clinics          Clinic[]
 }
 

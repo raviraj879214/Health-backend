@@ -14,4 +14,17 @@ export class updateClinicUser {
   @IsString()
   @IsOptional()
   phone?: string;
+
+  @IsString()
+  @IsOptional()
+  telegramnumber?: string;
+
+  @IsString()
+  @IsOptional()
+  whatsappnumber?: string;
+
+
+
+
+
 }

@@ -359,7 +359,7 @@ const formatted = clinics
                 patientName: dto.patientName || '',
                 phoneNumber: dto.phoneNumber || '',
                 message: dto.message || '',
-                clinicId: dto.clinicId || null,
+                clinicId: (dto.clinicId === "demo-id" ? null : dto.clinicId) || null,
                 packageId: dto.packageId || null,
                 email: dto.email || '',
                 subject: dto.subject || '',
@@ -374,9 +374,20 @@ const formatted = clinics
                 medicalReportsValue: dto.medicalReportsValue,
                 treatmentName : dto.treatmentName,
                 procedureTimeValue:dto.procedureTimeValue,
-                cordinatorid : Number(dto.cordinatorid)
+                cordinatorid : Number(dto.cordinatorid || 0)
             }
         });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -390,6 +401,9 @@ const formatted = clinics
                     htmlContent  
             );
         }
+
+
+
 
         //admin email 
             const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
@@ -436,9 +450,6 @@ const formatted = clinics
             message : `New Query received from patients ${createData?.querycode}` ,
         }
         await this.universalNotification.HandleNotification(payloadcordinator);
-
-
-
 
 
 
