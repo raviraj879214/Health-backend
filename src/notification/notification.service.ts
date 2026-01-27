@@ -61,6 +61,9 @@ async handleIncomingNotification(payload: WebhookNotificationDto) {
 
 
   const allNotifications = await this.prisma.notification.findMany({
+    where:{
+      isRead : false
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -80,7 +83,8 @@ async getNotifications(id:string){
 
   const getData = await this.prisma.notification.findMany({
     where:{
-      globaluserid : id
+      globaluserid : id,
+      isRead : false
     },
     orderBy:{
       createdAt : "desc"
@@ -94,6 +98,22 @@ async getNotifications(id:string){
   }
 
 }
+
+async markAsRead(id:string){
+  const update = await this.prisma.notification.update({
+    where:{
+      id : Number(id)
+    },
+    data:{
+      isRead : true
+    }
+  });
+
+  return{
+    status : 200
+  }
+}
+
 
 
 

@@ -5,6 +5,8 @@ import { ManagePayoutServices } from "./manageapyout.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import { RolesGuard } from "src/common/guards/roles.guards";
+import { EmailService } from "src/EmailServices/email.service";
+import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 
 
 
@@ -12,13 +14,14 @@ import { RolesGuard } from "src/common/guards/roles.guards";
 
 
 @Module({
+    imports:[UniversalNotificationnModule],
      controllers:[ManagePayoutController],
      providers:[
         {
             provide : MANAGE_PAYOUT_CONSTATNT,
             useClass : ManagePayoutServices
         },
-        RolesGuard, JwtService , PrismaService
+        RolesGuard, JwtService , PrismaService ,EmailService
      ],
      exports: [MANAGE_PAYOUT_CONSTATNT],
 })

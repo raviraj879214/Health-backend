@@ -188,10 +188,12 @@ async createShareableLink(@Body() body: {
 
   const paymentLink = await stripe.paymentLinks.create({
     line_items: [{ price: price.id, quantity: 1 }],
-    metadata: {
-      patientId: body.patientId,
-      patientQueryId: body.patientQueryId,
-      ids : paymentetailid.id
+    payment_intent_data: {
+      metadata: {
+        patientId: body.patientId,
+        patientQueryId: body.patientQueryId,
+        ids: paymentetailid.id,
+      },
     },
     after_completion: {
       type: 'redirect',

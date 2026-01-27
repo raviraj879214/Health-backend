@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { IPatientQueries } from "../interface/patientqueries.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { PatientQueryCreateDto } from "./dto/patientqueries.create.dto";
@@ -164,9 +164,14 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
-
+ isUUID(value: string) {
+  return /^[0-9a-fA-F-]{36}$/.test(value);
+}
 
     async getPackagesList(clinicid: string) {
+        if (!this.isUUID(clinicid)) {
+    throw new BadRequestException('Invalid clinicId (UUID required)');
+  }
         const getData = await this.prisma.clinicPackage.findMany({
             where:{
                 clinicId : clinicid
@@ -279,6 +284,7 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
+    
 
 
 

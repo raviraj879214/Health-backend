@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { PATIENT_QUERIES } from "../constant/patientqueries.constant";
 import { PatientQueriesServices } from "./patientqueries.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { ModuleAccess } from "src/common/decorators/module-access.decorator";
-import { PatientQueryCreateDto } from "./dto/patientqueries.create.dto";
+import { CreateOtherInformationDto, PatientQueryCreateDto } from "./dto/patientqueries.create.dto";
 import type { AuthRequest } from "src/common/decorators/auth-request.interface";
+import { UpdateOtherInformationDto } from "./dto/patientqueries.update.dto";
 
 
 
@@ -106,19 +107,9 @@ export class PatientQueriesController{
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
         async assignToClinicQuery(@Body("patientqueryid") patientqueryid:string,@Body("status") status:string){
-
             console.log(patientqueryid,status);
-
             return await this.patientQueriesService.assignQueryToClinic(patientqueryid,status);
-
         } 
-
-
-
-
-        
-        
-
 
 
 

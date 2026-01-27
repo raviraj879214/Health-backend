@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 
 
@@ -11,4 +11,17 @@ export class PatientQueryCreateDto{
     @IsString()
     finalprice : string;
 
+}
+
+
+
+
+export class CreateOtherInformationDto {
+  @IsString()
+  @IsNotEmpty()
+  label: string;
+
+  @IsString()
+  @IsNotEmpty()
+  value: string;
 }

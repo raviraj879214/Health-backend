@@ -106,6 +106,52 @@ export class PartnerRegisterClinicDetails {
     @IsString()
     @IsOptional()
     TermsID: string;
+
+
+    
+    @IsString()
+    @IsOptional()
+    addressnumber: string;
+
+    @IsString()
+    @IsOptional()
+    unidade: string;
+
+    @IsString()
+    @IsOptional()
+    estado: string;
+
+    @IsString()
+    @IsOptional()
+    regiao: string;
+
+    @IsString()
+    @IsOptional()
+    ibge: string;
+
+    @IsString()
+    @IsOptional()
+    gia: string;
+
+    @IsString()
+    @IsOptional()
+    ddd: string;
+
+    @IsString()
+    @IsOptional()
+    siafi: string;
+
+
+
+
+
+
+
+
+
+
+
+
   
 }
 

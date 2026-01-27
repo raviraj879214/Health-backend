@@ -32,14 +32,14 @@ export class EmailService {
     };
 
     try {
-      // const info = await this.transporter.sendMail(mailOptions);
-      // console.log('✅ Email sent successfully');
-      // console.log(info);
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully');
+      console.log(info);
 
-      // return info;
+      return info;
 
 
-        return true;
+       // return true;
     } catch (error) {
 
       console.log('❌ Error sending email');

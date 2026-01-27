@@ -418,21 +418,19 @@ const formatted = clinics
         //end
 
 
-        
-
 
 
 
 
         let payload : WebhookNotificationDto = {
-            title : "Patient Query Received",
+            title : "New Query Received Successfully",
             area: "admin",
             message : `New Query received from patients ${createData?.querycode}` ,
         }
         await this.universalNotification.HandleNotification(payload);
 
         let payloadcordinator : WebhookNotificationDto = {
-            title : "Patient Query Received",
+            title : "New Query Received Successfully",
             area: "",
             id : dto.cordinatorid,
             message : `New Query received from patients ${createData?.querycode}` ,

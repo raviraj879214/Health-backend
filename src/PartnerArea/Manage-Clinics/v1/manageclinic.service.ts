@@ -69,6 +69,15 @@ export class ManageClinicService implements IManageClinicService{
                 neighborhood: dto.neighborhood,
                 citycep: dto.citycep,
                 state: dto.state,
+
+                addressnumber: dto.addressnumber,
+                unidade : dto.unidade,
+                estado : dto.estado,
+                regiao : dto.regiao,
+                ibge : dto.ibge,
+                gia : dto.gia,
+                ddd : dto.ddd,
+                siafi : dto.siafi
             }
         });
 

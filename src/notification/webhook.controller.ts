@@ -19,10 +19,13 @@ export class WebhookController {
 
   @Get("get-notify/:userid")
   async getNotifications(@Param("userid") userid:string){
-
-
-
     return await this.notificationService.getNotifications(userid);
+  }
+
+  @Post("mark-as-read")
+  async markasRead(@Body("id") dto:{id:string}){
+    console.log(dto.id);
+    return await this.notificationService.markAsRead(dto.id);
   }
 
 

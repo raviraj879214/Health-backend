@@ -39,7 +39,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
         const checkEmail = await this.prisma.clinicUser.findFirst({
             where: {
                 email: email,
-                status: PatientRegister.PENDING
+                status: PatientRegister.ACTIVE
             }
         });
 
@@ -47,7 +47,8 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
         console.log("checkEmail",checkEmail);
-        if (checkEmail && checkEmail?.status !== PartnerRegister.PENDING) {
+        
+        if (checkEmail && checkEmail?.status !== PartnerRegister.ACTIVE) {
             console.log("1");
 
             return {
@@ -311,7 +312,15 @@ export class PartnerRegisterServices implements IPartnerRegister {
                         cep: dto.cep,
                         state: dto.state,
                         phoneVerify: dto.phoneVerify,
-                        clinicUserId: clinicuserdetails?.id
+                        clinicUserId: clinicuserdetails?.id,
+                        addressnumber : dto.addressnumber,
+                        unidade : dto.unidade,
+                        estado : dto.estado,
+                        regiao : dto.regiao,
+                        ibge : dto.ibge,
+                        gia : dto.gia,
+                        ddd : dto.ddd,
+                        siafi : dto.siafi
                     }
                 });
                 return {

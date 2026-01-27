@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Inject, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { REQUESTCONST } from "../constant/request.constant";
 import { RequestServices } from "./request.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
+import { RequestFundsCreateDto } from "./dto/request.create.dto";
 
 
 
@@ -33,6 +34,34 @@ export class RequestController{
 
         return await this.requestservices.getPatientQueryRequest(clinicuuid,req.user.id,pageNumber,pageSize);
     }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get("patient-query-details/:patientqueryid")
+    @Version("1")
+    async getPatientQueryDetails(@Param("patientqueryid") patientqueryid:string){
+
+        return await this.requestservices.getPatientQueryDetails(patientqueryid);
+    }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Post("clinic-request-fund")
+    @Version("1")
+    async requestFunds(@Body() dto:RequestFundsCreateDto){
+        return await this.requestservices.RequestFunds(dto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("get-clinic-request-fund/:patientqueryid")
+    @Version("1")
+    async getRequestFunds(@Param("patientqueryid") patientqueryid:string){
+        
+        return await this.requestservices.GEtRequestFunds(patientqueryid);
+    }
+
+
 
 
 
