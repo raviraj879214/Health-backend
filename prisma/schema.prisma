@@ -603,6 +603,7 @@ model ClinicPackage {
   Visibilty         Int?                    @default(0)
   status            Int?                    @default(0)
   reasontext        String?
+  homepagefeatures  String?
   boosts            ClinicBoost[]
   clinic            Clinic                  @relation(fields: [clinicId], references: [uuid])
   packagesDoctor    PackageDoctor[]         @relation("PackageDoctors")

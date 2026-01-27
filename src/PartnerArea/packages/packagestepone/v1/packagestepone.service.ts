@@ -80,7 +80,8 @@ export class PackageStepOneServices implements IPackageStepOneService{
                     title : dto.title,
                     briefdescription : dto.briefDescription,
                     actualprice : String(dto.actualPrice),
-                    discountedprice : String(dto.discountedPrice)
+                    discountedprice : String(dto.discountedPrice),
+                    homepagefeatures: String(dto.homepagefeatures)
                 }
             });
 

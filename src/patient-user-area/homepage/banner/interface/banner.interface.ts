@@ -20,4 +20,11 @@ export interface IHomePageBanner{
 
     getPopularClinicListing(dto:BannerCreateClinicDto);
 
+
+    getPackages();
+
+
+
+
+
 }

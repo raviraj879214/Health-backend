@@ -30,4 +30,12 @@ export class PackageOneUpdateDto {
     @IsOptional()
     @IsString()
     clinicId:string;
+
+
+    @IsOptional()
+    @IsString()
+    homepagefeatures:string;
+
+
+
 }

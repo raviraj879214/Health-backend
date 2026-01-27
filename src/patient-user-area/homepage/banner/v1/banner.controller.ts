@@ -66,6 +66,13 @@ export class HomepageBannerController {
 
 
 
+   @Get("get-home-page-packages")
+   @Version("1")
+   async getHomePagePackages(){
+
+      return await this.homepageBannerService.getPackages();
+   }
+
 
 
 

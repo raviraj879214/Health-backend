@@ -4,6 +4,9 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { BannerCreateClinicDto } from "./dto/banner.create.dto";
 import { take } from "rxjs";
 import { ClinicStatus } from "src/common/enum/ClinicStatus";
+import { PackageVisibiltyStatus } from "src/common/enum/packageVisibiltyStatus";
+import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
+import { Prisma } from "@prisma/client";
 
 
 
@@ -334,6 +337,49 @@ async getPopularClinicListing(dto: BannerCreateClinicDto) {
 
 
 
+
+
+  async getPackages() {
+    const now = new Date();
+
+    const packages = await this.prisma.clinicPackage.findMany({
+      include: {
+        boosts: {
+          where: {
+            isActive: true,
+            startAt: { lte: now },
+            endAt: { gte: now },
+          },
+        },
+        clinic: true,
+      },
+      where: {
+        status: PackageVerifyStatus.VERIFIED,
+        Visibilty: PackageVisibiltyStatus.SHOW,
+      },
+    });
+
+    type PackageWithBoosts = Prisma.ClinicPackageGetPayload<{
+      include: { boosts: true; clinic: true };
+    }>;
+
+    const boosted: PackageWithBoosts[] = [];
+    const normal: PackageWithBoosts[] = [];
+
+    for (const pkg of packages) {
+      if (pkg.boosts.length > 0) {
+        boosted.push(pkg);
+      } else {
+        normal.push(pkg);
+      }
+    }
+
+    const shuffle = <T>(arr: T[]) => arr.sort(() => Math.random() - 0.5);
+
+    return [...shuffle(boosted), ...shuffle(normal)];
+
+    
+  }
 
 
 
