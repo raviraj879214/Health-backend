@@ -67,6 +67,7 @@ export class RequestController{
     @Get("get-clinic-places-id/:input")
     @Version("1")
     async getPlacesID(@Param("input") input:string){
+        console.log("input serached for",input);
         return await this.requestservices.getPalcesid(input);
     }
 
