@@ -4,6 +4,7 @@ import { HOMEPAGE_BANNER_CONSTANT } from "../constant/banner.constant";
 import { HomePageBannerServices } from "./banner.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
+import { HttpModule } from "@nestjs/axios";
 
 
 
@@ -11,6 +12,7 @@ import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 
 
 @Module({
+    imports:[HttpModule],
     controllers :[HomepageBannerController],
     providers:[
             {

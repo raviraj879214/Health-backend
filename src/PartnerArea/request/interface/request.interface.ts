@@ -15,5 +15,13 @@ export interface IRequests{
     RequestFunds(dto:RequestFundsCreateDto);
     GEtRequestFunds(patientqueryid:string);
 
+
+
+    getPalcesid(input:string);
+    updateGooglePlacesID(dto:{placesid:string,uuid:string});
+
+    getClinicDetails(uuid:string);
+    getGooglePlaces(placesid:string);
+
     
 }

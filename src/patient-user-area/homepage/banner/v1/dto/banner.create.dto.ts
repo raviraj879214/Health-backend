@@ -38,3 +38,5 @@ export  class BannerCreateClinicDto{
   limit: number = 0; 
   total?: number;   
 }
+
+

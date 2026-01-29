@@ -1,12 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { IHomePageBanner } from "../interface/banner.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { BannerCreateClinicDto } from "./dto/banner.create.dto";
-import { take } from "rxjs";
+import { firstValueFrom, take } from "rxjs";
 import { ClinicStatus } from "src/common/enum/ClinicStatus";
 import { PackageVisibiltyStatus } from "src/common/enum/packageVisibiltyStatus";
 import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
 import { Prisma } from "@prisma/client";
+import axios from "axios";
+import { HttpService } from "@nestjs/axios";
 
 
 
@@ -17,7 +19,10 @@ import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class HomePageBannerServices implements IHomePageBanner{
-    constructor(private readonly prisma:PrismaService){}
+    constructor(
+      private readonly prisma:PrismaService,
+      private readonly httpService: HttpService
+    ){}
 
 
 
@@ -377,9 +382,128 @@ async getPopularClinicListing(dto: BannerCreateClinicDto) {
     const shuffle = <T>(arr: T[]) => arr.sort(() => Math.random() - 0.5);
 
     return [...shuffle(boosted), ...shuffle(normal)];
-
-    
   }
+
+
+
+
+  async getGoogleReviews(placeId: string) {
+    try {
+      const clinics = await this.prisma.clinic.findMany({
+        where: { placesid: { not: null } },
+        select: { uuid: true, placesid: true },
+      });
+
+      await this.prisma.googleReview.deleteMany({});
+      for (const clinic of clinics) {
+        try {
+          const url = `https://maps.googleapis.com/maps/api/place/details/json`;
+          const params = {
+            place_id: clinic.placesid,
+            fields: 'name,rating,user_ratings_total,reviews',
+            key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+          };
+
+          const response = await firstValueFrom(
+            this.httpService.get(url, { params }),
+          );
+
+          const data = response.data;
+
+          if (data.status !== 'OK') {
+            console.log(`Skipped clinic ${clinic.uuid} - ${data.status}`);
+            continue;
+          }
+
+          const result = data.result;
+          const averageRating = result.rating || 0;
+          const totalReviews = result.user_ratings_total || 0;
+
+          await this.prisma.clinicRatingSummary.upsert({
+            where: { clinicUuid: clinic.uuid },
+            update: {
+              averageRating,
+              totalReviews,
+              updatedAt: new Date(),
+            },
+            create: {
+              clinicUuid: clinic.uuid,
+              averageRating,
+              totalReviews,
+              updatedAt: new Date(),
+            },
+          });
+
+          const reviews = result.reviews || [];
+
+          for (const r of reviews) {
+            const googleReviewId = r.time?.toString() + '_' + r.author_name; // fallback unique id
+
+            await this.prisma.googleReview.upsert({
+              where: { googleReviewId },
+              update: {},
+              create: {
+                clinicUuid: clinic.uuid,
+                googleReviewId,
+                authorName: r.author_name,
+                rating: r.rating,
+                comment: r.text,
+                reviewTime: new Date(r.time * 1000),
+                replyText: r.owner_response?.text || null,
+                replyTime: r.owner_response?.time
+                  ? new Date(r.owner_response.time * 1000)
+                  : null,
+              },
+            });
+          }
+
+        } catch (err) {
+          console.log(`Error syncing clinic ${clinic.uuid}`, err.message);
+        }
+      }
+
+      return { success: true };
+    } catch (error: any) {
+      throw new HttpException(
+        `Failed to sync Google data: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+
+
+
+   async getGooglePlaces(placesid: string) {
+
+      const placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
+      const placeDetailsParams = {
+        place_id: placesid,
+        fields: 'name,rating,user_ratings_total,formatted_address,photos,opening_hours,types',
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+      };
+
+      const detailsResponse = await firstValueFrom(
+        this.httpService.get(placeDetailsUrl, { params: placeDetailsParams }),
+      );
+
+      const details = detailsResponse.data.result;
+
+      return {
+        place_id: placesid,
+        name: details.name,
+        address: details.formatted_address,
+        rating: details.rating || null,
+        total_ratings: details.user_ratings_total || 0,
+        photos: details.photos || [],
+        opening_hours: details.opening_hours || null,
+        types: details.types || [],
+      };
+
+  }
+
+
+
 
 
 

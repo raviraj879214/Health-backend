@@ -18,11 +18,18 @@ export interface IHomePageBanner{
     getTopRatedClinicListing(dto:BannerCreateClinicDto);
 
 
-    getPopularClinicListing(dto:BannerCreateClinicDto);
+     getPopularClinicListing(dto:BannerCreateClinicDto);
 
 
-    getPackages();
+      getPackages();
 
+
+
+     getGoogleReviews(placesid:string);
+
+
+
+      getGooglePlaces(placesid:string);
 
 
 

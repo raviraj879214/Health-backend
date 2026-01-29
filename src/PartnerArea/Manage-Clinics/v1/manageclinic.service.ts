@@ -3,6 +3,10 @@ import { IManageClinicService } from "../interface/manageclinic.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ManageClinicBusiness } from "./business/manageclinic.business";
 import { ClinicGoogleMap, ManageClinicDto } from "./dto/manageclinic.update.dto";
+import { EmailService } from "src/EmailServices/email.service";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { EmailTemplate } from "src/common/emailtemplate/email-template";
 
 
 
@@ -11,7 +15,12 @@ import { ClinicGoogleMap, ManageClinicDto } from "./dto/manageclinic.update.dto"
 @Injectable()
 export class ManageClinicService implements IManageClinicService{
 
-    constructor(private readonly prisma : PrismaService,private readonly manageClinicBusiness : ManageClinicBusiness){}
+    constructor(
+        private readonly prisma : PrismaService,
+        private readonly manageClinicBusiness : ManageClinicBusiness,
+        private emailservice : EmailService,
+        private readonly universalNotification:UniversalNotification
+    ){}
 
 
 
@@ -113,6 +122,30 @@ export class ManageClinicService implements IManageClinicService{
 
 
 
+    async pingAdmin(clinicmessage: string) {
+        console.log("clinicmessage",clinicmessage);
+        let payload: WebhookNotificationDto = {
+            title: clinicmessage,
+            area: "admin",
+            message: ''
+        }
+        await this.universalNotification.HandleNotification(payload);
+
+        const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
+        const emailText = clinicmessage;
+        const htmlContent = EmailTemplate.getTemplate(emailText);
+        await this.emailservice.sendEmail(
+                adminemail?.email!,
+                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `Request from clinic`,  
+                "",            
+                htmlContent  
+        );
+
+
+
+        return {success : true}
+
+    }
 
 
 

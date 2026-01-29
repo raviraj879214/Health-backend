@@ -246,6 +246,7 @@ model Clinic {
   ddd                 String?
   siafi               String?
   addressnumber       String?
+  placesid            String?
   city                City?                  @relation(fields: [cityId], references: [id])
   clinicUser          ClinicUser?            @relation(fields: [clinicUserId], references: [id])
   cordinator          User?                  @relation("ClinicCoordinator", fields: [cordinatorid], references: [id])
@@ -865,4 +866,36 @@ model RequestFunds {
   updatedAt      DateTime?    @default(now()) @db.Timestamptz(6)
   collected      Int?         @default(0)
   PatientQuery   PatientQuery @relation(fields: [patientQueryId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_patientquery")
+}
+
+model ip_geolocation {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ip                   String    @db.VarChar(45)
+  network              String?   @db.VarChar(50)
+  version              String?   @db.VarChar(10)
+  city                 String?   @db.VarChar(150)
+  region               String?   @db.VarChar(150)
+  region_code          String?   @db.VarChar(20)
+  country              String?   @db.VarChar(10)
+  country_name         String?   @db.VarChar(150)
+  country_code         String?   @db.VarChar(10)
+  country_code_iso3    String?   @db.VarChar(10)
+  country_capital      String?   @db.VarChar(150)
+  country_tld          String?   @db.VarChar(10)
+  continent_code       String?   @db.VarChar(10)
+  in_eu                String?   @db.VarChar(10)
+  postal               String?   @db.VarChar(20)
+  latitude             String?   @db.VarChar(50)
+  longitude            String?   @db.VarChar(50)
+  timezone             String?   @db.VarChar(100)
+  utc_offset           String?   @db.VarChar(10)
+  country_calling_code String?   @db.VarChar(10)
+  currency             String?   @db.VarChar(10)
+  currency_name        String?   @db.VarChar(50)
+  languages            String?
+  country_area         String?   @db.VarChar(50)
+  country_population   String?   @db.VarChar(50)
+  asn                  String?   @db.VarChar(20)
+  org                  String?   @db.VarChar(200)
+  created_at           DateTime? @default(now()) @db.Timestamp(6)
 }

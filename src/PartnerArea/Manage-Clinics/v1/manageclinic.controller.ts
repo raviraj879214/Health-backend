@@ -4,6 +4,7 @@ import { MANAGE_CLINIC_SERVICES_V1 } from "../constant/manage.clinic.constant";
 import { ManageClinicService } from "./manageclinic.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { ClinicGoogleMap, ManageClinicDto } from "./dto/manageclinic.update.dto";
+import { version } from "os";
 
 
 
@@ -51,6 +52,12 @@ export class ManageClinicController{
     }
 
 
+    @Post('ping-admin')
+    @Version("1")
+    async pingAdmin(@Body() dto:{clinicmessage : string }){
+
+        return await this.manageClinicService.pingAdmin(dto.clinicmessage);
+    }
 
 
 

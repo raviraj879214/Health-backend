@@ -5,11 +5,13 @@ import { ManageClinicService } from './manageclinic.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtStrategy } from 'src/PartnerArea/ClinicAuth/JwtStrategy/jwt.strategy';
 import { ManageClinicBusiness } from './business/manageclinic.business';
+import { UniversalNotificationnModule } from 'src/notification/GlobalNotification/businessnotificationmodule';
+import { EmailService } from 'src/EmailServices/email.service';
 
 
 @Module({
  
-
+  imports :[UniversalNotificationnModule],
   controllers: [ManageClinicController],
 
   providers: [
@@ -19,7 +21,8 @@ import { ManageClinicBusiness } from './business/manageclinic.business';
     },
     PrismaService,
     JwtStrategy,
-    ManageClinicBusiness
+    ManageClinicBusiness,
+    EmailService
   ],
 
   exports: [MANAGE_CLINIC_SERVICES_V1],

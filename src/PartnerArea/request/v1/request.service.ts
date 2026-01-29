@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { IRequests } from "../interface/request.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { PatientQueryStatus } from "src/common/enum/patientQueryStatus";
@@ -8,6 +8,8 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import Stripe from "stripe";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 
 
 
@@ -20,7 +22,8 @@ export class RequestServices implements IRequests{
     constructor(
       private readonly prisma:PrismaService,
       private emailservice : EmailService,
-      private readonly universalNotification:UniversalNotification
+      private readonly universalNotification:UniversalNotification,
+      private readonly httpService: HttpService
 
     ){
        this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -204,6 +207,140 @@ const totalCount = await this.prisma.patientQuery.count({
 
     }
 
+
+
+
+
+
+
+
+
+   async getPalcesid(input: string) {
+    try {
+      // Step 1: Find Place by text
+      const findPlaceUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json';
+      const findPlaceParams = {
+        input,
+        inputtype: 'textquery',
+        fields: 'place_id,name,formatted_address,photos',
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+      };
+
+      const findPlaceResponse = await firstValueFrom(
+        this.httpService.get(findPlaceUrl, { params: findPlaceParams }),
+      );
+
+      const candidates = findPlaceResponse.data.candidates;
+      if (!candidates || candidates.length === 0) {
+        return { message: 'No place found' };
+      }
+
+      const place = candidates[0];
+
+      // Step 2: Fetch detailed info (rating, total reviews, opening hours)
+      const placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
+      const placeDetailsParams = {
+        place_id: place.place_id,
+        fields: 'name,rating,user_ratings_total,formatted_address,photos,opening_hours,types',
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+      };
+
+      const detailsResponse = await firstValueFrom(
+        this.httpService.get(placeDetailsUrl, { params: placeDetailsParams }),
+      );
+
+      const details = detailsResponse.data.result;
+
+      return {
+        place_id: place.place_id,
+        name: details.name,
+        address: details.formatted_address,
+        rating: details.rating || null,
+        total_ratings: details.user_ratings_total || 0,
+        photos: details.photos || [],
+        opening_hours: details.opening_hours || null,
+        types: details.types || [],
+      };
+
+
+    } catch (error) {
+      console.error('Error fetching place info:', error.message);
+      throw new HttpException('Failed to fetch place info', HttpStatus.BAD_REQUEST);
+    }
+   }
+
+
+  async updateGooglePlacesID(dto: { placesid: string; uuid: string; }) {
+
+    const updateData = await this.prisma.clinic.update({
+      where:{
+        uuid : dto.uuid
+      },
+      data:{
+        placesid : dto.placesid
+      }
+    });
+
+    const payload: WebhookNotificationDto = {
+      title: `Clinic Google Review Profile Update: ${updateData.name}`,
+      area: "admin",
+      message: `The clinic "${updateData.name}" has updated its Google review profile. Please check the clinic details page and review it.`
+    };
+
+    await this.universalNotification.HandleNotification(payload);
+
+
+    return {
+      status : 200,
+      data : updateData
+    }
+    
+  }
+  
+
+
+  async getClinicDetails(uuid: string) {
+    const getData = await this.prisma.clinic.findUnique({
+      where :{
+        uuid : uuid
+      }
+    });
+
+    return {
+      status : 200,
+      data : getData
+    }
+  }
+
+  
+
+  async getGooglePlaces(placesid: string) {
+
+      const placeDetailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
+      const placeDetailsParams = {
+        place_id: placesid,
+        fields: 'name,rating,user_ratings_total,formatted_address,photos,opening_hours,types',
+        key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+      };
+
+      const detailsResponse = await firstValueFrom(
+        this.httpService.get(placeDetailsUrl, { params: placeDetailsParams }),
+      );
+
+      const details = detailsResponse.data.result;
+
+      return {
+        place_id: placesid,
+        name: details.name,
+        address: details.formatted_address,
+        rating: details.rating || null,
+        total_ratings: details.user_ratings_total || 0,
+        photos: details.photos || [],
+        opening_hours: details.opening_hours || null,
+        types: details.types || [],
+      };
+
+  }
 
 
 

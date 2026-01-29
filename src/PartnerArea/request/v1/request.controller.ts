@@ -3,6 +3,7 @@ import { REQUESTCONST } from "../constant/request.constant";
 import { RequestServices } from "./request.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { RequestFundsCreateDto } from "./dto/request.create.dto";
+import { post } from "axios";
 
 
 
@@ -60,6 +61,34 @@ export class RequestController{
         
         return await this.requestservices.GEtRequestFunds(patientqueryid);
     }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get("get-clinic-places-id/:input")
+    @Version("1")
+    async getPlacesID(@Param("input") input:string){
+        return await this.requestservices.getPalcesid(input);
+    }
+
+    
+    @UseGuards(JwtAuthGuard)
+    @Post("update-google-company")
+    @Version("1")
+    async updateGooglePlacesID(@Body() dto:{placesid:string,uuid:string}){
+        return await this.requestservices.updateGooglePlacesID(dto);
+    }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get("get-google-places-details/:placesid")
+    @Version("1")
+    async getGooglePlaces(@Param("placesid") placesid:string){
+        return await this.requestservices.getGooglePlaces(placesid);
+    }
+
+
+
 
 
 

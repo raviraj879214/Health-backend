@@ -261,6 +261,7 @@ export class PatientQueriesServices implements IPatientQueries{
 
 
                     await this.universalNotification.HandleNotification(payload);
+                    
                     const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
                     const emailText = `${clinicdetails?.name} has received a new request  ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`;
                     const htmlContent = EmailTemplate.getTemplate(emailText);

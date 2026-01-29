@@ -74,6 +74,29 @@ export class HomepageBannerController {
    }
 
 
+   @Get("get-google-reviews/:placesid")
+    @Version("1")
+    async getGoogleReviews(@Param("placesid") placesid:string){
+
+
+      return await this.homepageBannerService.getGoogleReviews(placesid);
+    }
+
+
+
+
+
+   
+      @Get("get-google-places-details/:input")
+      @Version("1")
+      async getPlacesID(@Param("input") input:string){
+         
+         return await this.homepageBannerService.getGooglePlaces(input);
+      }
+
+
+
+
 
 
 

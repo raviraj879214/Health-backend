@@ -100,6 +100,7 @@ async getNotifications(id:string){
 }
 
 async markAsRead(id:string){
+  
   const update = await this.prisma.notification.update({
     where:{
       id : Number(id)

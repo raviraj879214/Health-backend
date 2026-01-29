@@ -6,6 +6,7 @@ import { REQUESTCONST } from "../constant/request.constant";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { EmailService } from "src/EmailServices/email.service";
+import { HttpModule, HttpService } from "@nestjs/axios";
 
 
 
@@ -16,7 +17,7 @@ import { EmailService } from "src/EmailServices/email.service";
 
 
 @Module({
-    imports:[UniversalNotificationnModule],
+    imports:[UniversalNotificationnModule,HttpModule],
     controllers:[RequestController],
     providers:[
                {

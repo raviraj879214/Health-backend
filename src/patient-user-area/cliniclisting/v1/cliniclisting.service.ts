@@ -10,6 +10,8 @@ import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { ClinicStatus } from "src/common/enum/ClinicStatus";
+import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
+import { PackageVisibiltyStatus } from "src/common/enum/packageVisibiltyStatus";
 
 
 
@@ -251,19 +253,25 @@ const formatted = clinics
                 city : true,
                 country : true,
                 ratingSummary : true,
-                packages : true,
+                packages : {
+                    where:{
+                        status : PackageVerifyStatus.VERIFIED,
+                        Visibilty : PackageVisibiltyStatus.SHOW
+                    }
+                },
                 googleReviews : true,
-                
                 clinicDoctors : {
                     include :{
-                        doctor :{
-                            include :{
+                        doctor : {
+                            include : {
+                            
                                 specializations : {
                                     include:{
                                         specialization : true
                                     }
                                 }
-                            }
+                            },
+                            
                         }
                     }
                 },

@@ -23,8 +23,8 @@ export class WebhookController {
   }
 
   @Post("mark-as-read")
-  async markasRead(@Body("id") dto:{id:string}){
-    console.log(dto.id);
+  async markasRead(@Body() dto:{id:string}){
+    //console.log("dto.id",dto.id);
     return await this.notificationService.markAsRead(dto.id);
   }
 

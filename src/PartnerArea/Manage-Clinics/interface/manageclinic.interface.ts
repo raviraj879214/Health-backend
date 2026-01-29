@@ -15,5 +15,7 @@ export interface IManageClinicService{
 
     updateClinicMap(dto:ClinicGoogleMap)
     
+
+    pingAdmin(clinicmessage:string);
     
 }
