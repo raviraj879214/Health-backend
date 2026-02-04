@@ -377,6 +377,9 @@ export class PartnerRegisterServices implements IPartnerRegister {
             }
           }
 
+
+          
+
          const clinicExists = await this.prisma.clinic.findFirst({
             where: { name: dto.name },
             select: { id: true },

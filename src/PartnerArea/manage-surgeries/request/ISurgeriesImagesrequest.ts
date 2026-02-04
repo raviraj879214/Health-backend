@@ -14,6 +14,7 @@ export interface SurgeriesRequest extends Request {
     doctorUuid?:string;
     clinicUuid?:string;
     treatmentid?:string;
+    packageid:string;
     [key: string]: any;
   };
 }

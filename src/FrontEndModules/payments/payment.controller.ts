@@ -1,6 +1,6 @@
 
 
-import { Body, Controller, HttpException, Post, Version } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpException, Post, Version } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 
 @Controller('/api/payments')
@@ -46,6 +46,11 @@ export class PaymentController {
         card_payments: { requested: true },
         transfers: { requested: true },
       },
+
+      //  business_type: 'company', 
+
+      
+
     });
 
 
@@ -262,6 +267,30 @@ async updatePaymentDetails(@Body() body:{
 
 }
 
+
+
+@Post('create-account-link')
+  async createAccountLink(@Body('stripeAccountId') stripeAccountId: string,@Body('clinicuuid') clinicuuid: string) {
+    if (!stripeAccountId) {
+      throw new BadRequestException('stripeAccountId is required');
+    }
+
+    try {
+
+      const stripe = this.paymentService.client;
+
+      const link = await stripe.accountLinks.create({
+        account: stripeAccountId,
+        refresh_url: `${process.env.FRONT_END_PUBLI_URL}/stripe/refresh`,
+          return_url: `${process.env.FRONT_END_PUBLI_URL}/stripe-onboarding-succes/${clinicuuid}`,
+        type: 'account_onboarding',
+      });
+
+      return { url: link.url };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 
 
 

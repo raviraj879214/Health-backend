@@ -162,9 +162,12 @@ export class DoctorSpecilatyService implements IDoctorSpecialty {
   
                        await this.universalNotification.HandleNotification(payload);
 
-                       const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
-                        console.log("adminemail?.email",adminemail?.email);
-                        await this.universalNotification.HandleNotification(payload);
+                       
+                        
+
+                        // await this.universalNotification.HandleNotification(payload);
+                      const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+                      console.log("adminemail?.email",adminemail?.email);
                         const emailText = `${clinicdetails?.name} has submitted a request to add a new sub-specialty for Dr. ${doctordetails?.firstname} ${doctordetails?.lastname}. Kindly review and proceed with the appropriate action.`
                         const htmlContent = EmailTemplate.getTemplate(emailText);
                         await this.emailservice.sendEmail(

@@ -3,6 +3,8 @@ import { IManageSurgeries } from "../interface/managesurgeries.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ManageSurgeriesCreateDto } from "./dto/managesurgeries.create.dto";
 import { FileService } from "src/common/middleware/file.service";
+import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
+import { DoctorVerifyStatus } from "src/common/enum/doctorVerifyStatus";
 
 
 
@@ -19,22 +21,36 @@ export class ManageSurgeries implements IManageSurgeries{
 
         const surgeriesdata = await this.prisma.clinicSurgeryImage.findMany({
             where :{
-                clinicUuid : id
-            }
+                clinicUuid : id,
+            },
         });
 
-       // console.log("surgeriesdata",surgeriesdata);
+        const doctorIds = surgeriesdata.map(x => x.doctorUuid).filter((id): id is string => !!id);
+        const doctors = await this.prisma.doctor.findMany({where: {uuid: {in: doctorIds,},},});
 
+        const treatmids = surgeriesdata.map(x => x.treatmentid).filter((id): id is string => !!id);
+        const treatment = await this.prisma.treatment.findMany({where: {id: {in: treatmids,},},});
+
+        const packageids = surgeriesdata.map(x => x.packageid).filter((id): id is string => !!id);
+        const packages = await this.prisma.clinicPackage.findMany({where: {id: {in: packageids,},},});
+        
+        console.log("packages",packages);
         return {
             status : 200,
             data : surgeriesdata,
+            doctors : doctors,
+            treatment:treatment,
+            packages:packages,
             message : "Clinic surgery images fetched successsfully"
         }
 
     }
 
-    async addSurgeriesImages(dto: ManageSurgeriesCreateDto) {
 
+
+
+    async addSurgeriesImages(dto: ManageSurgeriesCreateDto) {
+         console.log("dto",dto);
         const insertsurgerie = await this.prisma.clinicSurgeryImage.create({
             data : {
                 imageType : dto.type,
@@ -42,7 +58,8 @@ export class ManageSurgeries implements IManageSurgeries{
                 surgeryId : dto.surgeryId,
                 clinicUuid : dto.clinicUuid,
                 doctorUuid : dto.doctorUuid,
-                treatmentid: dto.treatmentid
+                treatmentid: dto.treatmentid,
+                packageid : dto.packageid
             }
         });
 
@@ -112,6 +129,7 @@ export class ManageSurgeries implements IManageSurgeries{
         const getdoctorsiid = await this.prisma.clinicDoctor.findMany({
             where : {
                 clinicUuid : clinicuuid
+            
             }
         });
 
@@ -121,7 +139,9 @@ export class ManageSurgeries implements IManageSurgeries{
             where : {
                 uuid : {
                     in : idsarray
-                }
+                },
+                DoctorVerify : DoctorVerifyStatus.VERIFIED
+                
             },
             select:{
                 firstname : true,
@@ -138,6 +158,28 @@ export class ManageSurgeries implements IManageSurgeries{
 
     }
 
+
+
+     async getPackages(clinicuuid: string) {
+
+        const  doctorsdetaislname = await this.prisma.clinicPackage.findMany({
+            where : {
+               clinicId : clinicuuid,
+               status : PackageVerifyStatus.VERIFIED
+            },
+            select:{
+                title : true,
+                id : true
+            }
+        });
+
+        return {
+            status : 200,
+            data : doctorsdetaislname
+        }
+
+
+    }
 
 
 }

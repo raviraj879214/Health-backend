@@ -10,6 +10,7 @@ export class ManageSurgeriesCreateDto {
   type?: string;        
   surgeryId?: string;
   treatmentid?:string;
+  packageid?:string;
    
 
 

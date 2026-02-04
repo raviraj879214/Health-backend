@@ -15,6 +15,8 @@ export interface IManageSurgeries{
     getTreatments();
 
     getDoctors(clinicuuid:string);
+
+    getPackages(clinicuuid:string);
     
     
 }

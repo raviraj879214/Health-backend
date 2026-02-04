@@ -33,9 +33,9 @@ export class ManageSurgeriesController{
             const file = requestbody.file;
             const image_url = file ? `${file.filename}` : null;
             // console.log("imagePath",image_url);
-            const { surgeryid = '',type = '' , doctorUuid ='' , clinicUuid = '',treatmentid ='' } = requestbody.body ?? {};
-           // console.log("treatmentid",treatmentid);
-//console.log("type",type);
+            const { surgeryid = '', type = '', doctorUuid = '', clinicUuid = '', treatmentid = '',packageid = '' } = requestbody.body ?? {};
+            // console.log("treatmentid",treatmentid);
+            //console.log("type",type);
 
            const dto: ManageSurgeriesCreateDto = {
                 imageUrl: image_url ?? undefined,
@@ -43,8 +43,10 @@ export class ManageSurgeriesController{
                 type: type ?? undefined,
                 doctorUuid : doctorUuid,
                 clinicUuid : clinicUuid,
-                treatmentid : treatmentid
+                treatmentid : treatmentid,
+                packageid : packageid
             };
+            
             return this.managesurgeries.addSurgeriesImages(dto);
         }
 
@@ -72,6 +74,20 @@ export class ManageSurgeriesController{
 
             return this.managesurgeries.getDoctors(clinicuuid);
         }
+
+
+         @UseGuards(JwtAuthGuard)
+        @Get("get-packages/:clinicuuid")
+        @Version("1")
+        async getPackagesByclinic(@Param("clinicuuid") clinicuuid:string){
+
+            return this.managesurgeries.getPackages(clinicuuid);
+        }
+
+
+
+
+
 
 
 

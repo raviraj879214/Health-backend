@@ -27,8 +27,6 @@ export class BoostPackagesController{
     @Get("/get-clinic-packages")
     @Version("1")
     async getClinicPackages(@Request() req){
-
-        
         console.log("req.user.id",req.user.id);
         return this.boostPackagesServices.getClinicPackage(req.user.id);
     }

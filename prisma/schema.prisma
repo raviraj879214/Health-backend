@@ -251,6 +251,7 @@ model Clinic {
   clinicUser          ClinicUser?            @relation(fields: [clinicUserId], references: [id])
   cordinator          User?                  @relation("ClinicCoordinator", fields: [cordinatorid], references: [id])
   country             Country?               @relation(fields: [countryId], references: [id])
+  ClinicBoost         ClinicBoost[]
   clinicDoctors       ClinicDoctor[]
   clinicDoctorAddress ClinicDoctorAddress[]
   googleAccount       ClinicGoogleAccount?
@@ -328,6 +329,7 @@ model ClinicSurgeryImage {
   surgeryId   String?
   id          String   @id @default(uuid()) @db.Uuid
   treatmentid String?
+  packageid   String?
 }
 
 model ListingPackage {
@@ -607,6 +609,7 @@ model ClinicPackage {
   status            Int?                    @default(0)
   reasontext        String?
   homepagefeatures  String?
+  packageid         String?
   boosts            ClinicBoost[]
   clinic            Clinic                  @relation(fields: [clinicId], references: [uuid])
   packagesDoctor    PackageDoctor[]         @relation("PackageDoctors")
@@ -656,8 +659,10 @@ model ClinicBoost {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   clinicuserid    String?
+  clinicUuid      String?       @db.Uuid
   boostPackage    BoostPackage  @relation(fields: [boostPackageId], references: [id])
   clinicPackage   ClinicPackage @relation(fields: [clinicPackageId], references: [id])
+  Clinic          Clinic?       @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction, map: "FK_ClinicBoost_Clinic")
 }
 
 model PackageSpecialization {
