@@ -307,6 +307,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
                         phone: dto.phone,
                         citycep: dto.city,
                         street: dto.street,
+                        address_number : dto.addressnumber,
                         complement: dto.complement,
                         neighborhood: dto.neighborhood,
                         cep: dto.cep,
