@@ -220,6 +220,7 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
                 clinic: true,
                 doctor: true,
                 User: true,
+                RequestFunds : true
             },
             orderBy: {
                 createdAt: 'desc'
@@ -263,12 +264,21 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
             return t.metadata &&  t.metadata.patientqueryid === patientqueryid
         });
 
+        const requestedFunds = await this.prisma.requestFunds.findMany({
+            where:{
+                patientQueryId : patientqueryid
+            },
+            orderBy:{
+                createdAt : "desc"
+            }
+        });
 
         return {
             success: true,
             message: "PaymentIntents fetched successfully",
             data: matched,
-            transfer : filteredTransfers
+            transfer : filteredTransfers,
+            RequestFunds : requestedFunds
         };
 
 
@@ -361,6 +371,20 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
     }
 
 
+    async markasPaid(id: string) {
+        const updateData  = await this.prisma.requestFunds.update({
+            where:{
+                id : id
+            },
+            data:{
+                collected : 1
+            }            
+        });
+
+        return{
+            data : updateData
+        }
+    }
 
 
 

@@ -76,7 +76,7 @@ export class ManagePayoutController{
     @Version("1")
     @ModuleAccess("Manage Payout")
     async payoutPatientQueryTransaction(@Req() request: AuthRequest,@Param("patientqueryid") patientqueryid:string){
-        console.log("executed",request.user?.sub);
+        console.log("executed",patientqueryid);
 
         return await this.managePayoutServices.getPatinetQueryTransaction(patientqueryid);
     }
@@ -92,6 +92,15 @@ export class ManagePayoutController{
 
 
 
+
+    @Post("mark-as-paid")
+    @Version("1")
+    @ModuleAccess("Manage Payout")
+    async markAsPaid(@Body() dto:{id:string}){
+
+        
+        return await this.managePayoutServices.markasPaid(dto.id);
+    }
 
 
 

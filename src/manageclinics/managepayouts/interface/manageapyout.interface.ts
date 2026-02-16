@@ -24,6 +24,6 @@ export interface IManagePayout{
         releaseFundVendor(verndoraccountid:string,patientqueryid:string,note:string,amount:string);
 
         
-
+        markasPaid(id:string);
     
 }
