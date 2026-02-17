@@ -38,18 +38,13 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
         const checkEmail = await this.prisma.clinicUser.findFirst({
             where: {
-                email: email,
-                status: PatientRegister.ACTIVE
+                email: email
+               
             }
         });
-
-
-
-
-        console.log("checkEmail",checkEmail);
         
-        if (checkEmail && checkEmail?.status !== PartnerRegister.ACTIVE) {
-            console.log("1");
+        if (checkEmail && checkEmail?.status === PartnerRegister.ACTIVE) {
+            
 
             return {
                 status: 404,
@@ -57,7 +52,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
             }
         }
         else if (!checkEmail) {
-            console.log("2");
+            
 
 
             let randomOtp: string;
@@ -69,6 +64,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
             const hash = await bcrypt.hash("Aalpha@100", 10);
+
             const createEmail = await this.prisma.clinicUser.create({
                 data: {
                     email: email,
@@ -103,7 +99,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
         }
         else if (checkEmail?.isOtpVerify == false && checkEmail.status == PartnerRegister.PENDING) {
-            console.log("3");
+           
             let randomOtp: string;
             if (process.env.NODE_ENV === 'local') {
                 randomOtp = '0000';
@@ -137,19 +133,21 @@ export class PartnerRegisterServices implements IPartnerRegister {
             }
         }
         else if (checkEmail?.isOtpVerify == true && checkEmail.status == PartnerRegister.PENDING) {
-            console.log("4");
+           
             return {
                 status: 200,
                 data: checkEmail
             }
         }
         else if (checkEmail.email === email && checkEmail.status !== PartnerRegister.PENDING) {
-            console.log("5");
+          
             return {
                 status: 404,
                 message: "This email is already registered. Please log in to continue."
             }
         }
+
+
         else {
 
             return {

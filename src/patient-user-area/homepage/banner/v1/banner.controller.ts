@@ -74,7 +74,7 @@ export class HomepageBannerController {
    }
 
 
-   @Get("get-google-reviews/:placesid")
+    @Get("get-google-reviews/:placesid")
     @Version("1")
     async getGoogleReviews(@Param("placesid") placesid:string){
 
