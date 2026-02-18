@@ -58,6 +58,10 @@ import { ManageCordinatorModule } from './RolesManagement/managecordinator/v1/ma
 import { ManagePackageModule } from './manageclinics/manage-packages/v1/managepackage.module';
 import { RequestClinic } from './PartnerArea/request/v1/request.module';
 import { OtherInformationModule } from './patientqueries/otherinformation/other-information.module';
+import { ManageSpecialtyModule } from './AdminArea/(specialties)/manage-specialties/v1/managespecialties.module';
+import { ManageSubSpecialtyModule } from './AdminArea/(specialties)/manage-sub-specialties/v1/managespecialties.module';
+import { ManageTreatmentModule } from './AdminArea/(specialties)/manage-treatment/v1/managespecialties.module';
+import { ManageProcedureModule } from './AdminArea/(specialties)/manage-procedure/v1/managespecialties.module';
 
 
 
@@ -84,7 +88,7 @@ import { OtherInformationModule } from './patientqueries/otherinformation/other-
     DoctorTreatment ,DoctorDecription , ClinicDoctorAddressModule , ManageClinicSpecializationModule , ManageClinicSpecialityModule , ManageClinicTreatmentModule,BoostPackagesModule,
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
     ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
-    ,NotificationModule,PatietnQueryModule,ManageCordinatorModule,ManagePackageModule,RequestClinic,OtherInformationModule
+    ,NotificationModule,PatietnQueryModule,ManageCordinatorModule,ManagePackageModule,RequestClinic,OtherInformationModule,ManageSpecialtyModule,ManageSubSpecialtyModule,ManageTreatmentModule,ManageProcedureModule
     
   ],
   
