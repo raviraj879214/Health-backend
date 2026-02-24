@@ -7,11 +7,13 @@ import { PatientQueriesServices } from "./patientqueries.service";
 import { Module } from "@nestjs/common";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 import { EmailService } from "src/EmailServices/email.service";
+import { ActivityLogModule } from "src/middleware/activitylogg/activity-log.module";
 
 
 
 
 @Module({
+     
      controllers:[PatientQueriesController],
      providers:[
         {
@@ -21,6 +23,6 @@ import { EmailService } from "src/EmailServices/email.service";
         RolesGuard, JwtService , PrismaService,EmailService
      ],
      exports: [PATIENT_QUERIES],
-      imports:[UniversalNotificationnModule],
+      imports:[UniversalNotificationnModule,ActivityLogModule],
 })
 export class ManagePatietnQueriesModule{}

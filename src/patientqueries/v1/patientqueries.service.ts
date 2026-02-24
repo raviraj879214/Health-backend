@@ -6,6 +6,7 @@ import { EmailService } from "src/EmailServices/email.service";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { ActivityLogService } from "src/middleware/activitylogg/activity-log.service";
 
 
 
@@ -14,9 +15,12 @@ import { EmailTemplate } from "src/common/emailtemplate/email-template";
 export class PatientQueriesServices implements IPatientQueries{
     constructor(private readonly prisma:PrismaService,
          private emailservice : EmailService,
-         private readonly universalNotification:UniversalNotification
+         private readonly universalNotification:UniversalNotification,
+         private readonly activityLogService: ActivityLogService
     ){}
 
+
+    
 
     async getPateintQueries(page: number, limit: number,adminid:number) {
 
@@ -301,13 +305,17 @@ export class PatientQueriesServices implements IPatientQueries{
     
 
 
-    async assignAdminCordinator(cordinatorid: string, patientqueryid: string) {
+    async assignAdminCordinator(cordinatorid: string, patientqueryid: string,userid:string) {
+
         const assign = await this.prisma.patientQuery.update({
             where: {
                 id: patientqueryid
             },
             data: {
                 cordinatorid: Number(cordinatorid)
+            },
+            include:{
+                User: true
             }
         });
 
@@ -329,9 +337,23 @@ export class PatientQueriesServices implements IPatientQueries{
             htmlContent
         );
 
+
+        const ipAddress= "0.0.0.0";
+        const userAgent= "any browser";
+        await this.activityLogService.createLog({
+            userId : Number(userid),
+            action: `Cordinator Changed - #${assign.querycode}`,
+            description: `The ${assign.User?.firstname} ${assign.User?.lastname} (${assign.User?.email}) has been assigned to patient query code ${assign.querycode}`,
+            entityType: "specialtyPages",
+            entityId: Number(assign.id),
+            ipAddress,
+            userAgent,
+        });
+
         
         return {
-            status: 200
+            status: 200,
+            data : assign
         }
     }
 

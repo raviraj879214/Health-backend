@@ -18,7 +18,7 @@ export interface IPatientQueries{
 
     getAllCordinator();
 
-    assignAdminCordinator(cordinatorid:string,patientqueryid:string);
+    assignAdminCordinator(cordinatorid:string,patientqueryid:string,userid:string);
 
 
 

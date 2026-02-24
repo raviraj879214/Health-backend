@@ -124,10 +124,12 @@ export class PatientQueriesController{
         @Put("assign-cordinator")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async assignCordinator(@Body() dto:{cordinatorid:string,patientqueryid:string}){
+        async assignCordinator(@Body() dto:{cordinatorid:string,patientqueryid:string},@Req() request: AuthRequest){
 
-            
-            return await this.patientQueriesService.assignAdminCordinator(dto.cordinatorid,dto.patientqueryid);
+            const userid = request.user?.sub;
+
+           
+            return await this.patientQueriesService.assignAdminCordinator(dto.cordinatorid,dto.patientqueryid,String(userid));
         }
 
 
