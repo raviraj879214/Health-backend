@@ -720,13 +720,14 @@ model PackageProcedure {
 }
 
 model PackageFieldDefinition {
-  id          String              @id @default(uuid()) @db.Uuid
-  fieldKey    String              @unique
-  label       String
-  fieldType   String
-  required    Boolean             @default(false)
-  createdAt   DateTime            @default(now())
-  fieldValues PackageFieldValue[]
+  id              String              @id @default(uuid()) @db.Uuid
+  fieldKey        String              @unique
+  label           String
+  fieldType       String
+  required        Boolean             @default(false)
+  createdAt       DateTime            @default(now())
+  predefinedvalue String?
+  fieldValues     PackageFieldValue[]
 }
 
 model PackageFieldValue {

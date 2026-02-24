@@ -25,9 +25,9 @@ export class DoctorServices implements IDoctorServices{
     async getDoctors(clinicuuid: string) {
     
                 const assignments = await this.prisma.clinicDoctor.findMany({
-                where: {
-                    clinicUuid: clinicuuid,
-                },
+                    where: {
+                        clinicUuid: clinicuuid,
+                    },
                 });
 
           
@@ -39,10 +39,10 @@ export class DoctorServices implements IDoctorServices{
                     uuid: {
                         in: doctorUuids,
                     },
-                     OR: [
-                        { DoctorVerify: DoctorVerifyStatus.VERIFIED },
-                        { DoctorVerify: DoctorVerifyStatus.EDIT },
-                    ],
+                    //  OR: [
+                    //     { DoctorVerify: DoctorVerifyStatus.VERIFIED },
+                    //     { DoctorVerify: DoctorVerifyStatus.EDIT },
+                    // ],
                 },
              });
 

@@ -16,6 +16,10 @@ export interface IPatientQueries{
     assignDoctorToQuery(doctorid:string,queryid:string);
     assignQueryToClinic(patientqueryid:string,status:string);
 
+    getAllCordinator();
+
+    assignAdminCordinator(cordinatorid:string,patientqueryid:string);
+
 
 
 

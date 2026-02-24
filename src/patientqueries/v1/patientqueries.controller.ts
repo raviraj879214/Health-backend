@@ -76,8 +76,7 @@ export class PatientQueriesController{
         @ModuleAccess("Manage Patient Queries")
         async assignPackageQuery(@Body("packageid") packageid:string,@Body("queryid") queryid:string){
 
-            console.log("packageid",packageid);
-            console.log("queryid",queryid);
+          
             return await this.patientQueriesService.assignPackageToQuery(packageid,queryid);
         } 
 
@@ -95,8 +94,7 @@ export class PatientQueriesController{
         @ModuleAccess("Manage Patient Queries")
         async assignDoctorQuery(@Body("doctorid") doctorid:string,@Body("queryid") queryid:string){
 
-            console.log("doctorid",doctorid);
-            console.log("queryid",queryid);
+          
             return await this.patientQueriesService.assignDoctorToQuery(doctorid,queryid);
         } 
 
@@ -107,11 +105,30 @@ export class PatientQueriesController{
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
         async assignToClinicQuery(@Body("patientqueryid") patientqueryid:string,@Body("status") status:string){
-            console.log(patientqueryid,status);
+           
             return await this.patientQueriesService.assignQueryToClinic(patientqueryid,status);
         } 
 
 
+
+        @Get("get-all-cordinator")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async getAllCordinators(){
+            
+            return await this.patientQueriesService.getAllCordinator();
+        }
+
+
+
+        @Put("assign-cordinator")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async assignCordinator(@Body() dto:{cordinatorid:string,patientqueryid:string}){
+
+            
+            return await this.patientQueriesService.assignAdminCordinator(dto.cordinatorid,dto.patientqueryid);
+        }
 
 
 

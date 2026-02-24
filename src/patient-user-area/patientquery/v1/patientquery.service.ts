@@ -61,27 +61,27 @@ export class PatientQueryServices implements IPatietnQuery{
 
 
 
-   async getCordinatorDetails(clinicid: string) {
-    
-  const clinic = clinicid === "demo-id"
-    ? await this.prisma.clinic.findFirst({
+  async getCordinatorDetails(clinicid: string) {
+
+   console.log("clinicid",clinicid);
+
+   
+    const clinic = clinicid === "demo-id"
+      ? 
+      
+      await this.prisma.user.findUnique({
         where: {
-          cordinator: {
-            isNot: null, // ensures clinic has coordinator
-          },
+          id: 1  
         },
         select: {
-          cordinator: {
-            select: {
-              whatsappNumber: true,
-              telegramNumber: true,
-              messengerID: true,
-            },
-          },
-        },
-        orderBy: { createdAt: "asc" }, // consistent "first"
+          whatsappNumber: true,
+          telegramNumber: true,
+          messengerID: true,
+        }
       })
-    : await this.prisma.clinic.findUnique({
+
+
+      : await this.prisma.clinic.findUnique({
         where: { uuid: clinicid },
         select: {
           cordinator: {
@@ -94,11 +94,13 @@ export class PatientQueryServices implements IPatietnQuery{
         },
       });
 
-  return {
-    status: 200,
-    data: clinic,
-  };
-}
+       console.log("cordinator clinic",clinic);
+
+    return {
+      status: 200,
+      data: clinic,
+    };
+  }
 
 
 

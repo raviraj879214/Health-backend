@@ -258,8 +258,6 @@ export class PatientQueriesServices implements IPatientQueries{
                             id : clinicdetails?.clinicUserUuid!,
                             message: `${clinicdetails?.name} has received a new request ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`
                     }
-
-
                     await this.universalNotification.HandleNotification(payload);
                     
                     const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
@@ -285,8 +283,57 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
+
+    async getAllCordinator() {
+        const allCordinator = await this.prisma.user.findMany({
+            where: {
+                role: {
+                name: "Cordinator"
+                }
+            }
+        });
+
+        return{
+            data : allCordinator,
+            status : 200
+        }
+    }
     
 
+
+    async assignAdminCordinator(cordinatorid: string, patientqueryid: string) {
+        const assign = await this.prisma.patientQuery.update({
+            where: {
+                id: patientqueryid
+            },
+            data: {
+                cordinatorid: Number(cordinatorid)
+            }
+        });
+
+        const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(cordinatorid) } });
+        let payload: WebhookNotificationDto = {
+            title: `The New Request Received - ${assign.querycode}`,
+            area: "",
+            id: String(cordinatordetails?.id)!,
+            message: `The New request assigned admin to you please go throught the query - ${assign.querycode}`
+        }
+        await this.universalNotification.HandleNotification(payload);
+
+        const emailText = `The New request assigned admin to you please go throught the query - ${assign.querycode}`;
+        const htmlContent = EmailTemplate.getTemplate(emailText);
+        await this.emailservice.sendEmail(
+            cordinatordetails?.email!,
+            `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The New Request Received - ${assign.querycode}`,
+            "",
+            htmlContent
+        );
+
+        
+        return {
+            status: 200
+        }
+    }
 
 
 

@@ -345,7 +345,8 @@ const formatted = clinics
 
     async postQuery(dto: PostQueryCreateDto) {
 
-        console.log(dto);
+        // console.log(dto);
+        
         if (!dto) {
             throw new Error('Request body is empty or invalid');
         }
