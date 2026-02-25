@@ -42,8 +42,9 @@ export class PatientQueriesController{
         @Post("insert-final-deal-price")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async insertFinalDealPrice(@Body() dto:PatientQueryCreateDto){
-            return await this.patientQueriesService.insertFinalDealPrice(dto);
+        async insertFinalDealPrice(@Body() dto:PatientQueryCreateDto,@Req() request: AuthRequest){
+             const userid = request.user?.sub;
+            return await this.patientQueriesService.insertFinalDealPrice(dto,String(userid));
         }
 
 
@@ -57,8 +58,9 @@ export class PatientQueriesController{
         @Post("assign-clinic-query")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async assignClinicQuery(@Body("clinicid") clinicid:string,@Body("queryid") queryid:string){
-            return await this.patientQueriesService.assignClinicToPatientQuery(clinicid,queryid);
+        async assignClinicQuery(@Body("clinicid") clinicid:string,@Body("queryid") queryid:string,@Req() request: AuthRequest){
+             const userid = request.user?.sub;
+            return await this.patientQueriesService.assignClinicToPatientQuery(clinicid,queryid,String(userid));
         } 
 
 
@@ -74,10 +76,10 @@ export class PatientQueriesController{
         @Post("assign-package-query")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async assignPackageQuery(@Body("packageid") packageid:string,@Body("queryid") queryid:string){
-
+        async assignPackageQuery(@Body("packageid") packageid:string,@Body("queryid") queryid:string,@Req() request: AuthRequest){
+             const userid = request.user?.sub;
           
-            return await this.patientQueriesService.assignPackageToQuery(packageid,queryid);
+            return await this.patientQueriesService.assignPackageToQuery(packageid,queryid,String(userid));
         } 
 
 
@@ -92,10 +94,10 @@ export class PatientQueriesController{
         @Post("assign-doctor-query")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async assignDoctorQuery(@Body("doctorid") doctorid:string,@Body("queryid") queryid:string){
+        async assignDoctorQuery(@Body("doctorid") doctorid:string,@Body("queryid") queryid:string,@Req() request: AuthRequest){
 
-          
-            return await this.patientQueriesService.assignDoctorToQuery(doctorid,queryid);
+           const userid = request.user?.sub;
+            return await this.patientQueriesService.assignDoctorToQuery(doctorid,queryid,String(userid));
         } 
 
 
@@ -104,9 +106,10 @@ export class PatientQueriesController{
         @Put("assign-to-clinic-query")
         @Version("1")
         @ModuleAccess("Manage Patient Queries")
-        async assignToClinicQuery(@Body("patientqueryid") patientqueryid:string,@Body("status") status:string){
+        async assignToClinicQuery(@Body("patientqueryid") patientqueryid:string,@Body("status") status:string,@Req() request: AuthRequest){
            
-            return await this.patientQueriesService.assignQueryToClinic(patientqueryid,status);
+             const userid = request.user?.sub;
+            return await this.patientQueriesService.assignQueryToClinic(patientqueryid,status,String(userid));
         } 
 
 

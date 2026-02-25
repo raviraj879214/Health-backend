@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PatientQueryPaymentStatus } from 'src/common/enum/PatientQueryPaymentStatus';
+import { ActivityLogService } from 'src/middleware/activitylogg/activity-log.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import Stripe from 'stripe';
 
@@ -7,7 +8,12 @@ import Stripe from 'stripe';
 export class PaymentService {
   private stripe: Stripe;
 
-  constructor(private readonly prism:PrismaService) {
+  constructor(
+    private readonly prism:PrismaService,
+    private readonly activityLogService: ActivityLogService
+
+
+  ) {
     // ✅ Must include apiVersion
    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
       apiVersion: "2025-10-29.clover",
@@ -97,7 +103,7 @@ export class PaymentService {
 
 
 
-  async updatePatientQueryPaymentDetails(id:string,generatedlink:string,paymentLinkid:string){
+  async updatePatientQueryPaymentDetails(id:string,generatedlink:string,paymentLinkid:string,userid:string){
 
     const updateData = await this.prism.patientQueryPaymentDetails.update({
       where :{
@@ -106,8 +112,31 @@ export class PaymentService {
       data :{
           generatedlink : generatedlink,
           paymentLinkid : paymentLinkid
+      },
+      include:{
+        patientQuery : true
       }
-    })
+    });
+
+
+        const ipAddress= "0.0.0.0";
+        const userAgent= "any browser";
+
+        // await this.activityLogService.createLog({
+        //     userId : Number(userid),
+        //     action: `The coordinator has created a payment link for patient query code #${updateData.patientQuery.querycode}.`,
+        //     description: ``,
+        //     entityType: "createShareableLink",
+        //     entityId: Number(userid),
+        //     ipAddress,
+        //     userAgent,
+        // });
+
+
+
+
+
+
     return{
       staus : 200
     }

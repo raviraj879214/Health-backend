@@ -1,7 +1,8 @@
 
 
-import { BadRequestException, Body, Controller, HttpException, Post, Version } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpException, Post, Req, Version } from '@nestjs/common';
 import { PaymentService } from './payment.service';
+import type { AuthRequest } from 'src/common/decorators/auth-request.interface';
 
 @Controller('/api/payments')
 export class PaymentController {
@@ -162,11 +163,14 @@ async createShareableLink(@Body() body: {
   patientQueryId:string;
   displaytext :string;
   commission:string;
+}
+,@Req() request: AuthRequest
+) {
 
-}) {
 
+  const userid = request.user?.sub;
 
-  console.log("body.displaytext",body.commission);
+  console.log("body.displaytext",userid);
   const stripe = this.paymentService.client;
 
   const product = await stripe.products.create({
@@ -213,7 +217,8 @@ async createShareableLink(@Body() body: {
   await await this.paymentService.updatePatientQueryPaymentDetails(
     paymentetailid.id,
     paymentLink.url,
-    paymentLink.id
+    paymentLink.id,
+    String(userid)
   );
 
   console.log("paymentLink",paymentLink.id);

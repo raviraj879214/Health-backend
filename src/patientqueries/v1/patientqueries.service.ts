@@ -7,6 +7,7 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { ActivityLogService } from "src/middleware/activitylogg/activity-log.service";
+import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 
 
 
@@ -118,7 +119,7 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
-    async insertFinalDealPrice(dto: PatientQueryCreateDto) {
+    async insertFinalDealPrice(dto: PatientQueryCreateDto,userid:string) {
         
         const createData = await this.prisma.patientQuery.update({
             where :{
@@ -128,6 +129,20 @@ export class PatientQueriesServices implements IPatientQueries{
                 finalPrice : String(dto.finalprice)
             }
         });
+
+        const ipAddress= "0.0.0.0";
+        const userAgent= "any browser";
+        await this.activityLogService.createLog({
+            userId : Number(userid),
+            action: `Patient Query Final Deal Price - #${createData.querycode} Price ${brazilianCurrency(dto.finalprice)}`,
+            description: `The coordinator has finalized the deal and communicated the agreed amount of ${brazilianCurrency(dto.finalprice)}.`,
+            entityType: "finalDealPrice",
+            entityId: Number(userid),
+            ipAddress,
+            userAgent,
+        });
+
+
 
         return {
             status : 200,
@@ -150,7 +165,8 @@ export class PatientQueriesServices implements IPatientQueries{
 
 
 
-    async assignClinicToPatientQuery(clinicid: string, queryid: string) {
+    async assignClinicToPatientQuery(clinicid: string, queryid: string,userid:string) {
+        const prevPatientQuery = await this.prisma.patientQuery.findFirst({where:{id : queryid},include:{clinic:true}});
         const updateData = await this.prisma.patientQuery.update({
             where :{
                 id : queryid
@@ -159,8 +175,30 @@ export class PatientQueriesServices implements IPatientQueries{
                 clinicId : clinicid,
                 packageId : null,
                 doctorid : null
+            },
+            include:{
+                clinic : true
             }
         });
+
+        const ipAddress = "0.0.0.0";
+        const userAgent = "any browser";
+        await this.activityLogService.createLog({
+            userId: Number(userid),
+            action: `Patient Query Clinic Added/Updated - #${updateData.querycode}`,
+            description: prevPatientQuery?.clinic?.name ? `The coordinator has updated the clinic from ${prevPatientQuery.clinic.name} to ${updateData.clinic?.name || "N/A"} for patient query #${updateData.querycode}.`: `The coordinator has added the clinic ${updateData.clinic?.name || "N/A"} for patient query #${updateData.querycode}.`,
+            entityType: "clinicAssign",
+            entityId: Number(userid),
+            ipAddress,
+            userAgent,
+        });
+
+
+
+
+
+
+
         return {
             status : 200,
             data : updateData
@@ -190,8 +228,9 @@ export class PatientQueriesServices implements IPatientQueries{
 
 
 
-    async assignPackageToQuery(packageId: string, queryid: string) {
+    async assignPackageToQuery(packageId: string, queryid: string,userid:string) {
 
+        const prevPatientQuery = await this.prisma.patientQuery.findFirst({where:{id : queryid},include:{package:true}});
 
         const updateData = await this.prisma.patientQuery.update({
             where :{
@@ -199,8 +238,31 @@ export class PatientQueriesServices implements IPatientQueries{
             },
             data :{
                 packageId : packageId
+            },
+            include:{
+                package:true
             }
         });
+
+
+        const ipAddress = "0.0.0.0";
+        const userAgent = "any browser";
+        await this.activityLogService.createLog({
+            userId: Number(userid),
+            action: `Patient Query Package Added/Updated - #${updateData.querycode}`,
+            description: prevPatientQuery?.package?.title ? `The coordinator has updated the package from  ${prevPatientQuery.package.title}  to ${updateData.package?.title || "N/A"}  for patient query #${updateData.querycode}.`: `The coordinator has added the package  ${updateData.package?.title || "N/A"}  for patient query #${updateData.querycode}.`,
+            entityType: "packageAssign",
+            entityId: Number(userid),
+            ipAddress,
+            userAgent,
+        });
+
+
+
+
+
+
+
         return {
             status : 200,
             data : updateData
@@ -223,8 +285,9 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
-     async assignDoctorToQuery(doctorid: string, queryid: string) {
+     async assignDoctorToQuery(doctorid: string, queryid: string,userid:string) {
 
+        const prevPatientQuery = await this.prisma.patientQuery.findFirst({where:{id : queryid},include:{doctor:true}});
 
         const updateData = await this.prisma.patientQuery.update({
             where :{
@@ -232,8 +295,28 @@ export class PatientQueriesServices implements IPatientQueries{
             },
             data :{
                 doctorid : doctorid
+            },
+            include:{
+                doctor : true
             }
         });
+
+
+        const ipAddress = "0.0.0.0";
+        const userAgent = "any browser";
+        await this.activityLogService.createLog({
+            userId: Number(userid),
+            action: `Patient Query Doctor Added/Updated - #${updateData.querycode}`,
+            description: prevPatientQuery?.doctor?.firstname ? `The coordinator has updated the doctor from Dr. ${prevPatientQuery.doctor.firstname} - (${prevPatientQuery.doctor.crm}) to Dr. ${updateData.doctor?.firstname || "N/A"} - (${prevPatientQuery.doctor.crm}) for patient query #${updateData.querycode}.`: `The coordinator has added the doctor Dr. ${updateData.doctor?.firstname || "N/A"} - (${updateData.doctor?.crm}) for patient query #${updateData.querycode}.`,
+            entityType: "doctorAssign",
+            entityId: Number(userid),
+            ipAddress,
+            userAgent,
+        });
+
+
+
+
         return {
             status : 200,
             data : updateData
@@ -241,38 +324,54 @@ export class PatientQueriesServices implements IPatientQueries{
     }
 
 
-    async  assignQueryToClinic(patientqueryid: string, status: string) {
+    async assignQueryToClinic(patientqueryid: string, status: string, userid: string) {
 
         const update = await this.prisma.patientQuery.update({
-            where:{
-                id : patientqueryid
+            where: {
+                id: patientqueryid
             },
-            data :{
-                status : Number(status)
+            data: {
+                status: Number(status)
+            },
+            include:{
+                clinic : true
             }
         });
 
 
 
 
-                   const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: update.clinicId! },include:{clinicUser:true}});
-                    let payload : WebhookNotificationDto ={
-                            title : `The New Request Received To Clinic - ${clinicdetails?.name}`,
-                            area: "",
-                            id : clinicdetails?.clinicUserUuid!,
-                            message: `${clinicdetails?.name} has received a new request ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`
-                    }
-                    await this.universalNotification.HandleNotification(payload);
-                    
-                    const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
-                    const emailText = `${clinicdetails?.name} has received a new request  ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`;
-                    const htmlContent = EmailTemplate.getTemplate(emailText);
-                    await this.emailservice.sendEmail(
-                            clinicdetails?.email!,
-                            `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The New Request Received To Clinic - ${clinicdetails?.name}`,  
-                            "",            
-                            htmlContent  
-                    );
+        const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: update.clinicId! }, include: { clinicUser: true } });
+        let payload: WebhookNotificationDto = {
+            title: `The New Request Received To Clinic - ${clinicdetails?.name}`,
+            area: "",
+            id: clinicdetails?.clinicUserUuid!,
+            message: `${clinicdetails?.name} has received a new request ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`
+        }
+        await this.universalNotification.HandleNotification(payload);
+
+        const adminemail = await this.prisma.user.findFirst({ where: { role: { name: "SuperAdmin" } }, select: { email: true } });
+        const emailText = `${clinicdetails?.name} has received a new request  ${update.querycode} from ${process.env.NEXT_PUBLIC_PROJECT_NAME}. Please review the request and contact the coordinator.`;
+        const htmlContent = EmailTemplate.getTemplate(emailText);
+        await this.emailservice.sendEmail(
+            clinicdetails?.email!,
+            `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The New Request Received To Clinic - ${clinicdetails?.name}`,
+            "",
+            htmlContent
+        );
+
+
+        const ipAddress = "0.0.0.0";
+        const userAgent = "any browser";
+        await this.activityLogService.createLog({
+            userId: Number(userid),
+            action: `The coordinator has sent patient query #${update.querycode} to clinic ${update.clinic?.name}.`,
+            description: `The coordinator has discussed the case with the patient and the clinic, and has sent patient query #${update.querycode} to ${update.clinic?.name}.`,
+            entityType: "clinicAssign",
+            entityId: Number(userid),
+            ipAddress,
+            userAgent,
+        });
 
 
 
@@ -280,9 +379,10 @@ export class PatientQueriesServices implements IPatientQueries{
 
 
 
-        return{
-            status : 200,
-            data : update
+
+        return {
+            status: 200,
+            data: update
         }
     }
 

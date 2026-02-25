@@ -6,9 +6,11 @@ import { PaymentService } from './payment.service';
 import { PaymentController } from './payment.controller';
 import { WebhookController } from './webhook.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ActivityLogModule } from 'src/middleware/activitylogg/activity-log.module';
 
 
 @Module({
+  imports:[ActivityLogModule],
   providers: [PaymentService ,PrismaService],
   controllers: [PaymentController, WebhookController]
 

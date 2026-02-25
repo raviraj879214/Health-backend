@@ -7,14 +7,14 @@ export interface IPatientQueries{
 
     getPateintQueries(page: number, limit: number, adminid:number);
     getPatientQueryDetails(id:string);
-    insertFinalDealPrice(dto:PatientQueryCreateDto);
+    insertFinalDealPrice(dto:PatientQueryCreateDto,userid:string);
     getClinicList();
-    assignClinicToPatientQuery(clinicid:string,queryid:string);
+    assignClinicToPatientQuery(clinicid:string,queryid:string,userid:string);
     getPackagesList(clinicid:string);
-    assignPackageToQuery(packageid:string,queryid:string);
+    assignPackageToQuery(packageid:string,queryid:string,userid:string);
     getDoctorList(clinicid:string);
-    assignDoctorToQuery(doctorid:string,queryid:string);
-    assignQueryToClinic(patientqueryid:string,status:string);
+    assignDoctorToQuery(doctorid:string,queryid:string,userid:string);
+    assignQueryToClinic(patientqueryid:string,status:string,userid:string);
 
     getAllCordinator();
 

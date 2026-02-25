@@ -101,7 +101,8 @@ const totalCount = await this.prisma.patientQuery.count({
           clinic:true,
           package : true,
           doctor: true,
-          PatientQueryOtherInformation : true
+          PatientQueryOtherInformation : true,
+          User : true
         }
       });
 
