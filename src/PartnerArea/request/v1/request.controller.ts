@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { REQUESTCONST } from "../constant/request.constant";
 import { RequestServices } from "./request.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
@@ -88,6 +88,14 @@ export class RequestController{
         return await this.requestservices.getGooglePlaces(placesid);
     }
 
+
+    @UseGuards(JwtAuthGuard)
+    @Put("update-patient-query-status")
+    @Version("1")
+    async updatePatientQueryStatus(@Body() dto: { queryid: string, status: string, reason: string }) {
+
+        return await this.requestservices.updatepatientQuery(dto.queryid,dto.status,dto.reason);
+    }
 
 
 

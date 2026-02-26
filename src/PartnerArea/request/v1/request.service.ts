@@ -50,7 +50,9 @@ console.log("clinicIds", clinicIds);
 const assignedQueries = await this.prisma.patientQuery.findMany({
   where: {
     clinicId: { in: clinicIds },
-    status: PatientQueryStatus.ASSIGNED,
+    NOT:{
+      status : PatientQueryStatus.PENDING
+    }
   },
   include:{
     clinic:{
@@ -149,10 +151,12 @@ const totalCount = await this.prisma.patientQuery.count({
               let payloadclinic: WebhookNotificationDto = {
                       title: `Requested Funds  to Clinic ${patientquerydetails?.clinic?.name} for Patient Query - ${patientquerydetails?.querycode}`,
                       area: "",
-                      id : patientquerydetails?.clinic?.clinicUserUuid! ,
+                      id : String(patientquerydetails?.cordinatorid),
                       message: `Requested Funds  to the clinic ${patientquerydetails?.clinic?.name} for patient query code ${patientquerydetails?.querycode}.`,
               };
               await this.universalNotification.HandleNotification(payloadclinic);
+
+
       
                const htmlContentAdmin = EmailTemplate.getTemplate(`Requested Funds  to the clinic ${patientquerydetails?.clinic?.name} for patient query code ${patientquerydetails?.querycode}.`);
                await this.emailservice.sendEmail(
@@ -162,6 +166,8 @@ const totalCount = await this.prisma.patientQuery.count({
                    htmlContentAdmin
                    
                );
+
+
                const htmlContentClinic = EmailTemplate.getTemplate(`Requested Funds have been received to the clinic ${patientquerydetails?.clinic?.name} for patient query code ${patientquerydetails?.querycode}.`);
 
               //  await this.emailservice.sendEmail(
@@ -340,6 +346,67 @@ const totalCount = await this.prisma.patientQuery.count({
         opening_hours: details.opening_hours || null,
         types: details.types || [],
       };
+
+  }
+
+
+
+
+  async updatepatientQuery(queryid: string, status: string,reason:string) {
+    const updatedata = await this.prisma.patientQuery.update({
+      where :{
+        id : queryid
+      },
+        data:{
+          status : Number(status),
+          reason : reason
+      },
+      include:{
+        clinic : true,
+
+      }
+    });
+
+      let payload: WebhookNotificationDto = {
+                        title: `The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}.`,
+                        area: "admin",
+                        message: `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                };
+      await this.universalNotification.HandleNotification(payload);
+
+      const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(updatedata.cordinatorid) } });
+      let payloadcordinator: WebhookNotificationDto = {
+                        title: `The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}.`,
+                        area: "",
+                        id : String(updatedata.cordinatorid),
+                        message: `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                };
+      await this.universalNotification.HandleNotification(payloadcordinator);
+
+       const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+       const htmlContentAdmin = EmailTemplate.getTemplate(``);
+
+          await this.emailservice.sendEmail(
+                   adminemail?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}`,
+                   `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                   htmlContentAdmin
+           );
+
+          await this.emailservice.sendEmail(
+                   cordinatordetails?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}`,
+                   `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                   htmlContentAdmin
+           );
+
+
+
+    return{
+      status : 200,
+      data : updatedata
+    }
+
 
   }
 

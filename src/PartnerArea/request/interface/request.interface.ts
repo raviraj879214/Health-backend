@@ -24,4 +24,7 @@ export interface IRequests{
     getGooglePlaces(placesid:string);
 
     
+    updatepatientQuery(queryid:string,status:string,reason:string);
+
+
 }
