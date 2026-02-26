@@ -8,6 +8,7 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { Emailenumconsts } from "src/common/emailtemplate/emailenums";
 import { ClinicStatus } from "src/common/enum/ClinicStatus";
+import { ActivityLogService } from "src/middleware/activitylogg/activity-log.service";
 
 
 
@@ -19,7 +20,8 @@ export class ManageClinicServices implements IManageClinic{
     constructor(
         private readonly prisma:PrismaService,
         private emailservice : EmailService,
-        private readonly universalNotification:UniversalNotification
+        private readonly universalNotification:UniversalNotification,
+         private readonly activityLogService: ActivityLogService
 
     ){}
 
@@ -40,7 +42,8 @@ export class ManageClinicServices implements IManageClinic{
                     include : {
                         doctor : true
                     }
-                }
+                },
+                cordinator : true
             },
             orderBy:{
                 createdAt : "desc"
@@ -71,7 +74,8 @@ export class ManageClinicServices implements IManageClinic{
                 include:{
                     clinicUser :  true,
                     city:true,
-                    country:true
+                    country:true,
+                    cordinator : true
                 }
             });
             return {
@@ -1101,5 +1105,57 @@ export class ManageClinicServices implements IManageClinic{
     }
 
 
+
+    async getCordinators() {
+        const data= await this.prisma.user.findMany({
+            where:{
+                role : {
+                    name : "Cordinator"
+                }
+            }
+        });
+        return{
+            data : data
+        }
+    }
+
+
+
+    async  assignCordinators(clinicid: string, cordinatorid: string, userid: string) {
+
+        const  updateData = await this.prisma.clinic.update({
+            where:{
+                uuid : clinicid
+            },
+            data :{
+                cordinatorid : Number(cordinatorid)
+            },
+            include:{
+                cordinator : true
+            }
+        });
+
+
+
+        const ipAddress= "0.0.0.0";
+        const userAgent= "any browser";
+
+        await this.activityLogService.createLog({
+            userId : Number(userid),
+            action: `Coordinator Changed For Clinic ${updateData.name}`,
+            description: `The coordinator for clinic ${updateData.name} has been changed to ${updateData.cordinator?.firstname} ${updateData.cordinator?.lastname} (${updateData.cordinator?.email}).`,
+            entityType: "specialtyPages",
+            entityId: Number(updateData.id),
+            ipAddress,
+            userAgent,
+        });
+
+        return {
+            status : 200 , 
+            data : updateData
+        }
+    }
+
+    
 
 }

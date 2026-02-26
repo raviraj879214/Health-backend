@@ -69,7 +69,12 @@ export interface IManageClinic{
 
 
 
+
+    getCordinators();
     
 
+    assignCordinators(clinicid:string,cordinatorid:string,userid:string);
+
+    
     
 }

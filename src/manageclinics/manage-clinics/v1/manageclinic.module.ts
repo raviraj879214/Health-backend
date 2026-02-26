@@ -7,6 +7,7 @@ import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/prisma/prisma.service";
 import { EmailService } from "src/EmailServices/email.service";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { ActivityLogModule } from "src/middleware/activitylogg/activity-log.module";
 
 
 
@@ -25,7 +26,7 @@ import { UniversalNotificationnModule } from "src/notification/GlobalNotificatio
    
        RolesGuard, JwtService , PrismaService , EmailService
      ],
-     imports:[UniversalNotificationnModule],
+     imports:[UniversalNotificationnModule,ActivityLogModule],
 
      exports: [MANAGE_CLINIC_CONSTANT],
 })

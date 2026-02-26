@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Inject, Param, Post, Put, Query, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { MANAGE_CLINIC_CONSTANT } from "../constant/manageclinic.constamt";
 import { ManageClinicServices } from "./manageclinic.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { ModuleAccess } from "src/common/decorators/module-access.decorator";
 import { SendMessageCreateDto } from "./dto/manageclinic.update.dto";
+import type { AuthRequest } from "src/common/decorators/auth-request.interface";
 
 
 
@@ -318,16 +319,33 @@ export class ManageClinicController{
          @ModuleAccess("Manage Clinic")
          async saveCommssion(@Body() body: { id: string; commission: string }) {
             const { id, commission } = body;
-
             console.log("commission", id, commission);
-
             return this.manageClinicService.saveCommssion(id, commission);
          }
 
 
 
 
+         @Get("get-cordinators")
+         @Version("1")
+         @ModuleAccess("Manage Clinic")
+         async getCordinators(){
 
+            return await this.manageClinicService.getCordinators();
+         }
+
+
+
+         @Put("update-cordinators")
+         @Version("1")
+         @ModuleAccess("Manage Clinic")
+         async updateCordinators(@Body() dto:{clinicid:string,cordinatorid},@Req() request: AuthRequest){
+            const userid = request.user?.sub;
+
+
+            return await this.manageClinicService.assignCordinators(dto.clinicid,dto.cordinatorid,String(userid));
+            
+         }
 
 
 
