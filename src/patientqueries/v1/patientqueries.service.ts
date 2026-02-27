@@ -10,6 +10,7 @@ import { ActivityLogService } from "src/middleware/activitylogg/activity-log.ser
 import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 import { randomUUID } from "crypto";
 import { PackageQueryFinalPriceStatus } from "src/common/enum/PackageQueryFinalPriceStatus";
+import { PatientQueryStatus } from "src/common/enum/patientQueryStatus";
 
 
 
@@ -154,23 +155,20 @@ export class PatientQueriesServices implements IPatientQueries{
         });
 
 
-             
-
-              let payload: WebhookNotificationDto = {
-                      title:`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
-                      area: "admin",
-                      message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
-              };
-              await this.universalNotification.HandleNotification(payload);
-              let payloadclinic: WebhookNotificationDto = {
-                      title: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
-                      area: "",
-                      id : String(createData.clinic?.clinicUserUuid),
-                      message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
-              };
-              await this.universalNotification.HandleNotification(payloadclinic);
-
-
+         if(createData.status === PatientQueryStatus.ASSIGNED){
+            let payload: WebhookNotificationDto = {
+                    title:`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                    area: "admin",
+                    message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+            };
+            await this.universalNotification.HandleNotification(payload);
+            let payloadclinic: WebhookNotificationDto = {
+                    title: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                    area: "",
+                    id : String(createData.clinic?.clinicUserUuid),
+                    message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+            };
+            await this.universalNotification.HandleNotification(payloadclinic);
             const htmlContentAdmin = EmailTemplate.getTemplate(`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`);
             await this.emailservice.sendEmail(
                 createData.clinic?.email!,
@@ -179,6 +177,9 @@ export class PatientQueriesServices implements IPatientQueries{
                 htmlContentAdmin
             );
 
+         }
+
+            
 
 
 
