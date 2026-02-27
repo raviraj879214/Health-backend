@@ -8,6 +8,8 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { ActivityLogService } from "src/middleware/activitylogg/activity-log.service";
 import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
+import { randomUUID } from "crypto";
+import { PackageQueryFinalPriceStatus } from "src/common/enum/PackageQueryFinalPriceStatus";
 
 
 
@@ -107,8 +109,15 @@ export class PatientQueriesServices implements IPatientQueries{
                     orderBy :{
                         createdAt : "desc"
                     }
+                },
+                PatientQueryFinalPrice : {
+                    orderBy : {createdAt : "desc"},
+                    include:{
+                        Clinic : true
+                    }
                 }
-            
+
+                
             }
         });
 
@@ -127,27 +136,70 @@ export class PatientQueriesServices implements IPatientQueries{
             },
             data :{
                 finalPrice : String(dto.finalprice)
+            },
+            include:{
+                clinic :true,
+                
             }
         });
 
-        const ipAddress= "0.0.0.0";
-        const userAgent= "any browser";
-        await this.activityLogService.createLog({
-            userId : Number(userid),
-            action: `Patient Query Final Deal Price - #${createData.querycode} Price ${brazilianCurrency(dto.finalprice)}`,
-            description: `The coordinator has finalized the deal and communicated the agreed amount of ${brazilianCurrency(dto.finalprice)}.`,
-            entityType: "finalDealPrice",
-            entityId: Number(userid),
-            ipAddress,
-            userAgent,
+        await this.prisma.patientQueryFinalPrice.create({
+            data:{
+                id: randomUUID(),
+                finalPrice : Number(createData.finalPrice),
+                patientQueryId : createData.id,
+                clinicId : createData.clinicId,
+                status : PackageQueryFinalPriceStatus.PENDING
+            }
         });
 
 
+             
 
-        return {
-            status : 200,
-            data : createData
-        }
+              let payload: WebhookNotificationDto = {
+                      title:`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                      area: "admin",
+                      message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+              };
+              await this.universalNotification.HandleNotification(payload);
+              let payloadclinic: WebhookNotificationDto = {
+                      title: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                      area: "",
+                      id : String(createData.clinic?.clinicUserUuid),
+                      message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+              };
+              await this.universalNotification.HandleNotification(payloadclinic);
+
+
+            const htmlContentAdmin = EmailTemplate.getTemplate(`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`);
+            await this.emailservice.sendEmail(
+                createData.clinic?.email!,
+                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                "",
+                htmlContentAdmin
+            );
+
+
+
+
+                const ipAddress= "0.0.0.0";
+                const userAgent= "any browser";
+                await this.activityLogService.createLog({
+                    userId : Number(userid),
+                    action: `Patient Query Final Deal Price - #${createData.querycode} Price ${brazilianCurrency(dto.finalprice)}`,
+                    description: `The coordinator has finalized the deal and communicated the agreed amount of ${brazilianCurrency(dto.finalprice)}.`,
+                    entityType: "finalDealPrice",
+                    entityId: Number(userid),
+                    ipAddress,
+                    userAgent,
+                });
+
+
+
+                return {
+                    status : 200,
+                    data : createData
+                }
 
     }
 

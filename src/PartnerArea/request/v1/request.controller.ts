@@ -99,6 +99,16 @@ export class RequestController{
 
 
 
+    @UseGuards(JwtAuthGuard)
+    @Put("update-final-price-from-clinic")
+    @Version("1")
+    async updatePatientQueryFinalPriceAction(@Body() dto: { action: string, id: string, reason: string }) {
+
+        
+        return await this.requestservices.finalPriceMakeAction(dto.action,dto.id,dto.reason);
+    }
+
+
 
 
 

@@ -10,6 +10,8 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import Stripe from "stripe";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import { PackageQueryFinalPriceStatus } from "src/common/enum/PackageQueryFinalPriceStatus";
+import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 
 
 
@@ -104,7 +106,12 @@ const totalCount = await this.prisma.patientQuery.count({
           package : true,
           doctor: true,
           PatientQueryOtherInformation : true,
-          User : true
+          User : true,
+          PatientQueryFinalPrice : {
+            orderBy : {
+              createdAt : "desc"
+            }
+          }
         }
       });
 
@@ -164,7 +171,6 @@ const totalCount = await this.prisma.patientQuery.count({
                    `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `Requested Funds  to Clinic ${patientquerydetails?.clinic?.name} for Patient Query - ${patientquerydetails?.querycode}`,
                    "",
                    htmlContentAdmin
-                   
                );
 
 
@@ -410,6 +416,127 @@ const totalCount = await this.prisma.patientQuery.count({
 
   }
 
+
+  async finalPriceMakeAction(action: string, id: string, reason: string) {
+
+    const update = await this.prisma.patientQueryFinalPrice.update({
+      where: {
+        id: id
+      },
+      data: {
+        reason: reason,
+        status: Number(action === "accept" ? PackageQueryFinalPriceStatus.ACCEPT : (action === "reject" ? PackageQueryFinalPriceStatus.REJECT : null))
+      },
+      include:{
+        PatientQuery : true,
+        Clinic : true,
+        
+      }
+    });
+
+
+    if(action === "reject"){
+
+
+      await this.prisma.patientQuery.update({
+        where:{
+          id : update.patientQueryId
+        },
+        data :{
+          finalPrice : null
+        }
+      });
+
+
+
+
+            let payload: WebhookNotificationDto = {
+                      title:`The clinic ${update.Clinic?.name} has rejected the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                      area: "admin",
+                      message: `The clinic ${update.Clinic?.name} has rejected the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+              };
+              await this.universalNotification.HandleNotification(payload);
+      
+              let payloadclinic: WebhookNotificationDto = {
+                      title: `The clinic ${update.Clinic?.name} has rejected the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                      area: "",
+                      id : String(update.PatientQuery.cordinatorid),
+                      message: `The clinic ${update.Clinic?.name} has rejected the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+              };
+              await this.universalNotification.HandleNotification(payloadclinic);
+
+
+               const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+               const cordinatordetails = await this.prisma.user.findFirst({where:{id : Number(update.PatientQuery.cordinatorid)}});
+               const htmlContentAdmin = EmailTemplate.getTemplate(`The clinic ${update.Clinic?.name} has rejected the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`);
+
+               await this.emailservice.sendEmail(
+                    adminemail?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The clinic ${update.Clinic?.name} has rejected the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                   "",
+                   htmlContentAdmin
+               );
+               await this.emailservice.sendEmail(
+                    cordinatordetails?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The clinic ${update.Clinic?.name} has rejected the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                   "",
+                   htmlContentAdmin
+               );
+
+
+
+
+
+
+    }
+    else{
+
+
+
+
+
+              let payload: WebhookNotificationDto = {
+                      title:`The clinic ${update.Clinic?.name} has accepted the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                      area: "admin",
+                      message: `The clinic ${update.Clinic?.name} has accepted the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+              };
+              await this.universalNotification.HandleNotification(payload);
+      
+              let payloadclinic: WebhookNotificationDto = {
+                      title: `The clinic ${update.Clinic?.name} has accepted the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                      area: "",
+                      id : String(update.PatientQuery.cordinatorid),
+                      message: `The clinic ${update.Clinic?.name} has accepted the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+              };
+              await this.universalNotification.HandleNotification(payloadclinic);
+
+
+               const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+               const cordinatordetails = await this.prisma.user.findFirst({where:{id : Number(update.PatientQuery.cordinatorid)}});
+               const htmlContentAdmin = EmailTemplate.getTemplate(`The clinic ${update.Clinic?.name} has accepted the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`);
+
+               await this.emailservice.sendEmail(
+                    adminemail?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The clinic ${update.Clinic?.name} has accepted the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                   "",
+                   htmlContentAdmin
+               );
+               await this.emailservice.sendEmail(
+                    cordinatordetails?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The clinic ${update.Clinic?.name} has accepted the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
+                   "",
+                   htmlContentAdmin
+               );
+
+    }
+
+    return {
+      status: 200,
+      data : update
+
+    }
+
+  }
 
 
 }
