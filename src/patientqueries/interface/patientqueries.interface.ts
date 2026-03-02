@@ -23,6 +23,7 @@ export interface IPatientQueries{
 
 
 
+    deletepaymentDetails(id:string);
 
 
 

@@ -12,8 +12,70 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 import { PackageQueryFinalPriceStatus } from "src/common/enum/PackageQueryFinalPriceStatus";
 import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
+import { QueryPaymentStatus } from "src/common/enum/queryPaymentStatus";
 
 
+
+
+
+
+const getStatusLabel = (status: number): string => {
+  switch (Number(status)) {
+    case PatientQueryStatus.PENDING:
+      return "Pending";
+
+    case PatientQueryStatus.ASSIGNED:
+      return "Assigned";
+
+    case PatientQueryStatus.ACCEPT:
+      return "Accepted";
+
+    case PatientQueryStatus.REJECT:
+      return "Rejected";
+
+    case PatientQueryStatus.UNDER_REVIEW:
+      return "Under Review";
+
+    case PatientQueryStatus.WAITING_FOR_INFO:
+      return "Waiting For Info";
+
+    case PatientQueryStatus.OFFER_SENT:
+      return "Offer Sent";
+
+    case PatientQueryStatus.APPOINTMENT_BOOKED:
+      return "Appointment Booked";
+
+    case PatientQueryStatus.PATIENT_ARRIVED:
+      return "Patient Arrived";
+
+    case PatientQueryStatus.TREATMENT_ONGOING:
+      return "Treatment Ongoing";
+
+    case PatientQueryStatus.TREATMENT_COMPLETED:
+      return "Treatment Completed";
+
+    case PatientQueryStatus.TREATMENT_UNSUCCESSFUL:
+      return "Treatment Unsuccessful";
+
+    default:
+      return "Unknown Status";
+  }
+};
+const getPaymentStatusLabel = (status: number): string => {
+  switch (Number(status)) {
+    case QueryPaymentStatus.UNPAID:
+      return "Unpaid";
+
+    case QueryPaymentStatus.PARTIALLY_PAID:
+      return "Partially paid";
+
+    case QueryPaymentStatus.FULLY_PAID:
+      return "Fully Paid";
+
+    default:
+      return "Unknown Status";
+  }
+};
 
 
 
@@ -358,6 +420,9 @@ const totalCount = await this.prisma.patientQuery.count({
 
 
 
+
+
+
   async updatepatientQuery(queryid: string, status: string,reason:string) {
 
   let updatedata;
@@ -405,7 +470,7 @@ const totalCount = await this.prisma.patientQuery.count({
 
 
 
-    let labeltext = PatientQueryStatus.ACCEPT === Number(status) ? "Accepted" : (PatientQueryStatus.REJECT === Number(status) ? "Rejected" : "");
+    let labeltext = getStatusLabel(Number(status));
 
     let payload: WebhookNotificationDto = {
                         title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
@@ -449,6 +514,76 @@ const totalCount = await this.prisma.patientQuery.count({
 
 
   }
+
+
+  async updatepatientQueryPaymentStatus(queryid: string, status: string,reason:string) {
+      let updatedata;
+
+
+      updatedata = await this.prisma.patientQuery.update({
+        where: {
+          id: queryid
+        },
+        data: {
+          PaymentStatus: String(status),
+          paymentreason: reason,
+          
+        },
+        include: {
+          clinic: true
+        }
+      });
+
+
+
+    let labeltext = getPaymentStatusLabel(Number(status));
+
+    let payload: WebhookNotificationDto = {
+                        title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} status set by the clinic ${updatedata.clinic?.name}.`,
+                        area: "admin",
+                        message: `The patient query #${updatedata.querycode} has been ${labeltext} status set by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                };
+    await this.universalNotification.HandleNotification(payload);
+
+      const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(updatedata.cordinatorid) } });
+      let payloadcordinator: WebhookNotificationDto = {
+                        title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} status set by the clinic ${updatedata.clinic?.name}.`,
+                        area: "",
+                        id : String(updatedata.cordinatorid),
+                        message: `The patient query #${updatedata.querycode} has been ${labeltext} status set by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                };
+      await this.universalNotification.HandleNotification(payloadcordinator);
+
+       const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+       const htmlContentAdmin = EmailTemplate.getTemplate(``);
+
+          await this.emailservice.sendEmail(
+                   adminemail?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully ${labeltext} status set by the clinic ${updatedata.clinic?.name}`,
+                   `The patient query #${updatedata.querycode} has been ${labeltext} status set by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                   htmlContentAdmin
+           );
+
+          await this.emailservice.sendEmail(
+                   cordinatordetails?.email!,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully ${labeltext} status set by the clinic ${updatedata.clinic?.name}`,
+                   `The patient query #${updatedata.querycode} has been ${labeltext} status set by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                   htmlContentAdmin
+           );
+
+
+
+    return{
+      status : 200,
+      data : updatedata
+    }
+
+
+  }
+
+
+
+
 
 
   async finalPriceMakeAction(action: string, id: string, reason: string) {

@@ -512,5 +512,17 @@ export class PatientQueriesServices implements IPatientQueries{
 
 
 
+    async deletepaymentDetails(id: string) {
+       const  deletData =   await this.prisma.patientQueryPaymentDetails.delete({
+            where:{
+                id : id
+            }
+        });
+        return{
+            status : true,
+            data : deletData
+        }
+    }
+
 
 }

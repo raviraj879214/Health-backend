@@ -12,6 +12,7 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { ClinicStatus } from "src/common/enum/ClinicStatus";
 import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
 import { PackageVisibiltyStatus } from "src/common/enum/packageVisibiltyStatus";
+import { QueryPaymentStatus } from "src/common/enum/queryPaymentStatus";
 
 
 
@@ -383,7 +384,8 @@ const formatted = clinics
                 medicalReportsValue: dto.medicalReportsValue,
                 treatmentName : dto.treatmentName,
                 procedureTimeValue:dto.procedureTimeValue,
-                cordinatorid : Number(dto.cordinatorid || 0)
+                cordinatorid : Number(dto.cordinatorid || 0),
+                PaymentStatus : String(QueryPaymentStatus.UNPAID)
             }
         });
 

@@ -138,6 +138,17 @@ export class PatientQueriesController{
 
 
 
+        @Post("delete-payment-details")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async deletePaymentDetaisl(@Body("id") id:string){
+
+        
+
+            return await this.patientQueriesService.deletepaymentDetails(id);
+        }
+
+
 
         
 

@@ -98,6 +98,18 @@ export class RequestController{
     }
 
 
+    @UseGuards(JwtAuthGuard)
+    @Put("update-patient-query-payment-status")
+    @Version("1")
+    async updatePatientQueryPaymentStatus(@Body() dto: { queryid: string, status: string, reason: string }) {
+
+        return await this.requestservices.updatepatientQueryPaymentStatus(dto.queryid,dto.status,dto.reason);
+    }
+
+
+
+
+
 
     @UseGuards(JwtAuthGuard)
     @Put("update-final-price-from-clinic")

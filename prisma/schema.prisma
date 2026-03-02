@@ -804,6 +804,8 @@ model PatientQuery {
   doctorid                     String?                        @db.Uuid
   cordinatorid                 Int?
   reason                       String?
+  PaymentStatus                String?
+  paymentreason                String?
   clinic                       Clinic?                        @relation(fields: [clinicId], references: [uuid])
   User                         User?                          @relation(fields: [cordinatorid], references: [id])
   doctor                       Doctor?                        @relation(fields: [doctorid], references: [uuid])
