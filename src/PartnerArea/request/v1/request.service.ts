@@ -359,33 +359,67 @@ const totalCount = await this.prisma.patientQuery.count({
 
 
   async updatepatientQuery(queryid: string, status: string,reason:string) {
-    const updatedata = await this.prisma.patientQuery.update({
-      where :{
-        id : queryid
-      },
-        data:{
-          status : Number(status),
-          reason : reason
-      },
-      include:{
-        clinic : true,
 
-      }
-    });
+  let updatedata;
 
-      let payload: WebhookNotificationDto = {
-                        title: `The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}.`,
+    if (Number(status) === PatientQueryStatus.REJECT) {
+
+      updatedata = await this.prisma.patientQuery.update({
+        where: {
+          id: queryid
+        },
+        data: {
+          status: Number(status),
+          reason: reason,
+          finalPrice: null
+        },
+        include: {
+          clinic: true
+        }
+      });
+
+      await this.prisma.patientQueryFinalPrice.updateMany({
+        where:{
+          patientQueryId : queryid
+        },
+        data :{
+          status : PackageQueryFinalPriceStatus.REJECT
+        }
+      });
+
+    } else {
+
+      updatedata = await this.prisma.patientQuery.update({
+        where: {
+          id: queryid
+        },
+        data: {
+          status: Number(status),
+          reason: reason
+        },
+        include: {
+          clinic: true
+        }
+      });
+    }
+
+
+
+    let labeltext = PatientQueryStatus.ACCEPT === Number(status) ? "Accepted" : (PatientQueryStatus.REJECT === Number(status) ? "Rejected" : "");
+
+    let payload: WebhookNotificationDto = {
+                        title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
                         area: "admin",
-                        message: `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                        message: `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                 };
-      await this.universalNotification.HandleNotification(payload);
+    await this.universalNotification.HandleNotification(payload);
 
       const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(updatedata.cordinatorid) } });
       let payloadcordinator: WebhookNotificationDto = {
-                        title: `The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}.`,
+                        title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
                         area: "",
                         id : String(updatedata.cordinatorid),
-                        message: `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                        message: `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                 };
       await this.universalNotification.HandleNotification(payloadcordinator);
 
@@ -394,15 +428,15 @@ const totalCount = await this.prisma.patientQuery.count({
 
           await this.emailservice.sendEmail(
                    adminemail?.email!,
-                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}`,
-                   `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}`,
+                   `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                    htmlContentAdmin
            );
 
           await this.emailservice.sendEmail(
                    cordinatordetails?.email!,
-                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully closed by the clinic ${updatedata.clinic?.name}`,
-                   `The patient query #${updatedata.querycode} has been closed by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}`,
+                   `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                    htmlContentAdmin
            );
 
