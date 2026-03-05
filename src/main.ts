@@ -12,8 +12,8 @@ app.use((req, res, next) => {
 
 
   const allowedOrigins = [
-    'https://health-ui-three.vercel.app',
-    'http://localhost:3000', // add more origins here
+    'http://health.100.53.6.101.nip.io',
+    'http://localhost:3000', 
 
   ];
 
@@ -36,8 +36,8 @@ app.use((req, res, next) => {
 app.enableCors({
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'https://health-ui-three.vercel.app',
-      'http://localhost:3000', // new origin
+      'http://health.100.53.6.101.nip.io/',
+      'http://localhost:3000', 
     ];
 
     if (!origin || allowedOrigins.includes(origin)) {
