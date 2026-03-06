@@ -37,6 +37,8 @@ app.use((req, res, next) => {
   // ✅ Enable CORS dynamically
 app.enableCors({
   origin: (origin, callback) => {
+
+    
     const allowedOrigins = [
       'https://health.100.53.6.101.nip.io',
       'http://100.53.6.101:3000',
@@ -45,7 +47,7 @@ app.enableCors({
 
     ];
 
-    
+
 
 
 
