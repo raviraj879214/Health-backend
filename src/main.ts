@@ -14,7 +14,8 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     'https://health.100.53.6.101.nip.io',
     'http://localhost:3000', 
-    'http://100.53.6.101:3000'
+    'http://100.53.6.101:3000',
+    'https://itravelforhealth.com'
 
   ];
 
@@ -40,6 +41,7 @@ app.enableCors({
       'https://health.100.53.6.101.nip.io',
       'http://100.53.6.101:3000',
       'http://localhost:3000', 
+      'https://itravelforhealth.com'
 
     ];
 
