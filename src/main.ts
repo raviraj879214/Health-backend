@@ -47,6 +47,8 @@ app.enableCors({
 
     
 
+
+
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
