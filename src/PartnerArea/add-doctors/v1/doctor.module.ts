@@ -35,7 +35,7 @@ export class DoctorModule implements NestModule{
   configure(consumer: MiddlewareConsumer) 
   {
 
-     consumer.apply(UploadMiddleware(join(process.cwd(), 'uploads', 'doctors/profilepicture'))).forRoutes('v1/api/doctors/create-doctor');
+     consumer.apply(UploadMiddleware(join('uploads/doctors/profilepicture'))).forRoutes('v1/api/doctors/create-doctor');
 
 
   }

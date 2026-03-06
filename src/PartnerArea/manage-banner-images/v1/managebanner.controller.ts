@@ -9,6 +9,8 @@ import {
   UseGuards,
   Version,
 } from "@nestjs/common";
+
+
 import { MANAGE_BANNER_SERVICES } from "../constant/managebanner.constant";
 import { ManageBannerService } from "./managebanner.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
@@ -33,8 +35,9 @@ export class ManageBannerController {
   @Post("/insert-banner-images")
   @Version("1")
   async createOrUpdateBanner(@Req() requestbody: ManageBannerRequest) {
+
     const file = requestbody.file;
-    const image_url = file ? `${file.filename}` : null;
+    const image_url = (requestbody as any).fileName ?? null;;
 
     const { clinicuuid = "", sortbanner } = requestbody.body ?? {};
 

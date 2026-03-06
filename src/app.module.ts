@@ -63,6 +63,7 @@ import { ManageSubSpecialtyModule } from './AdminArea/(specialties)/manage-sub-s
 import { ManageTreatmentModule } from './AdminArea/(specialties)/manage-treatment/v1/managespecialties.module';
 import { ManageProcedureModule } from './AdminArea/(specialties)/manage-procedure/v1/managespecialties.module';
 import { AdminDashboardModule } from './AdminArea/(dashboard)/v1/admindashboard.module';
+import { S3Module } from './common/s3/s3.module';
 
 
 
@@ -75,7 +76,7 @@ import { AdminDashboardModule } from './AdminArea/(dashboard)/v1/admindashboard.
  imports: [
      ServeStaticModule.forRoot({
      rootPath: join(__dirname, '..', '..', 'uploads'),
-    serveRoot: '/v1/uploads',
+     serveRoot: '/v1/uplffoads',
     }),
      ConfigModule.forRoot({
       isGlobal: true,
@@ -89,7 +90,8 @@ import { AdminDashboardModule } from './AdminArea/(dashboard)/v1/admindashboard.
     DoctorTreatment ,DoctorDecription , ClinicDoctorAddressModule , ManageClinicSpecializationModule , ManageClinicSpecialityModule , ManageClinicTreatmentModule,BoostPackagesModule,
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
     ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
-    ,NotificationModule,PatietnQueryModule,ManageCordinatorModule,ManagePackageModule,RequestClinic,OtherInformationModule,ManageSpecialtyModule,ManageSubSpecialtyModule,ManageTreatmentModule,ManageProcedureModule,AdminDashboardModule
+    ,NotificationModule,PatietnQueryModule,ManageCordinatorModule,ManagePackageModule,RequestClinic,OtherInformationModule,ManageSpecialtyModule,ManageSubSpecialtyModule,ManageTreatmentModule,ManageProcedureModule,AdminDashboardModule,
+    S3Module
     
   ],
   

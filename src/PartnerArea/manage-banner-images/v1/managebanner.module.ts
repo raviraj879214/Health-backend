@@ -29,7 +29,7 @@ export class ManageBannerModule implements NestModule {
   configure(consumer: MiddlewareConsumer) 
   {
 
-     consumer.apply(UploadMiddleware(join(process.cwd(), 'uploads', 'clinic/banner'))) .forRoutes('v1/api/manage-clinic-banner/insert-banner-images');
+     consumer.apply(UploadMiddleware(join('uploads/clinic/banner'))) .forRoutes('v1/api/manage-clinic-banner/insert-banner-images');
 
 
   }

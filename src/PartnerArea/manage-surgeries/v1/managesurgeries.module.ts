@@ -31,7 +31,7 @@ export class ManageSurgeriesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) 
   {
 
-     consumer.apply(UploadMiddleware(join(process.cwd(), 'uploads', 'surgery/beforeandafter'))) .forRoutes('v1/api/manage-surgeries/insert-surgeries-images');
+     consumer.apply(UploadMiddleware(join('uploads/surgery/beforeandafter'))) .forRoutes('v1/api/manage-surgeries/insert-surgeries-images');
 
 
   }

@@ -35,12 +35,16 @@ export class DoctorController {
      @Post("/create-doctor")
      @Version("1")
      async createDoctor(@Req() dto:DoctorRequest){
+
         const file = dto.file;
-        const image_url = file ? `${file.filename}` : null;
+
+        const image_url = (dto as any).fileName ?? null;
 
         console.log("imagePath",image_url);
+
         const {firstname,lastname,email,dob,crm,languages,videourl,doctoruuid,clinicuuid ,cpf , degree} = dto.body ?? {};
         console.log("dto crm",firstname);
+
         const updateDoctor : DoctorUpdateDto = {firstname : firstname,lastname : lastname,email : email,dob:dob,crm:crm,languages:languages,videourl : videourl ,doctoruuid:doctoruuid,clinicuuid:clinicuuid,...(image_url && { image_url }) ,cpf:cpf ,degree:degree };
         console.log("updateDoctor",updateDoctor);
 
@@ -48,6 +52,8 @@ export class DoctorController {
         return await this.doctorServices.createUpdateDoctor(updateDoctor);         
      }
 
+
+     
 
      @UseGuards(JwtAuthGuard)
      @Get("/doctor-details/:doctoruuid")

@@ -31,7 +31,7 @@ export class ManageSurgeriesController{
         async InsertSurgeriesimages(@Req() requestbody : SurgeriesRequest){
 
             const file = requestbody.file;
-            const image_url = file ? `${file.filename}` : null;
+            const image_url =  (requestbody as any).fileName ?? null;
             // console.log("imagePath",image_url);
             const { surgeryid = '', type = '', doctorUuid = '', clinicUuid = '', treatmentid = '',packageid = '' } = requestbody.body ?? {};
             // console.log("treatmentid",treatmentid);
