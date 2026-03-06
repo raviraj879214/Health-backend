@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 
 
   const allowedOrigins = [
-    'http://health.100.53.6.101.nip.io',
+    'https://health.100.53.6.101.nip.io',
     'http://localhost:3000', 
     'http://100.53.6.101:3000'
 
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 app.enableCors({
   origin: (origin, callback) => {
     const allowedOrigins = [
-      'http://health.100.53.6.101.nip.io',
+      'https://health.100.53.6.101.nip.io',
       'http://100.53.6.101:3000',
       'http://localhost:3000', 
 
