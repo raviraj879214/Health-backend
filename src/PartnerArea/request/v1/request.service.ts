@@ -123,6 +123,12 @@ const assignedQueries = await this.prisma.patientQuery.findMany({
         include:{
             clinicUser : true
         }
+    },
+    PatientQueryFinalPrice:{
+      orderBy :{
+        createdAt : "desc"
+      },
+      take : 1
     }
   },
   orderBy:{

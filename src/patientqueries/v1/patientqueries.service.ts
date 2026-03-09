@@ -76,6 +76,12 @@ export class PatientQueriesServices implements IPatientQueries{
                 clinic : true,
                 doctor : true,
                 User : true,
+                PatientQueryFinalPrice : {
+                    orderBy : {
+                        createdAt : 'desc'
+                    },
+                    take : 1
+                }
                },
             orderBy:{
                 createdAt : 'desc'
@@ -155,7 +161,8 @@ export class PatientQueriesServices implements IPatientQueries{
         });
 
 
-         if(createData.status === PatientQueryStatus.ASSIGNED){
+         if((createData.status === PatientQueryStatus.ASSIGNED || createData.status === PatientQueryStatus.ACCEPT)){
+
             let payload: WebhookNotificationDto = {
                     title:`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
                     area: "admin",
