@@ -64,6 +64,7 @@ import { ManageTreatmentModule } from './AdminArea/(specialties)/manage-treatmen
 import { ManageProcedureModule } from './AdminArea/(specialties)/manage-procedure/v1/managespecialties.module';
 import { AdminDashboardModule } from './AdminArea/(dashboard)/v1/admindashboard.module';
 import { S3Module } from './common/s3/s3.module';
+import { FaqModule } from './AdminArea/(faqs)/v1/faq.module';
 
 
 
@@ -91,7 +92,7 @@ import { S3Module } from './common/s3/s3.module';
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
     ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
     ,NotificationModule,PatietnQueryModule,ManageCordinatorModule,ManagePackageModule,RequestClinic,OtherInformationModule,ManageSpecialtyModule,ManageSubSpecialtyModule,ManageTreatmentModule,ManageProcedureModule,AdminDashboardModule,
-    S3Module
+    S3Module,FaqModule
     
   ],
   

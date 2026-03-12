@@ -40,7 +40,8 @@ export class ManageClinicServices implements IManageClinic{
                         clinicUuid : clinicuuid
                     },
                     include : {
-                        doctor : true
+                        doctor : true,
+                        
                     }
                 },
                 cordinator : true
