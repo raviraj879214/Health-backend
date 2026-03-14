@@ -48,6 +48,15 @@ export class ClinicListingController{
     }
 
 
+    @Get("get-cordinator-details/:uuid")
+    @Version("1")
+    async GetCordinatorDetails(@Param("uuid") uuid:string){
+
+        console.log("uuid",uuid);
+        return await this.clincilistingService.getCordinatorDetails(uuid);
+    }
+
+
 
 
 

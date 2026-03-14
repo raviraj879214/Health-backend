@@ -15,4 +15,8 @@ export interface IClinicListing{
 
 
 
+    getCordinatorDetails(uuid:string);
+
+
+
 }

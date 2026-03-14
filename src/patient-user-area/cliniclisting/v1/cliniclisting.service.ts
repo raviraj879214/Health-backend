@@ -475,6 +475,17 @@ const formatted = clinics
 
 
 
+    async getCordinatorDetails(uuid: string) {
+        const  getCord =await this.prisma.clinic.findFirst({
+            where:{
+                uuid : uuid
+            }
+        });
+        return {
+            cordid : getCord?.cordinatorid
+        }
+    }
+
 
     
 
