@@ -9,6 +9,8 @@ export class WebhookController {
     private readonly notificationService: NotificationService,
   ) {}
 
+
+
   @Post('notify')
   async handleNotification(@Body() body: WebhookNotificationDto) {
     
@@ -27,6 +29,22 @@ export class WebhookController {
     //console.log("dto.id",dto.id);
     return await this.notificationService.markAsRead(dto.id);
   }
+
+
+  @Get("patient-request")
+  async patientRequest(){
+
+    return await this.notificationService.patientRequest();
+  }
+
+
+  @Get("patient-request-admin")
+  async patientRequestAdmin(){
+
+    return await this.notificationService.patientRequestAdmin();
+  }
+
+
 
 
 

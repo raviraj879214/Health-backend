@@ -14,6 +14,72 @@ import { PatientQueryStatus } from "src/common/enum/patientQueryStatus";
 
 
 
+const getStatusLabel = (status: number): string => {
+  switch (Number(status)) {
+    case PatientQueryStatus.PENDING:
+      return "Pending";
+
+    case PatientQueryStatus.ASSIGNED:
+      return "Assigned";
+
+    case PatientQueryStatus.ACCEPT:
+      return "Accepted";
+
+    case PatientQueryStatus.REJECT:
+      return "Rejected";
+
+    case PatientQueryStatus.UNDER_REVIEW:
+      return "Under Review";
+
+    case PatientQueryStatus.WAITING_FOR_INFO:
+      return "Waiting For Info";
+
+    case PatientQueryStatus.OFFER_SENT:
+      return "Offer Sent";
+
+    case PatientQueryStatus.APPOINTMENT_BOOKED:
+      return "Appointment Booked";
+
+    case PatientQueryStatus.PATIENT_ARRIVED:
+      return "Patient Arrived";
+
+    case PatientQueryStatus.TREATMENT_ONGOING:
+      return "Treatment Ongoing";
+
+    case PatientQueryStatus.TREATMENT_COMPLETED:
+      return "Treatment Completed";
+
+    case PatientQueryStatus.TREATMENT_UNSUCCESSFUL:
+      return "Treatment Unsuccessful";
+
+
+    case PatientQueryStatus.REOPENREQUEST:
+    return "Reopen Requested";
+
+      case PatientQueryStatus.REOPENED:
+          return "Reopened";
+
+      case PatientQueryStatus.FUNDS_RELEASED:
+          return "Funds Released";
+
+      case PatientQueryStatus.COMPLETED:
+          return "Completed";
+
+      case PatientQueryStatus.CLOSED:
+          return "Closed";
+
+      case PatientQueryStatus.PAYMENT_PENDING:
+          return "Payment Pending";
+
+
+
+
+
+    default:
+      return "Unknown Status";
+  }
+};
+
 
 @Injectable()
 export class PatientQueriesServices implements IPatientQueries{
@@ -81,7 +147,8 @@ export class PatientQueriesServices implements IPatientQueries{
                         createdAt : 'desc'
                     },
                     take : 1
-                }
+                },
+                RequestFunds : true
                },
             orderBy:{
                 createdAt : 'desc'
@@ -530,6 +597,93 @@ export class PatientQueriesServices implements IPatientQueries{
             data : deletData
         }
     }
+
+
+      async updatepatientQuery(queryid: string, status: string,reason:string) {
+    
+      let updatedata;
+    
+        if (Number(status) === PatientQueryStatus.REJECT) {
+    
+          updatedata = await this.prisma.patientQuery.update({
+            where: {
+              id: queryid
+            },
+            data: {
+              status: Number(status),
+              reason: reason,
+              finalPrice: null
+            },
+            include: {
+              clinic: true
+            }
+          });
+    
+          await this.prisma.patientQueryFinalPrice.updateMany({
+            where:{
+              patientQueryId : queryid
+            },
+            data :{
+              status : PackageQueryFinalPriceStatus.REJECT
+            }
+          });
+    
+        } else {
+    
+          updatedata = await this.prisma.patientQuery.update({
+            where: {
+              id: queryid
+            },
+            data: {
+              status: Number(status),
+              reason: reason
+            },
+            include: {
+              clinic: {
+                include : {
+                    clinicUser : true
+                }
+              }
+            }
+          });
+        }
+    
+    
+    
+        let labeltext = getStatusLabel(Number(status));
+    
+        let payload: WebhookNotificationDto = {
+                            title: `The admin/coordinator query #${updatedata.querycode} has been set  ${labeltext} to the clinic ${updatedata.clinic?.name}.`,
+                            area: "",
+                            id : updatedata.clinic.clinicUserUuid!,
+                            message: `The admin/coordinator query #${updatedata.querycode} has been ${labeltext} to the clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                    };
+        await this.universalNotification.HandleNotification(payload);
+    
+         
+           
+            const htmlContentAdmin = EmailTemplate.getTemplate(``);
+    
+              await this.emailservice.sendEmail(
+                        updatedata.clinic.clinicUser.email,
+                       `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The admin/coordinator query #${updatedata.querycode} has been set ${labeltext} to the clinic ${updatedata.clinic?.name}`,
+                       `The admin/coordinator query #${updatedata.querycode} has been ${labeltext} to clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
+                       htmlContentAdmin
+               );
+    
+              
+    
+    
+    
+        return{
+          status : 200,
+          data : updatedata
+        }
+    
+    
+      }
+
+
 
 
 }

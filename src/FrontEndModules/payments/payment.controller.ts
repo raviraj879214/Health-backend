@@ -1,6 +1,6 @@
 
 
-import { BadRequestException, Body, Controller, HttpException, Post, Req, Version } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, Param, Post, Query, Req, Version } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import type { AuthRequest } from 'src/common/decorators/auth-request.interface';
 
@@ -170,7 +170,7 @@ async createShareableLink(@Body() body: {
 
   const userid = request.user?.sub;
 
-  console.log("body.displaytext",userid);
+  console.log("body.displaytext",body);
   const stripe = this.paymentService.client;
 
   const product = await stripe.products.create({
@@ -191,7 +191,8 @@ async createShareableLink(@Body() body: {
       body.generatedamount,
       body.patientQueryId,
       body.commission,
-      ""
+      "",
+      body.displaytext
     );
 
 
@@ -213,10 +214,10 @@ async createShareableLink(@Body() body: {
   });
 
 
-
+  const shortLink = paymentLink.url.split('/').pop();
   await await this.paymentService.updatePatientQueryPaymentDetails(
     paymentetailid.id,
-    paymentLink.url,
+    String(shortLink),
     paymentLink.id,
     String(userid)
   );
@@ -225,6 +226,7 @@ async createShareableLink(@Body() body: {
 
   return {
     paymentLink: paymentLink.url,
+    shortLink : shortLink
   };
 }
 
@@ -299,6 +301,13 @@ async updatePaymentDetails(@Body() body:{
 
 
 
+
+  @Post("stripe-url-verification/")
+  async stripeVerifyUrl(@Body("url") url:string){
+
+    
+    return await this.paymentService.verifystripeurl(url);
+  }
 
 
 

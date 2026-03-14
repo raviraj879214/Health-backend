@@ -829,6 +829,7 @@ model PatientQueryPaymentDetails {
   platformfee     String?
   vendorfee       String?
   paymentLinkid   String?
+  note            String?
   patientQuery    PatientQuery @relation(fields: [patientQueryId], references: [id])
 }
 

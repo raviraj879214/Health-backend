@@ -57,6 +57,29 @@ const getStatusLabel = (status: number): string => {
     case PatientQueryStatus.TREATMENT_UNSUCCESSFUL:
       return "Treatment Unsuccessful";
 
+
+    case PatientQueryStatus.REOPENREQUEST:
+    return "Reopen Requested";
+
+      case PatientQueryStatus.REOPENED:
+          return "Reopened";
+
+      case PatientQueryStatus.FUNDS_RELEASED:
+          return "Funds Released";
+
+      case PatientQueryStatus.COMPLETED:
+          return "Completed";
+
+      case PatientQueryStatus.CLOSED:
+          return "Closed";
+
+      case PatientQueryStatus.PAYMENT_PENDING:
+          return "Payment Pending";
+
+
+
+
+
     default:
       return "Unknown Status";
   }
@@ -479,7 +502,7 @@ const totalCount = await this.prisma.patientQuery.count({
     let labeltext = getStatusLabel(Number(status));
 
     let payload: WebhookNotificationDto = {
-                        title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
+                        title: `The patient query #${updatedata.querycode} has been set  ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
                         area: "admin",
                         message: `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                 };
@@ -487,7 +510,7 @@ const totalCount = await this.prisma.patientQuery.count({
 
       const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(updatedata.cordinatorid) } });
       let payloadcordinator: WebhookNotificationDto = {
-                        title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
+                        title: `The patient query #${updatedata.querycode} has been set ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
                         area: "",
                         id : String(updatedata.cordinatorid),
                         message: `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
@@ -499,14 +522,14 @@ const totalCount = await this.prisma.patientQuery.count({
 
           await this.emailservice.sendEmail(
                    adminemail?.email!,
-                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}`,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been set ${labeltext} by the clinic ${updatedata.clinic?.name}`,
                    `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                    htmlContentAdmin
            );
 
           await this.emailservice.sendEmail(
                    cordinatordetails?.email!,
-                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been successfully ${labeltext} by the clinic ${updatedata.clinic?.name}`,
+                   `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The patient query #${updatedata.querycode} has been set ${labeltext} by the clinic ${updatedata.clinic?.name}`,
                    `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                    htmlContentAdmin
            );

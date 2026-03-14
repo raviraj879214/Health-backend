@@ -116,6 +116,20 @@ async markAsRead(id:string){
 }
 
 
+async patientRequest()
+{
+   this.notificationGateway.sendPatientRequest(100);
+}
+
+
+async patientRequestAdmin()
+{
+   this.notificationGateway.sendPatientRequestAdmin(100);
+}
+
+
+
+
 
 
 }

@@ -150,6 +150,13 @@ export class PatientQueriesController{
 
 
 
+        @Put("update-patient-query-status")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async updatePatientQueryStatus(@Body() dto: { queryid: string, status: string, reason: string }) {
+
+            return await this.patientQueriesService.updatepatientQuery(dto.queryid,dto.status,dto.reason);
+        }
         
 
 

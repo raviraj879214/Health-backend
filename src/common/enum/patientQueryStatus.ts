@@ -15,6 +15,17 @@ export enum PatientQueryStatus{
     TREATMENT_ONGOING = 9,     
     TREATMENT_COMPLETED = 10,    
     TREATMENT_UNSUCCESSFUL = 11, 
+    CANCELLED = 12,
+
+
+    
+    REOPENREQUEST = 13,
+    REOPENED = 14,
+    FUNDS_RELEASED = 15,
+    COMPLETED = 16,
+    CLOSED = 17,
+    PAYMENT_PENDING = 18,
+
 
 
 }

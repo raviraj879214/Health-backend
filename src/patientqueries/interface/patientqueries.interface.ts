@@ -22,8 +22,12 @@ export interface IPatientQueries{
 
 
 
+    updatepatientQuery(queryid:string,status:string,reason:string);
+
 
     deletepaymentDetails(id:string);
+
+    
 
 
 

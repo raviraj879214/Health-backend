@@ -8,6 +8,7 @@ import { EmailService } from "src/EmailServices/email.service";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 
 
 
@@ -372,18 +373,44 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
 
 
     async markasPaid(id: string) {
+
+
+
         const updateData  = await this.prisma.requestFunds.update({
             where:{
                 id : id
             },
             data:{
                 collected : 1
-            }            
+            },
+            include:{
+                PatientQuery : {
+                    include:{
+                        clinic : true
+                    }
+                }
+            }      
         });
+
+
+        let payload: WebhookNotificationDto = {
+            title: `Confirmation of Fund Request - ₹${brazilianCurrency(updateData.amount)} - #${updateData.PatientQuery.querycode}`,
+            area: "",
+            id: updateData.PatientQuery.clinic?.clinicUserUuid!,
+            message: `The funds you requested have been successfully paid through the platform and confirmed by the admin/coordinator. Please check the details for query #${updateData.PatientQuery.querycode}.`,
+        };
+        await this.universalNotification.HandleNotification(payload);
+
+
+
+
 
         return{
             data : updateData
         }
+
+
+
     }
 
 

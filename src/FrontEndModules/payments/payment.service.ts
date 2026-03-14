@@ -76,10 +76,10 @@ export class PaymentService {
   }
 
 
-  async insertPatientQueryPaymentDetails(packageprice:string,finalprice:string,generatedlink:string,generatedamount:string,patientQueryId:string,commission:string,paymentLinkid:string)
+  async insertPatientQueryPaymentDetails(packageprice:string,finalprice:string,generatedlink:string,generatedamount:string,patientQueryId:string,commission:string,paymentLinkid:string,displaytext:string)
   {
 
-      console.log("body.displaytext",commission);
+      console.log("body.displaytext",displaytext);
     const platformfee = ((Number(generatedamount) * Number(commission))/100);
     const vendorfee = (Number(generatedamount) - ((Number(generatedamount) * Number(commission))/100));
 
@@ -93,7 +93,9 @@ export class PaymentService {
         commission : commission,
         platformfee : String(platformfee),
         vendorfee : String(vendorfee),
-        paymentLinkid:paymentLinkid
+        paymentLinkid:paymentLinkid,
+        note : displaytext
+    
       }
     });
     return {
@@ -110,7 +112,7 @@ export class PaymentService {
         id : id
       },
       data :{
-          generatedlink : generatedlink,
+          generatedlink : `${generatedlink}`,
           paymentLinkid : paymentLinkid
       },
       include:{
@@ -157,6 +159,8 @@ export class PaymentService {
     payment_link: getData.paymentLinkid,
     limit: 5,
   });
+
+  console.log("sessions",sessions);
 
   if (sessions.data.length === 0) {
     return { success: false, message: 'No checkout sessions found' };
@@ -222,8 +226,20 @@ export class PaymentService {
   }
 
 
+async verifystripeurl(url: string) {
 
+  const check = await this.prism.patientQueryPaymentDetails.findFirst({
+    where: {
+      generatedlink: `${url}`
+    }
+  });
 
+  console.log("check", check);
+
+  return {
+    status: check ? check.status : -1
+  };
+}
 
 
 
