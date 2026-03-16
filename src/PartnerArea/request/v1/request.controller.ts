@@ -122,6 +122,20 @@ export class RequestController{
 
 
 
+    @UseGuards(JwtAuthGuard)
+    @Get("get-clinic-request-count")
+    @Version("1")
+    async getREquestCount(@Req() req) {
+         console.log("req.user.id",req.user.id);
+        return await this.requestservices.getRequestCount(req.user.id);
+    }
+
+
+
+
+
+
+
 
 
 

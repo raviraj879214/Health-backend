@@ -23,14 +23,13 @@ export interface IRequests{
     getClinicDetails(uuid:string);
     getGooglePlaces(placesid:string);
 
-    
     updatepatientQuery(queryid:string,status:string,reason:string);
     
     updatepatientQueryPaymentStatus(queryid:string,status:string,reason:string);
 
-
     finalPriceMakeAction(action:string,id:string,reason : string);
     
+    getRequestCount(clinic_id:string);
 
 
 }

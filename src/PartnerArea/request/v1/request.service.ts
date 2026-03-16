@@ -167,12 +167,15 @@ const assignedQueries = await this.prisma.patientQuery.findMany({
 console.log("assignedQueries", assignedQueries);
 
 
-const totalCount = await this.prisma.patientQuery.count({
-    where:{
-    clinicId: { in: clinicIds },
-    status: PatientQueryStatus.ASSIGNED,
-    }
-});
+      const totalCount = await this.prisma.patientQuery.count({
+          where:{
+          clinicId: { in: clinicIds },
+          status: PatientQueryStatus.ASSIGNED,
+          }
+      });
+
+
+
 
 
         return{
@@ -735,6 +738,37 @@ const totalCount = await this.prisma.patientQuery.count({
     }
 
   }
+
+
+
+  async getRequestCount(clinic_id: string) {
+
+    const clinics = await this.prisma.clinic.findMany({
+      where: { clinicUserUuid: clinic_id },
+      select: { uuid: true },
+    });
+
+    console.log("clinics", clinics);
+
+    const clinicIds = clinics.map(clinic => clinic.uuid);
+
+    const totalCount = await this.prisma.patientQuery.count({
+      where: {
+        clinicId: { in: clinicIds },
+        status: PatientQueryStatus.ASSIGNED,
+      }
+    });
+
+
+    return {
+      count: totalCount
+    }
+  }
+
+
+
+
+
 
 
 }
