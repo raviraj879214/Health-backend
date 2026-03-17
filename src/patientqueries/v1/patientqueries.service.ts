@@ -11,6 +11,7 @@ import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 import { randomUUID } from "crypto";
 import { PackageQueryFinalPriceStatus } from "src/common/enum/PackageQueryFinalPriceStatus";
 import { PatientQueryStatus } from "src/common/enum/patientQueryStatus";
+import { PatientQueryPaymentStatus } from "src/common/enum/PatientQueryPaymentStatus";
 
 
 
@@ -209,7 +210,7 @@ export class PatientQueriesServices implements IPatientQueries{
                 id : dto.patientqueryid
             },
             data :{
-                finalPrice : String(dto.finalprice)
+                finalPrice : null
             },
             include:{
                 clinic :true,
@@ -220,7 +221,7 @@ export class PatientQueriesServices implements IPatientQueries{
         await this.prisma.patientQueryFinalPrice.create({
             data:{
                 id: randomUUID(),
-                finalPrice : Number(createData.finalPrice),
+                finalPrice : Number(dto.finalprice),
                 patientQueryId : createData.id,
                 clinicId : createData.clinicId,
                 status : PackageQueryFinalPriceStatus.PENDING
@@ -650,21 +651,17 @@ export class PatientQueriesServices implements IPatientQueries{
     
     
     
-        let labeltext = getStatusLabel(Number(status));
+          let labeltext = getStatusLabel(Number(status));
     
-        let payload: WebhookNotificationDto = {
+           let payload: WebhookNotificationDto = {
                             title: `The admin/coordinator query #${updatedata.querycode} has been set  ${labeltext} to the clinic ${updatedata.clinic?.name}.`,
                             area: "",
                             id : updatedata.clinic.clinicUserUuid!,
                             message: `The admin/coordinator query #${updatedata.querycode} has been ${labeltext} to the clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
                     };
-        await this.universalNotification.HandleNotification(payload);
-    
-         
-           
+            await this.universalNotification.HandleNotification(payload);
             const htmlContentAdmin = EmailTemplate.getTemplate(``);
-    
-              await this.emailservice.sendEmail(
+             await this.emailservice.sendEmail(
                         updatedata.clinic.clinicUser.email,
                        `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The admin/coordinator query #${updatedata.querycode} has been set ${labeltext} to the clinic ${updatedata.clinic?.name}`,
                        `The admin/coordinator query #${updatedata.querycode} has been ${labeltext} to clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
@@ -683,6 +680,79 @@ export class PatientQueriesServices implements IPatientQueries{
     
       }
 
+
+
+      async updatePatientQueryFinalPriceStatus(id: string, status: string) {
+            
+
+       
+
+
+
+        const updateddata= await this.prisma.patientQueryFinalPrice.update({
+            where:{
+                id : id
+            },
+            data:{
+                status : Number(status)
+            },
+            include:{
+                PatientQuery : true,
+                Clinic : {
+                    include : {
+                        clinicUser : true
+                    }
+                }
+            }
+        });
+
+        const patientquery =   await this.prisma.patientQuery.update({
+            where:{
+                id : updateddata.patientQueryId
+            },
+            data : {
+                finalPrice : String(updateddata.finalPrice)
+            }
+        });
+
+        
+
+
+
+                const payload: WebhookNotificationDto = {
+                    title: `Final price accepted by admin for query #${updateddata.PatientQuery.querycode}`,
+                    area: "",
+                    id: updateddata.Clinic?.clinicUserUuid!,
+                    message: `The final price has been accepted by the admin for query #${updateddata.PatientQuery.querycode}. Please review the query details.`
+                };
+
+                await this.universalNotification.HandleNotification(payload);
+
+
+                const htmlContentAdmin = EmailTemplate.getTemplate(``);
+                await this.emailservice.sendEmail(
+                            updateddata.Clinic?.clinicUser?.email!,
+                        `${process.env.NEXT_PUBLIC_PROJECT_NAME} - The Final Price accepted by admin for #${updateddata.PatientQuery.querycode}`,
+                        `The final price has been accepted by the admin for query #${updateddata.PatientQuery.querycode}. Please review the query details.`,
+                        htmlContentAdmin
+                );
+
+
+
+
+
+
+
+
+
+
+
+        return{
+            data : updateddata,
+            patientQuery : patientquery
+
+        }
+      }
 
 
 

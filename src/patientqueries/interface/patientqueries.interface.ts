@@ -28,6 +28,7 @@ export interface IPatientQueries{
     deletepaymentDetails(id:string);
 
     
+    updatePatientQueryFinalPriceStatus(id:string,status:string);
 
 
 

@@ -157,6 +157,17 @@ export class PatientQueriesController{
 
             return await this.patientQueriesService.updatepatientQuery(dto.queryid,dto.status,dto.reason);
         }
+
+
+        @Put("update-patient-query-final-price-status")
+        @Version("1")
+        @ModuleAccess("Manage Patient Queries")
+        async updatePatientQueryFinalPriceStatus(@Body() dto: { id: string, status: string }){
+            
+            return await this.patientQueriesService.updatePatientQueryFinalPriceStatus(dto.id,dto.status);
+            
+        }
+
         
 
 
