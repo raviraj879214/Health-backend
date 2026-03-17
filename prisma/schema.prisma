@@ -853,6 +853,7 @@ model Notification {
   updatedAt    DateTime @default(now())
   uuid         String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   globaluserid String?
+  page         String?
 
   @@index([userId])
 }
