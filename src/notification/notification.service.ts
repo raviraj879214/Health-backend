@@ -56,6 +56,7 @@ async handleIncomingNotification(payload: WebhookNotificationDto) {
       type: alteredPayload.title,
       isRead: false,
       globaluserid: alteredPayload.id,
+      page : alteredPayload.page
     },
   });
 

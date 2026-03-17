@@ -8,6 +8,7 @@ import { Module } from "@nestjs/common";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 import { EmailService } from "src/EmailServices/email.service";
 import { ActivityLogModule } from "src/middleware/activitylogg/activity-log.module";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -20,7 +21,7 @@ import { ActivityLogModule } from "src/middleware/activitylogg/activity-log.modu
             provide : PATIENT_QUERIES,
             useClass : PatientQueriesServices
         },
-        RolesGuard, JwtService , PrismaService,EmailService
+        RolesGuard, JwtService , PrismaService,EmailService,UrlGeneratorService
      ],
      exports: [PATIENT_QUERIES],
       imports:[UniversalNotificationnModule,ActivityLogModule],

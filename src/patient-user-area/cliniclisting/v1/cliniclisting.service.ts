@@ -13,6 +13,9 @@ import { ClinicStatus } from "src/common/enum/ClinicStatus";
 import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
 import { PackageVisibiltyStatus } from "src/common/enum/packageVisibiltyStatus";
 import { QueryPaymentStatus } from "src/common/enum/queryPaymentStatus";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
+
+
 
 
 
@@ -26,7 +29,8 @@ export class ClinicListingServices implements IClinicListing{
         private readonly prisma:PrismaService,
         private readonly clincibusniess:ClinicListingBusiness,
         private emailservice : EmailService,
-        private readonly universalNotification:UniversalNotification
+        private readonly universalNotification:UniversalNotification,
+        private readonly urlGenerator: UrlGeneratorService
     ){}
 
     
@@ -442,12 +446,9 @@ const formatted = clinics
 
         //end
 
-
-
-
-
-
+        const  patientqueryurl= this.urlGenerator.urls.admin_patient_query_details(createData.id);
         let payload : WebhookNotificationDto = {
+            page :patientqueryurl,
             title : "New Query Received Successfully",
             area: "admin",
             message : `New Query received from patients ${createData?.querycode}` ,
@@ -455,6 +456,7 @@ const formatted = clinics
         await this.universalNotification.HandleNotification(payload);
 
         let payloadcordinator : WebhookNotificationDto = {
+            page : patientqueryurl,
             title : "New Query Received Successfully",
             area: "",
             id : dto.cordinatorid,

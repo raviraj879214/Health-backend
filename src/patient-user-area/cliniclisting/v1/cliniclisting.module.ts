@@ -11,6 +11,7 @@ import { NotificationService } from "src/notification/notification.service";
 import { NotificationGateway } from "src/notification/notification.gateway";
 import { HttpModule } from "@nestjs/axios";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -28,6 +29,7 @@ import { UniversalNotificationnModule } from "src/notification/GlobalNotificatio
             JwtAuthGuard,
             ClinicListingBusiness,
             EmailService,
+            UrlGeneratorService
     ],
     imports:[UniversalNotificationnModule],
     exports :[CLINIC_LISTING_CONSTANT]

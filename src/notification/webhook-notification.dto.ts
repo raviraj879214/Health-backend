@@ -23,6 +23,10 @@ export class WebhookNotificationDto {
   @IsString()
   id?: string;
 
+    @IsOptional()
+  @IsString()
+  page?: string;
+
   
 }
 

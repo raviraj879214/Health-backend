@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 import { PackageQueryFinalPriceStatus } from "src/common/enum/PackageQueryFinalPriceStatus";
 import { PatientQueryStatus } from "src/common/enum/patientQueryStatus";
 import { PatientQueryPaymentStatus } from "src/common/enum/PatientQueryPaymentStatus";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -87,7 +88,8 @@ export class PatientQueriesServices implements IPatientQueries{
     constructor(private readonly prisma:PrismaService,
          private emailservice : EmailService,
          private readonly universalNotification:UniversalNotification,
-         private readonly activityLogService: ActivityLogService
+         private readonly activityLogService: ActivityLogService,
+         private readonly urlGenerator: UrlGeneratorService
     ){}
 
 
@@ -231,13 +233,16 @@ export class PatientQueriesServices implements IPatientQueries{
 
          if((createData.status === PatientQueryStatus.ASSIGNED || createData.status === PatientQueryStatus.ACCEPT)){
 
+             const  patientqueryurl= this.urlGenerator.urls.clinic_request_details(createData.id);
             let payload: WebhookNotificationDto = {
+                    page : patientqueryurl,
                     title:`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
                     area: "admin",
                     message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
             };
             await this.universalNotification.HandleNotification(payload);
             let payloadclinic: WebhookNotificationDto = {
+                    page : patientqueryurl,
                     title: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
                     area: "",
                     id : String(createData.clinic?.clinicUserUuid),
@@ -468,9 +473,10 @@ export class PatientQueriesServices implements IPatientQueries{
 
 
 
-
+        const  patientqueryurl= this.urlGenerator.urls.clinic_request_details(update.id);
         const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: update.clinicId! }, include: { clinicUser: true } });
         let payload: WebhookNotificationDto = {
+            page : patientqueryurl,
             title: `The New Request Received To Clinic - ${clinicdetails?.name}`,
             area: "",
             id: clinicdetails?.clinicUserUuid!,
@@ -548,7 +554,9 @@ export class PatientQueriesServices implements IPatientQueries{
         });
 
         const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(cordinatorid) } });
+        const  patientqueryurl= this.urlGenerator.urls.admin_patient_query_details(assign.id);
         let payload: WebhookNotificationDto = {
+            page : patientqueryurl,
             title: `The New Request Received - ${assign.querycode}`,
             area: "",
             id: String(cordinatordetails?.id)!,
@@ -653,7 +661,9 @@ export class PatientQueriesServices implements IPatientQueries{
     
           let labeltext = getStatusLabel(Number(status));
     
+           const  patientqueryurl= this.urlGenerator.urls.clinic_request_details(updatedata.id);
            let payload: WebhookNotificationDto = {
+                    page : patientqueryurl,
                             title: `The admin/coordinator query #${updatedata.querycode} has been set  ${labeltext} to the clinic ${updatedata.clinic?.name}.`,
                             area: "",
                             id : updatedata.clinic.clinicUserUuid!,
@@ -718,8 +728,9 @@ export class PatientQueriesServices implements IPatientQueries{
         
 
 
-
+                const  patientqueryurl= this.urlGenerator.urls.clinic_request_details(updateddata.id);
                 const payload: WebhookNotificationDto = {
+                    page : patientqueryurl,
                     title: `Final price accepted by admin for query #${updateddata.PatientQuery.querycode}`,
                     area: "",
                     id: updateddata.Clinic?.clinicUserUuid!,
