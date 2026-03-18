@@ -7,6 +7,7 @@ import { JwtService } from "@nestjs/jwt";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { EmailService } from "src/EmailServices/email.service";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -21,7 +22,7 @@ import { UniversalNotificationnModule } from "src/notification/GlobalNotificatio
             provide : MANAGE_PAYOUT_CONSTATNT,
             useClass : ManagePayoutServices
         },
-        RolesGuard, JwtService , PrismaService ,EmailService
+        RolesGuard, JwtService , PrismaService ,EmailService,UrlGeneratorService
      ],
      exports: [MANAGE_PAYOUT_CONSTATNT],
 })

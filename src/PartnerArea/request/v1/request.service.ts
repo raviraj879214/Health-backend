@@ -15,6 +15,7 @@ import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 import { QueryPaymentStatus } from "src/common/enum/queryPaymentStatus";
 import { Decimal } from "@prisma/client/runtime/library";
 import { PatientQueryPaymentStatus } from "src/common/enum/PatientQueryPaymentStatus";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -112,7 +113,8 @@ export class RequestServices implements IRequests{
       private readonly prisma:PrismaService,
       private emailservice : EmailService,
       private readonly universalNotification:UniversalNotification,
-      private readonly httpService: HttpService
+      private readonly httpService: HttpService,
+       private readonly urlGenerator: UrlGeneratorService
 
     ){
        this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -244,7 +246,9 @@ console.log("assignedQueries", assignedQueries);
 
               const patientquerydetails = await this.prisma.patientQuery.findUnique({where:{id : dto.patientqueryid},include:{clinic:{include:{clinicUser:true}}}});
               const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+              const  urlgenerated= this.urlGenerator.urls.admin_manage_payout(dto.patientqueryid);
               let payload: WebhookNotificationDto = {
+                      page : urlgenerated,
                       title: `Requested Funds  to Clinic ${patientquerydetails?.clinic?.name} for Patient Query - ${patientquerydetails?.querycode}`,
                       area: "admin",
                       message: `Requested Funds  to the clinic ${patientquerydetails?.clinic?.name} for patient query code ${patientquerydetails?.querycode}.`,
@@ -252,6 +256,7 @@ console.log("assignedQueries", assignedQueries);
               await this.universalNotification.HandleNotification(payload);
       
               let payloadclinic: WebhookNotificationDto = {
+                      page : urlgenerated,
                       title: `Requested Funds  to Clinic ${patientquerydetails?.clinic?.name} for Patient Query - ${patientquerydetails?.querycode}`,
                       area: "",
                       id : String(patientquerydetails?.cordinatorid),
@@ -390,6 +395,7 @@ console.log("assignedQueries", assignedQueries);
       }
     });
 
+    
     const payload: WebhookNotificationDto = {
       title: `Clinic Google Review Profile Update: ${updateData.name}`,
       area: "admin",
@@ -505,8 +511,9 @@ console.log("assignedQueries", assignedQueries);
 
 
     let labeltext = getStatusLabel(Number(status));
-
+    const  urlgenerated= this.urlGenerator.urls.admin_patient_query_details(updatedata.id);
     let payload: WebhookNotificationDto = {
+                        page : urlgenerated,
                         title: `The patient query #${updatedata.querycode} has been set  ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
                         area: "admin",
                         message: `The patient query #${updatedata.querycode} has been ${labeltext} by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
@@ -515,6 +522,7 @@ console.log("assignedQueries", assignedQueries);
 
       const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(updatedata.cordinatorid) } });
       let payloadcordinator: WebhookNotificationDto = {
+                        page : urlgenerated,
                         title: `The patient query #${updatedata.querycode} has been set ${labeltext} by the clinic ${updatedata.clinic?.name}.`,
                         area: "",
                         id : String(updatedata.cordinatorid),
@@ -571,8 +579,9 @@ console.log("assignedQueries", assignedQueries);
 
 
     let labeltext = getPaymentStatusLabel(Number(status));
-
+      const  urlgenerated= this.urlGenerator.urls.admin_patient_query_details(updatedata.id);
     let payload: WebhookNotificationDto = {
+                        page: urlgenerated,
                         title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} status set by the clinic ${updatedata.clinic?.name}.`,
                         area: "admin",
                         message: `The patient query #${updatedata.querycode} has been ${labeltext} status set by clinic ${updatedata.clinic?.name}. Reason: ${updatedata.reason}.`,
@@ -581,6 +590,7 @@ console.log("assignedQueries", assignedQueries);
 
       const cordinatordetails = await this.prisma.user.findFirst({ where: { id: Number(updatedata.cordinatorid) } });
       let payloadcordinator: WebhookNotificationDto = {
+                        page : urlgenerated,
                         title: `The patient query #${updatedata.querycode} has been successfully ${labeltext} status set by the clinic ${updatedata.clinic?.name}.`,
                         area: "",
                         id : String(updatedata.cordinatorid),
@@ -648,8 +658,9 @@ async finalPriceMakeAction(action: string, id: string, reason: string) {
           finalPrice : null
         }
       });
-
+      const  urlgenerated= this.urlGenerator.urls.admin_patient_query_details(update.patientQueryId);
       let payload: WebhookNotificationDto = {
+        page: urlgenerated,
         title:`The clinic ${update.Clinic?.name} has rejected the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
         area: "admin",
         message: `The clinic ${update.Clinic?.name} has rejected the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
@@ -657,6 +668,7 @@ async finalPriceMakeAction(action: string, id: string, reason: string) {
       await this.universalNotification.HandleNotification(payload);
 
       let payloadclinic: WebhookNotificationDto = {
+        page:urlgenerated,
         title: `The clinic ${update.Clinic?.name} has rejected the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
         area: "",
         id : String(update.PatientQuery.cordinatorid),
@@ -717,8 +729,9 @@ async finalPriceMakeAction(action: string, id: string, reason: string) {
 
 
 
-
+      const  urlgenerated= this.urlGenerator.urls.admin_patient_query_details(update.patientQueryId);
       let payload: WebhookNotificationDto = {
+        page:urlgenerated,
         title:`The clinic ${update.Clinic?.name} has accepted the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
         area: "admin",
         message: `The clinic ${update.Clinic?.name} has accepted the final price  requested by the coordinator for query #${update.PatientQuery.querycode}.`,
@@ -726,6 +739,7 @@ async finalPriceMakeAction(action: string, id: string, reason: string) {
       await this.universalNotification.HandleNotification(payload);
 
       let payloadclinic: WebhookNotificationDto = {
+        page:urlgenerated,
         title: `The clinic ${update.Clinic?.name} has accepted the final price requested by the coordinator for query #${update.PatientQuery.querycode}.`,
         area: "",
         id : String(update.PatientQuery.cordinatorid),

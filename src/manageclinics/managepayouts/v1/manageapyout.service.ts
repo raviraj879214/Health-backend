@@ -9,6 +9,7 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -23,7 +24,8 @@ export class ManagePayoutServices implements IManagePayout{
     constructor(
         private readonly prisma:PrismaService,
         private emailservice : EmailService,
-        private readonly universalNotification:UniversalNotification
+        private readonly universalNotification:UniversalNotification,
+         private readonly urlGenerator: UrlGeneratorService
     ){
         this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
       apiVersion: "2025-10-29.clover",
@@ -331,14 +333,19 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
 
         const patientquerydetails = await this.prisma.patientQuery.findUnique({where:{id : patientqueryid},include:{clinic:{include:{clinicUser:true}}}});
         const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+
+       
         let payload: WebhookNotificationDto = {
+                page : this.urlGenerator.urls.admin_manage_payout(patientquerydetails?.id!),
                 title: `Funds Transferred to Clinic ${patientquerydetails?.clinic?.name} for Patient Query - ${patientquerydetails?.querycode}`,
                 area: "admin",
                 message: `Funds have been transferred to the clinic ${patientquerydetails?.clinic?.name} for patient query code ${patientquerydetails?.querycode}.`,
         };
         await this.universalNotification.HandleNotification(payload);
 
+
         let payloadclinic: WebhookNotificationDto = {
+                page : this.urlGenerator.urls.clinic_request_details(patientquerydetails?.id!),
                 title: `Funds Received to Clinic ${patientquerydetails?.clinic?.name} for Patient Query - ${patientquerydetails?.querycode}`,
                 area: "",
                 id : patientquerydetails?.clinic?.clinicUserUuid! ,
@@ -394,6 +401,7 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
 
 
         let payload: WebhookNotificationDto = {
+             page : this.urlGenerator.urls.clinic_request_details(updateData.patientQueryId),
             title: `Confirmation of Fund Request - ₹${brazilianCurrency(updateData.amount)} - #${updateData.PatientQuery.querycode}`,
             area: "",
             id: updateData.PatientQuery.clinic?.clinicUserUuid!,

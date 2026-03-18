@@ -7,6 +7,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { EmailService } from "src/EmailServices/email.service";
 import { HttpModule, HttpService } from "@nestjs/axios";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -26,7 +27,8 @@ import { HttpModule, HttpService } from "@nestjs/axios";
                },
                PrismaService,
                JwtAuthGuard,
-               EmailService
+               EmailService,
+               UrlGeneratorService
        ],
        exports:[REQUESTCONST]
 })

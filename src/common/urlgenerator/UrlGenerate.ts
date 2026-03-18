@@ -18,7 +18,8 @@ export class UrlGeneratorService {
   constructor() {
     const urlTemplates = {
      admin_patient_query_details: `${process.env.FRONT_END_PUBLI_URL}` + "/admin/patient-queries/${id}",
-     clinic_request_details: `${process.env.FRONT_END_PUBLI_URL}` + "/partner/requests/${id}"
+     clinic_request_details: `${process.env.FRONT_END_PUBLI_URL}` + "/partner/requests/${id}",
+     admin_manage_payout: `${process.env.FRONT_END_PUBLI_URL}` + "/admin/manage-payout?id=${id}",
 
     } as const;
 
