@@ -276,12 +276,24 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
             }
         });
 
+        const patientQuery =await this.prisma.patientQuery.findUnique({
+            where:{
+                id : patientqueryid
+            },
+            include:{
+                clinic: true,
+                doctor: true,
+                package: true
+            }
+        })
+
         return {
             success: true,
             message: "PaymentIntents fetched successfully",
             data: matched,
             transfer : filteredTransfers,
-            RequestFunds : requestedFunds
+            RequestFunds : requestedFunds,
+            patientQuery:patientQuery
         };
 
 
