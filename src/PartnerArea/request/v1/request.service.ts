@@ -209,7 +209,8 @@ console.log("assignedQueries", assignedQueries);
             orderBy : {
               createdAt : "desc"
             }
-          }
+          },
+          paymentDetails : true,
         }
       });
 
