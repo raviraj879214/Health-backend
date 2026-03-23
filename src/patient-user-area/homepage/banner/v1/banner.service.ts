@@ -504,6 +504,17 @@ async getPopularClinicListing(dto: BannerCreateClinicDto) {
 
 
 
+  async getFaqs() {
+    const data = await this.prisma.faqs.findMany({
+      orderBy : {
+        sort_order : "desc"
+      }
+    });
+
+    return{
+      data : data
+    }
+  }
 
 
 

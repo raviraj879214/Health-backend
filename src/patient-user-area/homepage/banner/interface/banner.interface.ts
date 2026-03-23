@@ -32,6 +32,7 @@ export interface IHomePageBanner{
       getGooglePlaces(placesid:string);
 
 
+      getFaqs();
 
 
 }

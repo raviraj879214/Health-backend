@@ -95,6 +95,16 @@ export class HomepageBannerController {
       }
 
 
+      @Get("get-faqs")
+      @Version("1")
+      async getFaqs(){
+         
+         return await this.homepageBannerService.getFaqs();
+      }
+
+
+
+
 
 
 
