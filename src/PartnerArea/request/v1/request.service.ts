@@ -179,13 +179,19 @@ console.log("assignedQueries", assignedQueries);
       });
 
 
+      const stripe = this.client;
+        const transfers = await stripe.transfers.list();
+        const allTransfers = transfers.data;
+
+
 
 
 
         return{
             status : 200,
             data : assignedQueries,
-            totalCount
+            totalCount,
+            transfer : allTransfers
         }
     }
 

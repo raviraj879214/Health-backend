@@ -10,6 +10,7 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
+import { PatientQueryStatus } from "src/common/enum/patientQueryStatus";
 
 
 
@@ -230,9 +231,16 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
             },
         });
 
+
+        const stripe = this.client;
+        const transfers = await stripe.transfers.list();
+        const allTransfers = transfers.data;
+
+
         return {
             status: 200,
-            data: getData
+            data: getData,
+            transfer : allTransfers
         }
     }
 
@@ -315,8 +323,8 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
 
         const balance = await stripe.balance.retrieve();
 
-        console.log('Available:', balance.available[0].amount);
-        console.log('Pending:', balance.pending[0].amount);
+        // console.log('Available:', balance.available[0].amount);
+        // console.log('Pending:', balance.pending[0].amount);
 
         const numericAmount = Number(amount);
 
@@ -384,9 +392,52 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
 
 
 
+
+        
+        const transfers = await stripe.transfers.list();
+        const filteredTransfers = transfers.data.filter(t => {
+            return t.metadata &&  t.metadata.patientqueryid === patientqueryid
+        });
+
+
+        const finalPrice = Number(patientquerydetails?.finalPrice ?? 0);
+        const commission = Number(patientquerydetails?.clinic?.commission ?? 0);
+
+        const totalAmount = finalPrice - (finalPrice * commission) / 100;
+        const totalTransfer = filteredTransfers.reduce((sum, t) => sum + t.amount, 0) / 100;
+        const percentage = Math.round(((totalTransfer / totalAmount) * 100));
+
+        let status = 0;
+
+        if(percentage > 0 && percentage < 30){
+            status = PatientQueryStatus.INITIAL_FUND_RELEASED
+        }
+        else if(percentage > 30 && percentage < 99){
+            status = PatientQueryStatus.PARTIALL_FUND_RELEASED
+        }
+        else  if(percentage === 100){
+                status = PatientQueryStatus.FULL_FUND_RELEASED
+        }
+
+       
+       let patientQueryDetailsUpdates; 
+
+         if (percentage > 0) {
+             patientQueryDetailsUpdates = await this.prisma.patientQuery.update({
+                 where: {
+                     id: patientqueryid,
+                 },
+                 data: {
+                     status: status,
+                 },
+             });
+         }
+
         return {
             success: true,
             transferId: transfer.id,
+            transfers:filteredTransfers,
+            patientquery : patientQueryDetailsUpdates
         };
     }
 
@@ -421,7 +472,8 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
         };
         await this.universalNotification.HandleNotification(payload);
 
-
+        
+        
 
 
 

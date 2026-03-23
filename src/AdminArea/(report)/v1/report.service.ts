@@ -48,6 +48,9 @@ async getStripeTransaction(startingAfter?: string) {
     select: {
       id: true,
       querycode: true
+    },
+    orderBy:{
+      createdAt : "desc"
     }
   });
 
