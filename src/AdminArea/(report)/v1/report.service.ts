@@ -33,7 +33,7 @@ async getStripeTransaction(startingAfter?: string) {
     limit: 100,
     starting_after: startingAfter,
     created: {
-      gte: Math.floor(new Date("2026-03-19").getTime() / 1000),
+      gte: Math.floor(new Date("2026-01-01").getTime() / 1000),
       lte: Math.floor(new Date().getTime() / 1000),
     },
     expand: [

@@ -19,10 +19,21 @@ export class AdminDashboardController {
     @ModuleAccess("Admin Dashboard")
     @Version("1")
     async getAdminDashboardData(){
-
-
         return await this.adminDashboardService.getDashboardData();
     }
+
+
+    @Get("admin-dashboard-revenue")
+    @ModuleAccess("Admin Dashboard")
+    @Version("1")
+    async rev(){
+        return await this.adminDashboardService.getRevenue();
+    }
+
+
+   
+
+
 
 
 

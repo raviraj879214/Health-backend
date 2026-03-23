@@ -98,6 +98,24 @@ export class AdminDasboardServices implements IAdminDashboard{
     }
 
 
+
+
+
+    async getRevenue() {
+        
+        const stripe = this.client;
+        const transfers = await stripe.transfers.list();
+        const allTransfers = transfers.data;
+        return {
+           transfers : allTransfers
+        }
+        
+    }
+
+
+
+
+
 }
 
 
