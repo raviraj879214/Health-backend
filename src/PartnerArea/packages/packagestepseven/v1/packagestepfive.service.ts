@@ -28,7 +28,7 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
 
     async getSelectedDoctor(packageid: string) {
 
-        const  getData = await this.prisma.packageDoctor.findFirst({
+        const  getData = await this.prisma.packageDoctor.findMany({
             where :{
                 packageId : packageid
             },
@@ -36,6 +36,8 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
                 doctors : true
             }
         });
+
+
         return {
             status : 200,
             data : getData
@@ -45,25 +47,22 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
 
     async selectDoctor(dto: PackageStepDoctorUpdateDto) {
 
-        const existcheck = await this.prisma.packageDoctor.findFirst({
-            where: { packageId: dto.packageId }
-        })
-        
-        if (existcheck) {
+        console.log("existcheck",dto);
 
-            const update = await this.prisma.packageDoctor.update({
+       
+        
+        if (dto.action == "uncheck") {
+
+           await this.prisma.packageDoctor.deleteMany({
                 where: {
-                    id: existcheck.id,
-                },
-                data: {
+                    packageId: dto.packageId,
                     doctorId: dto.doctorId
                 }
             });
+
             return {
                 status: 200,
                 message: "Doctor selected successgully",
-                data: update
-
             }
         }
         else {

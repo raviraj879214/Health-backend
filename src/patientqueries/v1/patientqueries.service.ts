@@ -236,23 +236,23 @@ export class PatientQueriesServices implements IPatientQueries{
              const  patientqueryurl= this.urlGenerator.urls.clinic_request_details(createData.id);
             let payload: WebhookNotificationDto = {
                     page : patientqueryurl,
-                    title:`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                    title:`The coordinator has submitted a final deal price of ${brazilianCurrency(dto.finalprice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
                     area: "admin",
-                    message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                    message: `The coordinator has submitted a final deal price of ${brazilianCurrency(dto.finalprice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
             };
             await this.universalNotification.HandleNotification(payload);
             let payloadclinic: WebhookNotificationDto = {
                     page : patientqueryurl,
-                    title: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                    title: `The coordinator has submitted a final deal price of ${brazilianCurrency(dto.finalprice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
                     area: "",
                     id : String(createData.clinic?.clinicUserUuid),
-                    message: `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                    message: `The coordinator has submitted a final deal price of ${brazilianCurrency(dto.finalprice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
             };
             await this.universalNotification.HandleNotification(payloadclinic);
-            const htmlContentAdmin = EmailTemplate.getTemplate(`The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`);
+            const htmlContentAdmin = EmailTemplate.getTemplate(`The coordinator has submitted a final deal price of ${brazilianCurrency(dto.finalprice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`);
             await this.emailservice.sendEmail(
                 createData.clinic?.email!,
-                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The coordinator has submitted a final deal price of ${brazilianCurrency(createData.finalPrice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
+                `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `The coordinator has submitted a final deal price of ${brazilianCurrency(dto.finalprice)} to the clinic ${createData.clinic?.name} for query #${createData.querycode}.`,
                 "",
                 htmlContentAdmin
             );
