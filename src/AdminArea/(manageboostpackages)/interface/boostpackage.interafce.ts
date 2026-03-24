@@ -12,8 +12,10 @@ export interface IBoostPackage{
 
     createPackages(dto:BoostPackageCreateDto);
 
-
     updatePackages(dto:BoostPackageUpdateDto);
+
+
+    updatepackageType(id:string,type:string);
 
 
 }

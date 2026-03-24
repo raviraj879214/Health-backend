@@ -85,5 +85,20 @@ export class BoostPackageServices implements IBoostPackage{
     }
 
 
+    async updatepackageType(id: string, type: string) {
+            const updateData = await this.prisma.boostPackage.update({
+                where : {
+                    id : id
+                },
+                data :{
+                    type : Number(type)
+                }
+            });
+            return {
+                data : updateData
+            }
+    }
+
+
     
 }

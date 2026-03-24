@@ -48,6 +48,18 @@ export class BoostPackageController{
         }
 
 
+        @Put("update-packages-type")
+        @ModuleAccess("Manage Boost Package")
+        @Version("1")
+        async updatePackagesType(@Body("id") id:string,@Body("type") type:string){
+
+            console.log("id",id);
+            console.log("type",type);
+            return await this.boostPackageServices.updatepackageType(id,type);
+        }
+
+
+
 
 
 
