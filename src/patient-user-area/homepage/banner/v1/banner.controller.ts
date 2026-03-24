@@ -105,6 +105,13 @@ export class HomepageBannerController {
 
 
 
+      @Get("clinic-boost-cron-job")
+      @Version("1")
+      async clinicBoostCronjob(){
+         return await this.homepageBannerService.clinicboostcronjob();
+      }
+
+
 
 
 

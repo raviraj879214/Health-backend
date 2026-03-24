@@ -519,6 +519,45 @@ async getPopularClinicListing(dto: BannerCreateClinicDto) {
 
 
 
+async clinicboostcronjob(): Promise<void> {
+  const data = await this.prisma.clinicBoost.findMany({where : {isActive : true}});
+
+  for (const item of data) {
+    if (item.endAt < new Date()) {
+      console.log("Deactivating:", item.id);
+
+      await this.prisma.clinicBoost.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          isActive: false,
+        },
+      });
+    }
+  }
+
+  const clincidata= await this.prisma.clinicListingBoost.findMany({where : {isActive : true}});
+
+  for (const item of clincidata) {
+    if (item.endAt < new Date()) {
+      console.log("Deactivating clinci lsit:", item.id);
+
+      await this.prisma.clinicListingBoost.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          isActive: false,
+        },
+      });
+    }
+  }
+
+
+}
+
+
 
 
 
