@@ -46,6 +46,7 @@ export class PaymentService {
             unit_amount: Math.round(amount * 100),
             product_data: {
               name: metadata.packagename || 'Package',
+               description: metadata.description || 'Default description',
             },
           },
           quantity: 1,
@@ -54,7 +55,8 @@ export class PaymentService {
 
       metadata,
       payment_intent_data: {
-        metadata, // ✅ store metadata on PaymentIntent (visible in Dashboard)
+        metadata, 
+        description: metadata.description || 'Payment for package',
       },
       success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
@@ -63,6 +65,9 @@ export class PaymentService {
 
     return session;
   }
+
+
+
 
   async retrieveSession(sessionId: string) {
     return this.stripe.checkout.sessions.retrieve(sessionId, { 

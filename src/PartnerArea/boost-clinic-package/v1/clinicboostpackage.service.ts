@@ -23,7 +23,9 @@ export class ClinicBoostPackagesListingsServices implements IClinicBoostPackages
 
    async getBoostPackages() {
         const getData = await this.prisma.boostPackage.findMany({
-            
+            where:{
+              delete : false
+            }
         });
         return {
             status : 200,

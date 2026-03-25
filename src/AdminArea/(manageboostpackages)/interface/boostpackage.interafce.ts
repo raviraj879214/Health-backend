@@ -17,5 +17,6 @@ export interface IBoostPackage{
 
     updatepackageType(id:string,type:string);
 
+    deletePackage(id:string);
 
 }

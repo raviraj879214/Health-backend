@@ -18,7 +18,9 @@ export class BoostPackageServices implements IBoostPackage{
     async getAll(page: number, limit: number, userid: number){
              const totalCount = await this.prisma.boostPackage.count();
         const getData = await this.prisma.boostPackage.findMany({
-            
+            where:{
+                delete : false
+            },
             include :{
               cliniclistingboost : {
                 where : {
@@ -55,7 +57,8 @@ export class BoostPackageServices implements IBoostPackage{
                 name : dto.name,
                 price : dto.price,
                 durationDays : Number(dto.duration),
-                description : dto.description
+                description : dto.description,
+                delete : false
             }
         });
 
@@ -97,6 +100,20 @@ export class BoostPackageServices implements IBoostPackage{
             return {
                 data : updateData
             }
+    }
+
+
+    async deletePackage(id: string) {
+        const deletePackage =await this.prisma.boostPackage.update({
+            where : {id : id},
+            data : {
+                delete : true
+            }
+        });
+        
+        return {
+            data : deletePackage
+        }
     }
 
 

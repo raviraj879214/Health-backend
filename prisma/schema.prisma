@@ -632,6 +632,7 @@ model BoostPackage {
   description        String?
   placement          Int                  @default(2)
   type               Int                  @default(0)
+  delete             Boolean?
   clinics            ClinicBoost[]
   cliniclistingboost ClinicListingBoost[]
 }

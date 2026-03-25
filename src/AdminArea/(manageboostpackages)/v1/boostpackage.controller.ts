@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { BOOSTPACKAGECONSTANT } from "../constant/boostpackage.constant";
 import { BoostPackageServices } from "./boostpackage.service";
@@ -57,6 +57,19 @@ export class BoostPackageController{
             console.log("type",type);
             return await this.boostPackageServices.updatepackageType(id,type);
         }
+
+
+        @Delete("delete-packages/:id")
+        @ModuleAccess("Manage Boost Package")
+        @Version("1")
+        async deletePackagesType(@Param("id") id:string){
+
+            console.log("id",id);
+            
+            return await this.boostPackageServices.deletePackage(id);
+        }
+
+
 
 
 

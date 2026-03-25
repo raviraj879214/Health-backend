@@ -20,7 +20,11 @@ export class BoostPackagesServices implements IBoostPackages{
 
 
     async getBoostPackages() {
-        const getData = await this.prisma.boostPackage.findMany({});
+        const getData = await this.prisma.boostPackage.findMany({
+            where:{
+                delete : false
+            }
+        });
         return {
             status : 200,
             data : getData
