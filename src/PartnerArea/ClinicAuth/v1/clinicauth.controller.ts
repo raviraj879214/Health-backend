@@ -1,7 +1,7 @@
 
 
 
-import { Controller, Post, Body, Version, Inject, Get, UseGuards, Request, UnauthorizedException, Req } from '@nestjs/common';
+import { Controller, Post, Body, Version, Inject, Get, UseGuards, Request, UnauthorizedException, Req, Param } from '@nestjs/common';
 import { ClinicService } from './clinic.services';
 import { CLINIC_AUTH_SERVICE_V1 } from '../constant/clinic.constant';
 import { JwtAuthGuard } from 'src/PartnerArea/AuthGuard/jwt-auth.guard';
@@ -19,12 +19,22 @@ export class ClinicAuthController {
   @Post('login')
   @Version("1")
   async login(@Body() body: { email: string; password: string }) {
-
-
     console.log("email", body.email, "password", body.password);
     return this.auth.login(body.email, body.password);
-
   }
+
+
+
+
+  @Get('clinic-login-by-admin/:id')
+  @Version("1")
+  async clinicLoginByAdmin(@Param("id") id:string) {
+   
+    return await this.auth.clinicLoginByAdmin(id);
+  }
+
+
+
 
   @Post('register')
   @Version("1")

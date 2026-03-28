@@ -9,6 +9,9 @@ export interface IClinicAuthService{
 
     login(email: string, password: string);
 
+
+    clinicLoginByAdmin(id:string);
+
     createClinicUser(data: { email: string; password: string; phone?: string });
     
     verifyToken(token: string);

@@ -47,6 +47,32 @@ export class ClinicService implements IClinicAuthService{
   }
 
 
+  async validateUserByAdmin(email: string) {
+  try {
+    console.log("JWT Secret:", process.env.JWT_SECRET); // Optional debug
+
+    const user = await this.prisma.clinicUser.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+   
+
+    if (!user.isActive) {
+      throw new UnauthorizedException('User account is inactive');
+    }
+
+    return user;
+  } catch (error) {
+    throw new UnauthorizedException(error.message);
+  }
+  }
+
+
+
+
+
   async login(email: string, password: string) {
   try {
     const user = await this.validateUser(email, password);
@@ -86,12 +112,62 @@ export class ClinicService implements IClinicAuthService{
   } catch (error) {
     console.error('Login error ➤', error);
 
-    // Controlled response
     if (error instanceof UnauthorizedException) {
       throw error;
     }
     throw new Error('Login failed. Please try again later.');
   }
+  }
+
+
+
+  async clinicLoginByAdmin(id: string) {
+
+     const getClinicDetails= await this.prisma.clinic.findFirst({
+      where: {
+        uuid: id
+      },
+      include :{
+        clinicUser : true
+      }
+     });
+
+
+
+    const user = await this.validateUserByAdmin(getClinicDetails?.clinicUser?.email!);
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT secret key not configured');
+    }
+
+    const access_token = this.jwtService.sign(
+      { email: user.email, sub: user.uuid },
+      { expiresIn: '1d' }
+    );
+
+    console.log("access_token",access_token);
+    const refresh_token = this.jwtService.sign(
+      { email: user.email, sub: user.uuid },
+      { expiresIn: '7d' }
+    );
+
+    // Save refresh token
+    await this.prisma.clinicUser.update({
+      where: { id: user.id },
+      data: { refreshToken: refresh_token },
+    });
+
+    return {
+      message: 'Login successful',
+      access_token,
+      refresh_token,
+      user: {
+        uuid: user.uuid,
+        email: user.email,
+        phone: user.phone,
+      },
+    };
+
   }
 
   
