@@ -235,12 +235,18 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
         const stripe = this.client;
         const transfers = await stripe.transfers.list();
         const allTransfers = transfers.data;
+        
+
+
+
 
 
         return {
             status: 200,
             data: getData,
             transfer : allTransfers
+          
+
         }
     }
 
@@ -293,7 +299,12 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
                 doctor: true,
                 package: true
             }
-        })
+        });
+
+        const balance = await stripe.balance.retrieve();
+
+        const availableBalance = balance.available[0].amount;
+
 
         return {
             success: true,
@@ -301,7 +312,8 @@ async getTransferTransaction(dto: ManagePayoutUpdateDto) {
             data: matched,
             transfer : filteredTransfers,
             RequestFunds : requestedFunds,
-            patientQuery:patientQuery
+            patientQuery:patientQuery,
+            balance:availableBalance
         };
 
 
