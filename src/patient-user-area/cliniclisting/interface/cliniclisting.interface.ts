@@ -18,5 +18,6 @@ export interface IClinicListing{
     getCordinatorDetails(uuid:string);
 
 
+    getPackageDetails(id:string);
 
 }

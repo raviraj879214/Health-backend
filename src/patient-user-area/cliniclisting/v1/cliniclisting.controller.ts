@@ -57,6 +57,16 @@ export class ClinicListingController{
     }
 
 
+    @Get("get-package-details/:id")
+    @Version("1")
+    async getPackageDetails(@Param("id") id:string){
+
+        console.log(id);
+        return await this.clincilistingService.getPackageDetails(id);
+    }
+
+
+
 
 
 

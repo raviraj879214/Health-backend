@@ -45,9 +45,9 @@ export class PatientQueryController{
       async sendOtp(@Body('phone') phone: string) {
         let otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        if (process.env.NODE_ENV === 'local') {
-          otp = '000000';
-        }
+        // if (process.env.NODE_ENV === 'local') {
+        //   otp = '000000';
+        // }
         console.log("otp",otp);
         console.log("phone",phone);
         const result = await this.patietnQueryServices.sendOtp(phone, otp);

@@ -489,6 +489,25 @@ const formatted = clinics
     }
 
 
+
+    async getPackageDetails(id: string) {
+        const getData = await this.prisma.clinicPackage.findUnique({
+            where : {
+                id : id
+            },
+            include:{
+                fieldValues : {
+                    include : {
+                        field : true
+                    }
+                }
+            }
+        });
+
+        return {
+            data : getData
+        }
+    }
     
 
 
