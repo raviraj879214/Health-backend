@@ -301,6 +301,7 @@ const formatted = clinics
             where :{
                 clinicUuid : getClinicDetails?.uuid
             }
+            
         });
 
 
@@ -499,6 +500,15 @@ const formatted = clinics
                 fieldValues : {
                     include : {
                         field : true
+                    }
+                },
+                packagesDoctor : {
+                    include : {
+                        doctors : {
+                            include :{
+                                specializations : true
+                            }
+                        }
                     }
                 }
             }
