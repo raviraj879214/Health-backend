@@ -1,60 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
-import * as util from 'util';
+import { Injectable, Logger } from '@nestjs/common';
+import axios from 'axios';
 
 @Injectable()
 export class EmailService {
-  private transporter;
+  private readonly logger = new Logger(EmailService.name);
 
- constructor() {
-  this.transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,         
-    secure: true,     
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASSWORD, 
-    },
-    logger: true,
-    debug: true,
-    connectionTimeout: 10000, 
-  });
-}
+  private readonly postmarkApiUrl = 'https://api.postmarkapp.com/email';
+  private readonly postmarkApiToken = process.env.POSTMARK_SERVER_API_TOKEN;
 
 
-  async sendEmail(to: string, subject: string, text: string, html?: string) {
-    const mailOptions = {
-      from: process.env.GMAIL_USER,
-      to,
-      subject,
-      text,
-      html,
+
+  async sendEmail(
+    to: string,
+    subject: string,
+    text: string,
+    html?: string,
+  ): Promise<boolean> {
+    const payload = {
+      From: `${process.env.POSTMARK_EMAIL}`, 
+      To: to,
+      Subject: subject,
+      TextBody: text,
+      HtmlBody: html,
     };
 
     try {
-      // const info = await this.transporter.sendMail(mailOptions);
-      // console.log('✅ Email sent successfully');
-      // console.log(info);
+      const response = await axios.post(this.postmarkApiUrl, payload, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Postmark-Server-Token': this.postmarkApiToken,
+        },
+      });
 
-      // return info;
+      this.logger.log('✅ Email sent successfully');
+      this.logger.debug(response.data);
 
-
-        return true;
-    } catch (error) {
-
-      console.log('❌ Error sending email');
-
-
-      console.log('Message:', error.message);
-
-
-      console.log('Stack:', error.stack);
-
-      console.log(
-        'Full Error Object:',
-        util.inspect(error, { showHidden: true, depth: null }),
-      );
-
+      return true;
+    } catch (error: any) {
+      this.logger.error('❌ Error sending email');
+      this.logger.error(error.response?.data || error.message);
       throw error;
     }
   }

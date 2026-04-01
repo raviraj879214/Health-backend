@@ -1,7 +1,8 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { EmailService } from './email.service';
+
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EmailTemplate } from 'src/common/emailtemplate/email-template';
+import { EmailService } from './email.service';
 
 
 
