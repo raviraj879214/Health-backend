@@ -20,4 +20,9 @@ export interface IClinicListing{
 
     getPackageDetails(id:string);
 
+
+    getDoctorDetails(id:string);
+
+    
+
 }

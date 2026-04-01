@@ -520,6 +520,17 @@ const formatted = clinics
     }
     
 
+    async getDoctorDetails(id: string) {
+        const data = await this.prisma.doctor.findFirst({
+            where :{
+                uuid : id
+            }
+        });
+
+        return {
+            data : data
+        }
+    }
 
 
 

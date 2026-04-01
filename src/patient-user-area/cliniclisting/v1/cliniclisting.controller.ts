@@ -66,6 +66,16 @@ export class ClinicListingController{
     }
 
 
+    @Get("get-doctor-details/:id")
+    @Version("1")
+    async getDoctorDetails(@Param("id") id:string){
+
+        console.log(id);
+        return await this.clincilistingService.getDoctorDetails(id);
+    }
+
+
+
 
 
 
