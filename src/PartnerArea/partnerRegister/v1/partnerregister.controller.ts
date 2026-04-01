@@ -94,13 +94,15 @@ export class PartnerRegisterController{
       @Post('send-otp-phone')
       @Version("1")
       async sendOtp(@Body('phone') phone: string) {
-        let otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+       let otp = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         // if (process.env.NODE_ENV === 'local') {
         //   otp = '0000';
         // }
-        console.log("otp",otp);
+        console.log("otpghghgh",otp);
         console.log("phone",phone);
         const result = await this.partnerRegister.sendOtp(phone, otp);
+
         return result;
       }
 
