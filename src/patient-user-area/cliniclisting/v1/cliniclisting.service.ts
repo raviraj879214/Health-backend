@@ -520,15 +520,31 @@ const formatted = clinics
     }
     
 
+
+
     async getDoctorDetails(id: string) {
         const data = await this.prisma.doctor.findFirst({
             where :{
                 uuid : id
+            },
+            include:{
+                specialtys : {
+                    include :{
+                        specialty : true
+                    }
+                }
+            }
+        });
+
+        const surgerImages  = await this.prisma.clinicSurgeryImage.findMany({
+            where:{
+                doctorUuid : data?.uuid
             }
         });
 
         return {
-            data : data
+            data : data,
+            surgerImages : surgerImages
         }
     }
 

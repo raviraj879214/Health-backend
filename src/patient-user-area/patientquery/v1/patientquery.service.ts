@@ -109,12 +109,18 @@ export class PatientQueryServices implements IPatietnQuery{
 
     async sendOtp(phone: string, otp: string) {
             try {
-                const message = await this.client.messages.create({
-                    body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
-                    from: process.env.TWILIO_PHONE_NUMBER,
-                    to: phone,
-                });
+              // const message = await this.client.messages.create({
+              //   body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
+              //   from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
+              //   to: `whatsapp:${phone}`,
+              // });
+              const message = await this.client.messages.create({
+                body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
+                from: `${process.env.TWILIO_PHONE_NUMBER}`,
+                to: `${phone}`,
+              });
 
+              
             return { 
                 success: true,
                  sid: message.sid,

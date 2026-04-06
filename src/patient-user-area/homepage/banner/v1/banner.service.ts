@@ -35,6 +35,9 @@ export class HomePageBannerServices implements IHomePageBanner{
                 },
                 },
             },
+             orderBy :{
+              name : "asc"
+            },
             ...(Number(limit) > 0 && { take: Number(limit) }),
         });
 
@@ -55,6 +58,9 @@ export class HomePageBannerServices implements IHomePageBanner{
                 },
                 },
             },
+            orderBy :{
+              name : "asc"
+            }
         });
 
          return {
