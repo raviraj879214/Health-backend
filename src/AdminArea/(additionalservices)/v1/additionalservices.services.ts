@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { IAdditionalServices } from "../interface/additionalservice.interface";
 import { PrismaService } from "src/prisma/prisma.service";
+import Stripe from "stripe";
 
 
 
@@ -8,7 +9,14 @@ import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class AdditionalServices implements IAdditionalServices{
-        constructor(private readonly prisma:PrismaService){}
+
+ private stripe: Stripe;
+
+        constructor(private readonly prisma:PrismaService){
+                this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      apiVersion: "2025-10-29.clover",
+    });
+        }
 
 
         async getPatinetQuery(page: number, limit: number, adminid: number) {
@@ -108,5 +116,13 @@ export class AdditionalServices implements IAdditionalServices{
                 }
         }
 
-        
+
+
+
+
+       
+
+
+
+
 }

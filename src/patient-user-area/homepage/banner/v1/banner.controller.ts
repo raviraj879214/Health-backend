@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, Version } from "@nestjs/common";
 import { HOMEPAGE_BANNER_CONSTANT } from "../constant/banner.constant";
 import { HomePageBannerServices } from "./banner.service";
 import { BannerCreateClinicDto } from "./dto/banner.create.dto";
@@ -113,6 +113,14 @@ export class HomepageBannerController {
 
 
 
+
+       @Put("update-service-payment-status")
+         @Version("1")
+         
+         async updatePaymentServiceStatus(@Body() dto:{id:string}){
+   
+            return await this.homepageBannerService.updatePaymentAdditionalServices(dto.id);
+         }
 
 
 

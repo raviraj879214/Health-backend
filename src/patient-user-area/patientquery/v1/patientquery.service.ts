@@ -114,20 +114,21 @@ export class PatientQueryServices implements IPatietnQuery{
               //   from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
               //   to: `whatsapp:${phone}`,
               // });
+
               const message = await this.client.messages.create({
                 body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
-                from: `${process.env.TWILIO_PHONE_NUMBER}`,
-                to: `${phone}`,
+                from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`, // WhatsApp-enabled Twilio number
+                to: `whatsapp:${phone}`, // Recipient number with country code
               });
 
-              
-            return { 
+              return {
                 success: true,
-                 sid: message.sid,
-                 otp: otp
-             };
+                sid: message.sid,
+                otp: otp
+              };
+
             } catch (error) {
-                    return { success: false, error: error.message };
+                    return { success: false, error: error };
             }
         }
 

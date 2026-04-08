@@ -257,33 +257,34 @@ async createAdditionalCostSession(
     throw new Error("patientQueryId is required");
   }
 
-
-   const session = await this.stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            unit_amount: Math.round(amount * 100),
-            product_data: {
-              name: name || 'Additional Charges',
-               description: description || 'Default description',
-            },
-          },
-          quantity: 1,
+const session = await this.stripe.checkout.sessions.create({
+  mode: 'payment',
+  payment_method_types: ['card'],
+  line_items: [
+    {
+      price_data: {
+        currency: 'usd',
+        unit_amount: Math.round(amount * 100),
+        product_data: {
+          name: name || 'Additional Charges',
+          description: description || 'Default description',
         },
-      ],
-      payment_intent_data: {
-        
-        description: description || 'Payment for package',
       },
-      success_url: `http://localhost:3000/admin/manage-report`,
-      cancel_url: `http://localhost:3000/admin/manage-report`,
-    });
-
-
-
+      quantity: 1,
+    },
+  ],
+  payment_intent_data: {
+    description: description || 'Payment for package',
+  },
+  metadata: {      // <--- Add metadata directly here
+    patientQueryId,
+    name: name || 'Additional Charges',
+    description: description || 'Default description',
+    amount: amount.toString(),
+  },
+  success_url: `${process.env.FRONT_END_PUBLI_URL}/additional-success?session_id={CHECKOUT_SESSION_ID}`,
+  cancel_url: `${process.env.FRONT_END_PUBLI_URL}/additional-success?session_id={CHECKOUT_SESSION_ID}`,
+});
 
   // Save to your DB
   const createPaymentLink = await this.prism.additionalServicesPaymetnDetails.create({

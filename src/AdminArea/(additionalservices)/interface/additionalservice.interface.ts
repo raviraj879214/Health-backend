@@ -11,5 +11,6 @@ export interface IAdditionalServices{
     updateServiceStatus(id:string);
 
 
-    
+   
+
 }

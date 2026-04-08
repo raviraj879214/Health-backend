@@ -9,6 +9,7 @@ import { PackageVerifyStatus } from "src/common/enum/packageVerifyStatus";
 import { Prisma } from "@prisma/client";
 import axios from "axios";
 import { HttpService } from "@nestjs/axios";
+import Stripe from "stripe";
 
 
 
@@ -19,10 +20,20 @@ import { HttpService } from "@nestjs/axios";
 
 @Injectable()
 export class HomePageBannerServices implements IHomePageBanner{
+
+
+   private stripe: Stripe;
+
+
     constructor(
       private readonly prisma:PrismaService,
       private readonly httpService: HttpService
-    ){}
+    ){
+
+       this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      apiVersion: "2025-10-29.clover",
+    });
+    }
 
 
 
@@ -564,6 +575,36 @@ async clinicboostcronjob(): Promise<void> {
 }
 
 
+
+  async updatePaymentAdditionalServices(id: string) {
+    try {
+      const session = await this.stripe.checkout.sessions.retrieve(id);
+
+      console.log("Session metadata:", session?.metadata?.patientQueryId);
+
+      const isPaid = session.payment_status === "paid";
+
+      if (isPaid) {
+        // Update the payment status in your DB
+        await this.prisma.additionalServicesPaymetnDetails.updateMany({
+          where: {
+            patientQueryId: String(session?.metadata?.patientQueryId),
+          },
+          data: {
+            status: 1,
+          },
+        });
+      }
+
+      return {
+        success: isPaid,       // true if paid, false otherwise
+        metadata: session.metadata,
+      };
+    } catch (error) {
+      console.error("Stripe fetch error:", error);
+      return { success: false, metadata: null, error };
+    }
+  }
 
 
 

@@ -22,4 +22,6 @@ export interface IHomePageBanner{
       clinicboostcronjob();
 
 
+       updatePaymentAdditionalServices(id:string);
+
 }
