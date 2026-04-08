@@ -247,63 +247,60 @@ async verifystripeurl(url: string) {
 }
 
 
-  async createAdditionalCostSession(
-    name: string,
-    amount: number,
-    description: string,
-    patientQueryId?:string
-  ) {
-    const session = await this.stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
+async createAdditionalCostSession(
+  name: string,
+  amount: number,
+  description: string,
+  patientQueryId?: string
+) {
+  if (!patientQueryId) {
+    throw new Error("patientQueryId is required");
+  }
 
+
+   const session = await this.stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
             currency: 'usd',
+            unit_amount: Math.round(amount * 100),
             product_data: {
-              name: name ? `Payment for ${name}` : 'Payment',
-              ...(description && { description: description }), // 👈 added here
+              name: name || 'Additional Charges',
+               description: description || 'Default description',
             },
-            unit_amount: (amount ?? 0) * 100,
           },
           quantity: 1,
         },
       ],
-
-      success_url: 'https://yourdomain.com/success',
-      cancel_url: 'https://yourdomain.com/cancel',
-
-      // 👇 Add metadata only if values exist
-      ...((name || description) && {
-        metadata: {
-          ...(name && { customerName: name }),
-          ...(description && { description: description }),
-        },
-      }),
-    });
-
-
-    if (!patientQueryId) {
-      throw new Error("patientQueryId is required");
-    }
-
-    const createPaymentLink = await this.prism.additionalServicesPaymetnDetails.create({
-      data: {
-        paymentLink: session.url,
-        amount: amount,
-        status: 0,
-        patientQueryId: patientQueryId, 
-        description : description
+      payment_intent_data: {
+        
+        description: description || 'Payment for package',
       },
+      success_url: `http://localhost:3000/admin/manage-report`,
+      cancel_url: `http://localhost:3000/admin/manage-report`,
     });
 
 
-    return {
-      url : session.url,
-      AdditionalServicesPaymetnDetails : createPaymentLink
-    };
-  }
+
+
+  // Save to your DB
+  const createPaymentLink = await this.prism.additionalServicesPaymetnDetails.create({
+    data: {
+      paymentLink: session.url,
+      amount,
+      status: 0,
+      patientQueryId,
+      description,
+    },
+  });
+
+  return {
+    url: session.url,
+    AdditionalServicesPaymetnDetails: createPaymentLink,
+  };
+}
 
 
 
