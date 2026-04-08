@@ -247,6 +247,64 @@ async verifystripeurl(url: string) {
 }
 
 
+  async createAdditionalCostSession(
+    name: string,
+    amount: number,
+    description: string,
+    patientQueryId?:string
+  ) {
+    const session = await this.stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: name ? `Payment for ${name}` : 'Payment',
+              ...(description && { description: description }), // 👈 added here
+            },
+            unit_amount: (amount ?? 0) * 100,
+          },
+          quantity: 1,
+        },
+      ],
+
+      success_url: 'https://yourdomain.com/success',
+      cancel_url: 'https://yourdomain.com/cancel',
+
+      // 👇 Add metadata only if values exist
+      ...((name || description) && {
+        metadata: {
+          ...(name && { customerName: name }),
+          ...(description && { description: description }),
+        },
+      }),
+    });
+
+
+    if (!patientQueryId) {
+      throw new Error("patientQueryId is required");
+    }
+
+    const createPaymentLink = await this.prism.additionalServicesPaymetnDetails.create({
+      data: {
+        paymentLink: session.url,
+        amount: amount,
+        status: 0,
+        patientQueryId: patientQueryId, 
+        description : description
+      },
+    });
+
+
+    return {
+      url : session.url,
+      AdditionalServicesPaymetnDetails : createPaymentLink
+    };
+  }
+
 
 
 

@@ -28,7 +28,9 @@ export class PaymentController {
     const successUrl = `${process.env.Front_End_APP_URL}/partner/clinic-boost-package`;
     const cancelUrl = `${process.env.Front_End_APP_URL}/partner/clinic-boost-package`;
     console.log("metadata",metadata);
+
     const session = await this.paymentService.createCheckoutSession(amount, metadata, successUrl, cancelUrl);
+
     return { url: session.url, id: session.id };
   }
 
@@ -174,7 +176,8 @@ async createShareableLink(@Body() body: {
   const stripe = this.paymentService.client;
 
   const product = await stripe.products.create({
-    name: body.displaytext || "Medical Consultation",
+    name: "Medical Consultation", // keep a fixed or fallback name
+    description: body.displaytext || "Medical Consultation",
   });
 
   const price = await stripe.prices.create({
@@ -311,6 +314,14 @@ async updatePaymentDetails(@Body() body:{
 
 
 
+
+
+   @Post("create-additional-cost-payemtn-link")
+   async createAdditionalPaymentLink(@Body() dto:{name:string,amount:number,description:string,patientQueryId:string}){
+    
+      console.log('BODY:', dto);
+     return await this.paymentService.createAdditionalCostSession(dto.name,dto.amount,dto.description,dto.patientQueryId);
+   }
 
 
 
