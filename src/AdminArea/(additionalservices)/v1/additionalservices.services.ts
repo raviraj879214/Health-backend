@@ -56,7 +56,7 @@ export class AdditionalServices implements IAdditionalServices{
                         where: queryWhere,
                        include: {
                                 AdditionalServices: true,
-                                AdditionalServicesPaymentDetails: true
+                                AdditionalServicesPaymetnDetails: true
                                 },
                         orderBy: {
                                 createdAt: 'desc'
