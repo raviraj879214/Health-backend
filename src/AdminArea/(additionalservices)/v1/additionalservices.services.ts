@@ -54,10 +54,10 @@ export class AdditionalServices implements IAdditionalServices{
 
                 const getData = await this.prisma.patientQuery.findMany({
                         where: queryWhere,
-                        include: {
+                       include: {
                                 AdditionalServices: true,
-                                AdditionalServicesPaymetnDetails : true
-                        },
+                                AdditionalServicesPaymentDetails: true
+                                },
                         orderBy: {
                                 createdAt: 'desc'
                         },
