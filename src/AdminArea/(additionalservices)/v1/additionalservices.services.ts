@@ -28,9 +28,7 @@ export class AdditionalServices implements IAdditionalServices{
                                 role: true
                         }
                 });
-
                 var cordinatorid = 0;
-
                 if (AdminDetails?.role.name === "Cordinator") {
                         cordinatorid = AdminDetails.id;
                 }
@@ -46,20 +44,13 @@ export class AdditionalServices implements IAdditionalServices{
                                         id: true,
                                 },
                         });
-
                         const coordinatorId = coordinator?.id;
                 }
-
-
                 const queryWhere: any = {};
                 if (cordinatorid > 0) {
                         queryWhere.cordinatorid = adminid;
                 }
-
-
                 const totalCount = await this.prisma.patientQuery.count();
-
-
                 const getData = await this.prisma.patientQuery.findMany({
                         where: queryWhere,
                        include: {
@@ -75,10 +66,14 @@ export class AdditionalServices implements IAdditionalServices{
                         })
                 });
 
+
+               const additionalServicesList = await this.prisma.additionalServicesMaster.findMany({});
+
                 return {
                         status: 200,
                         data: getData,
-                        totalCount
+                        totalCount,
+                        additionalServicesList
                 }
 
         }
@@ -95,6 +90,32 @@ export class AdditionalServices implements IAdditionalServices{
                                
                         }
                 });
+
+                const getValue = await this.prisma.additionalServicesMaster.findFirst({
+                        where :{
+                                label : service
+                        }
+                });
+
+                if(!getValue){
+
+                        await this.prisma.additionalServicesMaster.create({
+                                data :{
+                                        label : service,
+                                        value : description,
+                                        price : price
+                                }
+                        });
+                }
+
+                
+
+
+
+
+
+
+
                 return {
                         data: createServices
                 }

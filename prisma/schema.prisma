@@ -962,3 +962,12 @@ model AdditionalServicesPaymetnDetails {
   description    String?
   PatientQuery   PatientQuery @relation(fields: [patientQueryId], references: [id], onDelete: Cascade)
 }
+
+model AdditionalServicesMaster {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label     String    @db.VarChar(255)
+  value     String    @unique @db.VarChar(50)
+  price     Decimal?  @db.Decimal(10, 2)
+  createdAt DateTime? @default(now()) @db.Timestamp(6)
+  status    Int?      @default(0)
+}
