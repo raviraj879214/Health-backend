@@ -15,6 +15,9 @@ export interface IAdditionalServices{
 
 
    deleteService(id:string);
+
+
+   deletePaymentLink(id:string);
    
 
 }

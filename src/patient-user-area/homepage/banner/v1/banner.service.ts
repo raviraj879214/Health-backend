@@ -581,7 +581,7 @@ async clinicboostcronjob(): Promise<void> {
       const session = await this.stripe.checkout.sessions.retrieve(id);
 
       const url = session.url;
-      console.log("Checkout session:", session?.id);
+      console.log("Checkout session:", session);
 
 
       const isPaid = session.payment_status === "paid";

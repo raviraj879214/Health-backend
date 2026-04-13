@@ -151,7 +151,8 @@ export class PatientQueriesServices implements IPatientQueries{
                     },
                     take : 1
                 },
-                RequestFunds : true
+                RequestFunds : true,
+                 AdditionalServices : true
                },
             orderBy:{
                 createdAt : 'desc'
@@ -192,7 +193,8 @@ export class PatientQueriesServices implements IPatientQueries{
                     include:{
                         Clinic : true
                     }
-                }
+                },
+               
 
                 
             }

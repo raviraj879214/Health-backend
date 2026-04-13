@@ -18,6 +18,11 @@ export class AdditionalServices implements IAdditionalServices{
     });
         }
 
+        get client() {
+    return this.stripe;
+  }
+
+
 
         async getPatinetQuery(page: number, limit: number, adminid: number) {
                 const AdminDetails = await this.prisma.user.findUnique({
@@ -194,6 +199,58 @@ export class AdditionalServices implements IAdditionalServices{
         }
 
 
+
+
+        async deletePaymentLink(id: string) {
+                const data = await this.prisma.additionalServicesPaymetnDetails.findUnique({
+                        where: { id }
+                });
+
+                if (!data?.sessionid) {
+                        throw new Error("Session ID is required");
+                }
+
+                const session = await this.stripe.checkout.sessions.retrieve(
+                        data.sessionid.toString()
+                );
+
+                 let additionids: string[] = [];
+
+                if (session?.metadata?.additionids) {
+                        additionids = session.metadata.additionids.split(',');
+                }
+
+
+                if (session.status === "open") {
+                        await this.stripe.checkout.sessions.expire(session.id);
+                        console.log("Session expired successfully");
+                        await this.prisma.additionalServicesPaymetnDetails.delete({
+                                 where: { id }
+                         });
+
+                        
+
+                        await this.prisma.additionalServices.deleteMany({
+                                where: {
+                                        id: {
+                                                in: additionids,
+                                        },
+                                }
+                        });
+
+
+
+                } else {
+                        console.log("Session already:", session.status);
+                        
+                }
+
+                return {
+                        data:true,
+                        additionids:additionids
+                        
+                }
+        }
 
 
 }

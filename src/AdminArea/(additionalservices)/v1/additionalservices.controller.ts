@@ -69,6 +69,17 @@ export class AdditonalServicesController{
     }
 
 
+    @Delete("delete-paymentlink/:id")
+    @Version("1")
+    @ModuleAccess("Manage Patient Queries")
+    async deletePaymentLink(@Param("id") id:string){
+
+        return await this.additonalServices.deletePaymentLink(id);
+    }
+
+
+
+
 
 
 
