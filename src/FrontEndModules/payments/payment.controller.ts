@@ -298,7 +298,7 @@ async updatePaymentDetails(@Body() body:{
 
       return { url: link.url };
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException(error);
     }
   }
 
@@ -317,10 +317,10 @@ async updatePaymentDetails(@Body() body:{
 
 
    @Post("create-additional-cost-payemtn-link")
-   async createAdditionalPaymentLink(@Body() dto:{name:string,amount:number,description:string,patientQueryId:string}){
+   async createAdditionalPaymentLink(@Body() dto:{name:string,amount:number,description:string,patientQueryId:string,additionids: string[]}){
     
-      console.log('BODY:', dto);
-     return await this.paymentService.createAdditionalCostSession(dto.name,dto.amount,dto.description,dto.patientQueryId);
+      
+     return await this.paymentService.createAdditionalCostSession(dto.name,dto.amount,dto.description,dto.patientQueryId,dto.additionids);
    }
 
 

@@ -251,7 +251,8 @@ async createAdditionalCostSession(
   name: string,
   amount: number,
   description: string,
-  patientQueryId?: string
+  patientQueryId?: string,
+  additionids?: string[]
 ) {
   if (!patientQueryId) {
     throw new Error("patientQueryId is required");
@@ -281,10 +282,23 @@ const session = await this.stripe.checkout.sessions.create({
     name: name || 'Additional Charges',
     description: description || 'Default description',
     amount: amount.toString(),
+    additionids: additionids ? additionids.join(',') : null,
   },
   success_url: `${process.env.FRONT_END_PUBLI_URL}/additional-success?session_id={CHECKOUT_SESSION_ID}`,
   cancel_url: `${process.env.FRONT_END_PUBLI_URL}/additional-success?session_id={CHECKOUT_SESSION_ID}`,
 });
+
+  console.log("Service IDs:", additionids);
+
+  await this.prism.additionalServices.updateMany({
+    where: {
+      id: { in: additionids },
+    },
+    data: {
+      status: 1,
+    },
+  });
+
 
   // Save to your DB
   const createPaymentLink = await this.prism.additionalServicesPaymetnDetails.create({
@@ -294,6 +308,8 @@ const session = await this.stripe.checkout.sessions.create({
       status: 0,
       patientQueryId,
       description,
+      sessionid : session.id
+      
     },
   });
 

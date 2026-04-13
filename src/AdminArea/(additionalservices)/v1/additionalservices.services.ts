@@ -55,7 +55,11 @@ export class AdditionalServices implements IAdditionalServices{
                         where: queryWhere,
                        include: {
                                 AdditionalServices: true,
-                                AdditionalServicesPaymetnDetails: true
+                                AdditionalServicesPaymetnDetails: {
+                                        orderBy : {
+                                                createdAt : "desc"
+                                        }
+                                }
                                 },
                         orderBy: {
                                 createdAt: 'desc'
@@ -86,8 +90,8 @@ export class AdditionalServices implements IAdditionalServices{
                                 label: service,
                                 value: description,
                                 price: price,
-                                patientQueryId : patientqueryid
-                               
+                                patientQueryId : patientqueryid,
+                                paymentstatus : 0
                         }
                 });
 
@@ -128,7 +132,7 @@ export class AdditionalServices implements IAdditionalServices{
                                 patientQueryId : id
                         },
                         data :{
-                                status : 1
+                                status : 2
                         }
                 });
 
@@ -140,8 +144,54 @@ export class AdditionalServices implements IAdditionalServices{
 
 
 
+        async updateService(id: string, label: string, description: string, price: string) {
+                const updateData = await this.prisma.additionalServices.update({
+                        where: {
+                                id: id
+                        },
+                        data: {
+                                label: label,
+                                value: description,
+                                price: price
+                        }
+                });
+
+
+                const getValue = await this.prisma.additionalServicesMaster.findFirst({
+                        where: {
+                                label: label.trim()
+                        }
+                });
+
+                if (!getValue) {
+
+                        await this.prisma.additionalServicesMaster.create({
+                                data: {
+                                        label: label,
+                                        value: description,
+                                        price: price
+                                }
+                        });
+                }
+                return {
+                        data: updateData
+                }
+        }
+
 
        
+
+        async deleteService(id: string) {
+                const deleteservices = await this.prisma.additionalServices.delete({
+                        where :{
+                                id : id
+                        }
+                });
+
+                return {
+                        data : deleteservices
+                }
+        }
 
 
 

@@ -580,18 +580,38 @@ async clinicboostcronjob(): Promise<void> {
     try {
       const session = await this.stripe.checkout.sessions.retrieve(id);
 
-      console.log("Session metadata:", session?.metadata?.patientQueryId);
+      const url = session.url;
+      console.log("Checkout session:", session?.id);
+
 
       const isPaid = session.payment_status === "paid";
+      
+
+      let additionids: string[] = [];
+
+      if (session?.metadata?.additionids) {
+        additionids = session.metadata.additionids.split(',');
+      }
+
 
       if (isPaid) {
-        // Update the payment status in your DB
+        
         await this.prisma.additionalServicesPaymetnDetails.updateMany({
           where: {
-            patientQueryId: String(session?.metadata?.patientQueryId),
+            sessionid: String(session?.id),
           },
           data: {
             status: 1,
+          },
+        });
+        await this.prisma.additionalServices.updateMany({
+          where: {
+            id: {
+              in: additionids,   
+            },
+          },
+          data: {
+            status: 2,
           },
         });
       }

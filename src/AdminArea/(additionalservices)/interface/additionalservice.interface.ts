@@ -11,6 +11,10 @@ export interface IAdditionalServices{
     updateServiceStatus(id:string);
 
 
+   updateService(id:string,label:string,description:string,price:string);
+
+
+   deleteService(id:string);
    
 
 }

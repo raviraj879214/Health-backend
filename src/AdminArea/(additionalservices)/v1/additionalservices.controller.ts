@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { ADDITIONALSERVICES } from "../constant/additionalservices.constant";
 import { AdditionalServices } from "./additionalservices.services";
 import { RolesGuard } from "src/common/guards/roles.guards";
@@ -50,6 +50,25 @@ export class AdditonalServicesController{
 
         return await this.additonalServices.updateServiceStatus(dto.id);
     }
+
+
+    @Put("update-service")
+    @Version("1")
+    @ModuleAccess("Manage Patient Queries")
+    async updateService(@Body() dto:{id:string,lable:string,description:string,price:string}){
+
+        return await this.additonalServices.updateService(dto.id,dto.lable,dto.description,dto.price);
+    }
+
+    @Delete("delete-service/:id")
+    @Version("1")
+    @ModuleAccess("Manage Patient Queries")
+    async deleteServices(@Param("id") id:string){
+
+        return await this.additonalServices.deleteService(id);
+    }
+
+
 
 
 
