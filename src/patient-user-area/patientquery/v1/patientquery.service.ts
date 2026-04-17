@@ -117,8 +117,8 @@ export class PatientQueryServices implements IPatietnQuery{
 
               const message = await this.client.messages.create({
                 body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
-                from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`, // WhatsApp-enabled Twilio number
-                to: `whatsapp:${phone}`, // Recipient number with country code
+                from: `${process.env.TWILIO_WHATSAPP_NUMBER}`, 
+                to: `${phone}`, 
               });
 
               return {

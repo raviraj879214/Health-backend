@@ -380,6 +380,7 @@ const formatted = clinics
                 subject: dto.subject || '',
                 telegramUsername: dto.telegramUsername || '',
                 whatsappNumber: dto.whatsappNumber || '',
+                provider : dto.provider,
                 city: dto.city || '',
                 postalCode: dto.postalCode || '',
                 state: dto.state || '',
