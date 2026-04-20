@@ -5,6 +5,8 @@ import { HomePageBannerServices } from "./banner.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { HttpModule } from "@nestjs/axios";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -20,7 +22,9 @@ import { HttpModule } from "@nestjs/axios";
                 useClass : HomePageBannerServices
             },
             PrismaService,
-            JwtAuthGuard
+            JwtAuthGuard,
+            UniversalNotification,
+            UrlGeneratorService
     ],
     exports :[HOMEPAGE_BANNER_CONSTANT]
 })

@@ -10,6 +10,10 @@ import { Prisma } from "@prisma/client";
 import axios from "axios";
 import { HttpService } from "@nestjs/axios";
 import Stripe from "stripe";
+import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
+import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
 
 
 
@@ -27,7 +31,9 @@ export class HomePageBannerServices implements IHomePageBanner{
 
     constructor(
       private readonly prisma:PrismaService,
-      private readonly httpService: HttpService
+      private readonly httpService: HttpService,
+      private readonly universalNotification:UniversalNotification,
+       private readonly urlGenerator: UrlGeneratorService
     ){
 
        this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -616,8 +622,20 @@ async clinicboostcronjob(): Promise<void> {
         });
       }
 
+
+      const addurl = this.urlGenerator.urls.admin_additional_services("10");
+      const amount = (session.amount_total ?? 0) / 100;
+      let payload: WebhookNotificationDto = {
+        page: addurl,
+        title: `Payment of ${brazilianCurrency(amount)} successful for ${session.metadata?.name}`,
+        area: "admin",
+        message: ``
+      }
+      
+      await this.universalNotification.HandleNotification(payload);
+
       return {
-        success: isPaid,       // true if paid, false otherwise
+        success: isPaid,      
         metadata: session.metadata,
       };
     } catch (error) {
