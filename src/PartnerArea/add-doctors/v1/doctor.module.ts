@@ -9,6 +9,7 @@ import { UploadMiddleware } from "src/common/middleware/upload.middleware";
 import { join } from "path";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 import { EmailService } from "src/EmailServices/email.service";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -25,7 +26,7 @@ import { EmailService } from "src/EmailServices/email.service";
         },
         PrismaService,
         JwtStrategy,
-        EmailService
+        EmailService,UrlGeneratorService
 
     ],
     exports:[DOCTOR_CONSTANT_SERVICES]

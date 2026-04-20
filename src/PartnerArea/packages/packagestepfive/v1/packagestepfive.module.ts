@@ -6,6 +6,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
 import { EmailService } from "src/EmailServices/email.service";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -22,7 +23,8 @@ import { EmailService } from "src/EmailServices/email.service";
             },
             PrismaService,
             JwtAuthGuard,
-            EmailService
+            EmailService,
+            UrlGeneratorService
     ],
     exports :[PACKAGE_STEP_FIVE_CONSTANT]
 })

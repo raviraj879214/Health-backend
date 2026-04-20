@@ -7,6 +7,7 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { DoctorVerifyStatus } from "src/common/enum/doctorVerifyStatus";
 import { EmailService } from "src/EmailServices/email.service";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -17,7 +18,8 @@ export class DoctorServices implements IDoctorServices{
     constructor(
         private readonly prisma:PrismaService,
         private readonly universalNotification:UniversalNotification,
-        private emailservice : EmailService
+        private emailservice : EmailService,
+        private readonly urlGenerator: UrlGeneratorService
 
     ){}
 
@@ -388,8 +390,11 @@ export class DoctorServices implements IDoctorServices{
 
 
                     const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: clinicuuid },});
-                     const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+                    const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
+
+                    const  doctorurl= this.urlGenerator.urls.admin_clinic_details(clinicuuid);
                     let payload : WebhookNotificationDto ={
+                        page : doctorurl,
                         title : "Doctor Profile Added",
                         area: "admin",
                         message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} created doctor successfully,sent for approval please visit clinic and make approval`

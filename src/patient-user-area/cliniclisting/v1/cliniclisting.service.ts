@@ -449,6 +449,7 @@ const formatted = clinics
         //end
 
         const  patientqueryurl= this.urlGenerator.urls.admin_patient_query_details(createData.id);
+        
         let payload : WebhookNotificationDto = {
             page :patientqueryurl,
             title : "New Query Received Successfully",

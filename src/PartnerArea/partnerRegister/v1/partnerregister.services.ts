@@ -13,6 +13,7 @@ import type { Twilio as TwilioClient } from 'twilio';
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { PatientRegister } from "src/common/enum/PatientRegistration";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -27,6 +28,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
     constructor(private readonly prisma: PrismaService, private emailservice: EmailService,
         private readonly universalNotification: UniversalNotification,
+        private readonly urlGenerator: UrlGeneratorService
     ) {
 
         this.client = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -419,8 +421,13 @@ export class PartnerRegisterServices implements IPartnerRegister {
             });
 
 
+
+
         const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: createClinic.uuid },include:{clinicUser:true} });
+        const  clinicdetailsurl= this.urlGenerator.urls.admin_clinic_details(createClinic.uuid);
+        console.log("clinicdetailsurl",clinicdetailsurl);
         let payload: WebhookNotificationDto = {
+            page : clinicdetailsurl,
             title: "New Partner Registered",
             area: "admin",
             message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner. The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.`
@@ -428,16 +435,12 @@ export class PartnerRegisterServices implements IPartnerRegister {
         await this.universalNotification.HandleNotification(payload);
 
 
-         const adminemail = await this.prisma.user.findFirst({where:{role:{name : "SuperAdmin"}}});
+        const adminemail = await this.prisma.user.findFirst({where:{role:{name : "SuperAdmin"}}});
         const adminemailText = `Hi,<br/><br/>
                             ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
                             The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.<br/>`;
         const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
         await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
-
-
-
-
 
 
 
@@ -540,7 +543,10 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
         const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: dto.clinicid },include:{clinicUser:true} });
+         const  clinicdetailsurl= this.urlGenerator.urls.admin_clinic_details(dto.clinicid);
+          console.log("clinicdetailsurl",clinicdetailsurl);
         let payload: WebhookNotificationDto = {
+            page : clinicdetailsurl,
             title: "New Partner Registered",
             area: "admin",
             message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner. The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.`

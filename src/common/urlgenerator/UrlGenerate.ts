@@ -20,6 +20,7 @@ export class UrlGeneratorService {
      admin_patient_query_details: `${process.env.FRONT_END_PUBLI_URL}` + "/admin/patient-queries/${id}",
      clinic_request_details: `${process.env.FRONT_END_PUBLI_URL}` + "/partner/requests/${id}",
      admin_manage_payout: `${process.env.FRONT_END_PUBLI_URL}` + "/admin/manage-payout?id=${id}",
+     admin_clinic_details : `${process.env.FRONT_END_PUBLI_URL}` + "/admin/clinic-details/${id}",
 
     } as const;
 

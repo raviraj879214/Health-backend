@@ -6,6 +6,7 @@ import { PACKAGE_STEP_DOCTOR_CONSTANT } from "../constant/packagestepfive.consta
 import { ManagePackageDoctorServices } from "./packagestepfive.service";
 import { EmailService } from "src/EmailServices/email.service";
 import { UniversalNotificationnModule } from "src/notification/GlobalNotification/businessnotificationmodule";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -22,7 +23,8 @@ import { UniversalNotificationnModule } from "src/notification/GlobalNotificatio
             },
             PrismaService,
             JwtAuthGuard,
-            EmailService
+            EmailService,
+            UrlGeneratorService
     ],
     exports :[PACKAGE_STEP_DOCTOR_CONSTANT]
 })

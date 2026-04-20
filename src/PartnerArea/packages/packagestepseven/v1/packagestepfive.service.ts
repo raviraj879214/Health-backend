@@ -9,6 +9,7 @@ import { EmailService } from "src/EmailServices/email.service";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { DoctorVerifyStatus } from "src/common/enum/doctorVerifyStatus";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -22,7 +23,8 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
     constructor(
         private readonly prisma: PrismaService,
          private readonly universalNotification:UniversalNotification,
-                private emailservice : EmailService
+                private emailservice : EmailService,
+                private readonly urlGenerator: UrlGeneratorService
     ) { }
 
 
@@ -105,7 +107,9 @@ export class ManagePackageDoctorServices implements IPackageStepFiveServices {
         const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: updateData.clinicId },});
          const packagdetails = await this.prisma.clinicPackage.findUnique({ where: { id: packageid } });
          const adminemail = await this.prisma.user.findFirst({ where: { role: { name: "SuperAdmin" } }, select: { email: true } });
+            const  url= this.urlGenerator.urls.admin_clinic_details(updateData.clinicId!);
         let payload: WebhookNotificationDto = {
+            page : url,
             title: "New Package Created/Updated",
             area: "admin",
             message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} created/updated package successfully,sent for approval please visit clinic and make approval`

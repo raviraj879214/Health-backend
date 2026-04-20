@@ -8,6 +8,7 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { EmailService } from "src/EmailServices/email.service";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 @Injectable()
@@ -15,7 +16,8 @@ export class ManageClinicTreatmentServices implements IManageClinicTreatment{
 
     constructor(private readonly prisma:PrismaService,
       private readonly universalNotification:UniversalNotification,
-                                private emailservice : EmailService
+                                private emailservice : EmailService,
+                                 private readonly urlGenerator: UrlGeneratorService
     ){}
 
 
@@ -111,7 +113,9 @@ export class ManageClinicTreatmentServices implements IManageClinicTreatment{
 
 
                                        const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: dto.clinicUuid },});
+                                        const  url= this.urlGenerator.urls.admin_clinic_details(dto.clinicUuid!);
                                         let payload: WebhookNotificationDto = {
+                                          page : url,
                                           title: `New Treatment Request - ${dto.othertext}`,
                                           area: "admin",
                                           message: `${clinicdetails?.name} has submitted a request to add a new treatment reqeuest. Kindly review and proceed with the appropriate action.`

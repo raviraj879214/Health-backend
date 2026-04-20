@@ -8,6 +8,7 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { EmailService } from "src/EmailServices/email.service";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -18,7 +19,8 @@ export class ManagePackageSpecialtyServices implements IPackageStepThree{
 
     constructor(private readonly prisma:PrismaService,
        private readonly universalNotification:UniversalNotification,
-                              private emailservice : EmailService
+                              private emailservice : EmailService,
+                               private readonly urlGenerator: UrlGeneratorService
     ){}
 
 
@@ -112,7 +114,9 @@ export class ManagePackageSpecialtyServices implements IPackageStepThree{
     const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: dto.clinicuuid }, });
     const packagdetails = await this.prisma.clinicPackage.findUnique({ where: { id: dto.packageId } });
     const adminemail = await this.prisma.user.findFirst({ where: { role: { name: "SuperAdmin" } }, select: { email: true } });
+    const  url= this.urlGenerator.urls.admin_clinic_details(dto.clinicuuid!);
     let payload: WebhookNotificationDto = {
+      page : url,
       title: `New Sub-Specialty Request for Clinic Package - ${dto.othertext}`,
       area: "admin",
       message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has requested for new Sub-specialty ${dto.othertext} for package ${packagdetails?.title} please make an appropriate action`

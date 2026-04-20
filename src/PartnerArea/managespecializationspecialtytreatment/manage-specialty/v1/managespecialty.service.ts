@@ -8,6 +8,7 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { EmailService } from "src/EmailServices/email.service";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -19,7 +20,8 @@ export class ManageSpecialtyServices implements IManageClinicSpecialty{
 
     constructor(private readonly prisma:PrismaService,
        private readonly universalNotification:UniversalNotification,
-                          private emailservice : EmailService
+                          private emailservice : EmailService,
+                          private readonly urlGenerator: UrlGeneratorService
     ){}
 
 
@@ -113,7 +115,9 @@ export class ManageSpecialtyServices implements IManageClinicSpecialty{
 
 
                                                     const clinicdetails = await this.prisma.clinic.findUnique({where: { uuid: dto.clinicUuid },});
+                                                    const  url= this.urlGenerator.urls.admin_clinic_details(dto.clinicUuid!);
                                                     let payload: WebhookNotificationDto = {
+                                                      page : url,
                                                       title: `New Sub-Specialty Request - ${dto.othertext}`,
                                                       area: "admin",
                                                       message: `${clinicdetails?.name} has submitted a request to add a new Sub-specialty. Kindly review and proceed with the appropriate action.`
@@ -121,6 +125,7 @@ export class ManageSpecialtyServices implements IManageClinicSpecialty{
                                   
                                                     const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});
                                                     console.log("adminemail?.email",adminemail?.email);
+
                                                     await this.universalNotification.HandleNotification(payload);
                                                     const emailText = `${clinicdetails?.name} has submitted a request to add a new Sub-specialty. Kindly review and proceed with the appropriate action.<br/><br/>`;
                                                     const htmlContent = EmailTemplate.getTemplate(emailText);
