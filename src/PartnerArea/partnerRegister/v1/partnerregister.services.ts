@@ -58,12 +58,15 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
             let randomOtp: string;
-            if (process.env.NODE_ENV === 'local') {
-                randomOtp = '0000';
-            } else {
-                randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
-            }
+            randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
+            // if (process.env.NODE_ENV === 'local') {
+            //     randomOtp = '0000';
+            // } else {
+            //     randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            // }
+
+             
 
             const hash = await bcrypt.hash("Aalpha@100", 10);
 
@@ -80,6 +83,9 @@ export class PartnerRegisterServices implements IPartnerRegister {
             const otptext = `${randomOtp}`;
 
             const emailText = emailTemplate?.body.replace('${randomOtp}', otptext);
+
+
+            console.log("randomOtp","100000");
 
 
             const htmlContent = EmailTemplate.getTemplate(emailText);
@@ -103,11 +109,12 @@ export class PartnerRegisterServices implements IPartnerRegister {
         else if (checkEmail?.isOtpVerify == false && checkEmail.status == PartnerRegister.PENDING) {
            
             let randomOtp: string;
-            if (process.env.NODE_ENV === 'local') {
-                randomOtp = '0000';
-            } else {
-                randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
-            }
+            randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            // if (process.env.NODE_ENV === 'local') {
+            //     randomOtp = '0000';
+            // } else {
+            //     randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            // }
 
 
 

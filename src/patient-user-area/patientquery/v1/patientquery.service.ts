@@ -40,9 +40,9 @@ export class PatientQueryServices implements IPatietnQuery{
 
             let otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-            if (process.env.NODE_ENV === 'local') {
-                 otp = '000000'; 
-            }
+            // if (process.env.NODE_ENV === 'local') {
+            //      otp = '000000'; 
+            // }
 
             
 
@@ -126,9 +126,9 @@ export class PatientQueryServices implements IPatietnQuery{
                 sid: message.sid,
                 otp: otp
               };
-
+              
             } catch (error) {
-                    return { success: false, error: error };
+                 return { success: false, error: error };
             }
         }
 

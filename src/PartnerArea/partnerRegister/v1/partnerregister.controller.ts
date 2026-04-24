@@ -20,7 +20,7 @@ export class PartnerRegisterController{
     @Post("/validate-email")
     @Version("1")
     async validateemail(@Body("email") email:string){
-
+       console.log("randomOtp",email);
         return await this.partnerRegister.validateEmailAndOtp(email);
     }
 
