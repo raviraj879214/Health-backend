@@ -123,6 +123,11 @@ export class HomepageBannerController {
          }
 
 
+         @Get("seo-page-content/:slug")
+         async seoPagesContent(@Param("slug") slug:string){
+
+            return await this.homepageBannerService.getSeoPageContent(slug);
+         }
 
 
 

@@ -18,10 +18,11 @@ export interface IHomePageBanner{
       getGooglePlaces(placesid:string);
       getFaqs();
 
-
       clinicboostcronjob();
 
+      updatePaymentAdditionalServices(id:string);
 
-       updatePaymentAdditionalServices(id:string);
+
+      getSeoPageContent(slug:string);
 
 }
