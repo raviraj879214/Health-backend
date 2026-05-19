@@ -17,7 +17,7 @@ export class EmailService {
     html?: string,
   ): Promise<boolean> {
     const payload = {
-      From: `${process.env.POSTMARK_EMAIL}`, 
+      From: `iTravelForHealth <no-reply@itravelforhealth.com>`,
       To: to,
       Subject: subject,
       TextBody: text,

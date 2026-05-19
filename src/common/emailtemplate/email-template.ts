@@ -11,8 +11,8 @@ export class EmailTemplate {
               <!-- HEADER -->
               <tr>
                 <td style="padding:25px; text-align:center; background:#ffffff; border-bottom:1px solid #f0f0f0;">
-                  <img src="https://health-travel-rho.vercel.app/_next/image?url=%2Fimages%2Flogo%2Flogo-new.png&w=1920&q=75" 
-                       alt="Company Logo" 
+                  <img src="https://itravelforhealth.com/_next/image?url=%2Fimages%2Flogo.png&w=750&q=75" 
+                       alt="I Travel Health Tech" 
                        style="max-width:160px;">
                 </td>
               </tr>
@@ -21,17 +21,18 @@ export class EmailTemplate {
               <tr>
                 <td style="padding:15px 30px; font-size:16px; color:#444;">
                   ${emailText}
-
-                  If you have any questions, feel free to reply to this email.<br>
-                  We're always here to help ❤️
+                  <br>
+                  If you have any questions, feel free to reply to below email.<br>
+                  We're always here to help 
                 </td>
               </tr>
 
               <!-- FOOTER -->
               <tr>
                 <td style="background:#eef1f5; padding:18px 0; text-align:center; font-size:12px; color:#888;">
-                  © ${new Date().getFullYear()} Your Company Name. All rights reserved.<br>
-                  123, Your Company Address, City, Country
+                  © ${new Date().getFullYear()} ${process.env.NEXT_PUBLIC_PROJECT_NAME}. All rights reserved.<br>
+                  
+                  Email: ${process.env.POSTMARK_EMAIL}
                 </td>
               </tr>
 
