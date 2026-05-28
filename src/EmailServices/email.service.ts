@@ -17,7 +17,7 @@ export class EmailService {
     html?: string,
   ): Promise<boolean> {
     const payload = {
-      From: `iTravelForHealth <no-reply@itravelforhealth.com>`,
+      From: `iTravelForHealth <customer.service@itravelforhealth.com>`,
       To: to,
       Subject: subject,
       TextBody: text,
