@@ -25,4 +25,6 @@ export interface IHomePageBanner{
 
       getSeoPageContent(slug:string);
 
+      getSeoPageSlug();
+
 }

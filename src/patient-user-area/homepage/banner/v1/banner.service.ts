@@ -660,4 +660,15 @@ async clinicboostcronjob(): Promise<void> {
 
 
 
+  async getSeoPageSlug() {
+    const data= await this.prisma.seoPages.findMany();
+
+
+    return{
+      data : data
+    }
+    
+  }
+
+
 }

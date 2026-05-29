@@ -130,5 +130,11 @@ export class HomepageBannerController {
          }
 
 
+         @Get("get-seo-slug")
+         async seoPagesSlug(){
+               console.log("fddddd");
+            return await this.homepageBannerService.getSeoPageSlug();
+         }
+
 
 }
