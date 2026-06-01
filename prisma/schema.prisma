@@ -247,6 +247,10 @@ model Clinic {
   siafi                  String?
   addressnumber          String?
   placesid               String?
+  metatitle              String?
+  metakeyword            String?
+  metadescription        String?
+  slug                   String?
   city                   City?                    @relation(fields: [cityId], references: [id])
   clinicUser             ClinicUser?              @relation(fields: [clinicUserId], references: [id])
   cordinator             User?                    @relation("ClinicCoordinator", fields: [cordinatorid], references: [id])

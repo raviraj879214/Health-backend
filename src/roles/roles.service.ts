@@ -75,11 +75,11 @@ async getRoles(page: number, limit: number) {
   const totalCount = await this.prisma.role.count(); // total rows
 
   const roles = await this.prisma.role.findMany({
-   where: {
-      name: {
-        not: "SuperAdmin",
-      },
-    },
+  //  where: {
+  //     name: {
+  //       not: "SuperAdmin",
+  //     },
+  //   },
     orderBy: { createdAt: 'desc' }, 
     skip: (page - 1) * limit, 
     take: limit,
