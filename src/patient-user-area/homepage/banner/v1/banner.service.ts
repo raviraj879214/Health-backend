@@ -670,5 +670,18 @@ async clinicboostcronjob(): Promise<void> {
     
   }
 
+  async getRedirects() {
+    const data = await this.prisma.urlredirects.findMany({
+      select :{
+        old_url : true,
+        new_url : true
+      }
+    });
+
+    return{
+      data : data
+    }
+  }
+
 
 }

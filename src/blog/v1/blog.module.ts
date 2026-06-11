@@ -32,14 +32,15 @@ import { FileModule } from 'src/common/middleware/modules/file.module';
 
 
 
-export class BlogModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) 
-  {
+ export class BlogModule{}
+//  implements NestModule {
+//   configure(consumer: MiddlewareConsumer) 
+//   {
 
-     consumer.apply(UploadMiddleware(join(process.cwd(), 'uploads', 'blogs'))) .forRoutes('v1/api/blog/create-blog','v1/api/blog/update-blog');
+//      consumer.apply(UploadMiddleware(join(process.cwd(), 'uploads', 'blogs'))) .forRoutes('v1/api/blog/create-blog','v1/api/blog/update-blog');
 
-  }
-}
+//   }
+// }
 
 
 

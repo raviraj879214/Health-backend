@@ -21,10 +21,11 @@ export class BlogServices implements IBlogService{
 
 
 
-   async createBlog(dto: CreatedBlog, userId: number, ipAddress: string, userAgent: string) {
+   async createBlog(dto: CreatedBlog, userId: number) {
 
          const titleUrl = dto.title ? dto.title.trim().toLowerCase().replace(/\s+/g, "-") : "";
          const tagUrl = dto.tagid ? dto.tagid.trim().toLowerCase().replace(/\s+/g, "-") : "";
+
 
         const createblog = await this.prisma.blog.create({
             data : {
@@ -37,16 +38,7 @@ export class BlogServices implements IBlogService{
             }
         });
 
-        this.activityLogService.createLog({
-            userId :  userId,
-            action: 'Create',
-            description: dto.title +  " Blog Created Successfully",
-            entityType: '',
-            entityId: 0,
-            ipAddress : ipAddress,
-            userAgent : userAgent,
-        });
-
+        
         
 
         return {

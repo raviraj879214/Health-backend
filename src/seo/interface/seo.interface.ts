@@ -12,5 +12,12 @@ export interface ISeoServices{
 
     updateseopagedetails(dto : SeoUpdateDto ,userId: number, ipAddress: string, userAgent: string);
     
-    
+
+
+
+    geRedirects();
+    createRedirects(oldurl:string,newurl:string);
+
+    deleteRedirects(id:string);
+
 }

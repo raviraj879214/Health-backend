@@ -69,6 +69,7 @@ import { ReportModule } from './AdminArea/(report)/v1/report.module';
 import { BoostPackageModule } from './AdminArea/(manageboostpackages)/v1/boostpackage.module';
 import { AdditionalServicesModule } from './AdminArea/(additionalservices)/v1/additionalservices.module';
 import { ClinicDetailSeoModule } from './AdminArea/(manageseo)/v1/clinicdetails.module';
+import { ManageBlogModule } from './AdminArea/(manageblogs)/v1/blog.module';
 
 
 
@@ -96,7 +97,7 @@ import { ClinicDetailSeoModule } from './AdminArea/(manageseo)/v1/clinicdetails.
     PackageStepOneModule , ManagePackageSpecializationModule ,ManagePackageSpecialityModule , ManagePackageTreatmentModule ,ManagePackageProcedureModule,PackageStepSixModule,ManagePackageDoctorModule,PartnerRegisterModule,ManageClinicModule ,ManageDoctorModule,
     ManagePatietnQueriesModule,StripeConnectModule,ManagePayoutModule , BoostClinicListingPackagesModule ,ManageClinicListingModule,HomePageBannerModule
     ,NotificationModule,PatietnQueryModule,ManageCordinatorModule,ManagePackageModule,RequestClinic,OtherInformationModule,ManageSpecialtyModule,ManageSubSpecialtyModule,ManageTreatmentModule,ManageProcedureModule,AdminDashboardModule,
-    S3Module,FaqModule,ReportModule,BoostPackageModule,AdditionalServicesModule,ClinicDetailSeoModule
+    S3Module,FaqModule,ReportModule,BoostPackageModule,AdditionalServicesModule,ClinicDetailSeoModule,ManageBlogModule
     
   ],
   

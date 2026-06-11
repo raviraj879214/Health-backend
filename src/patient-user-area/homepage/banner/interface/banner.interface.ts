@@ -27,4 +27,7 @@ export interface IHomePageBanner{
 
       getSeoPageSlug();
 
+
+      getRedirects();
+
 }

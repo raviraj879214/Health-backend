@@ -121,6 +121,42 @@ export class SeoServices implements ISeoServices {
 
 
 
+        async geRedirects() {  
+            const url = await this.prisma.urlredirects.findMany({});
+            return {
+                data : url
+            }
+        }
+
+
+
+
+        async createRedirects(oldurl: string, newurl: string) {
+            
+            const create = await this.prisma.urlredirects.create({
+                data:{
+                    old_url : oldurl,
+                    new_url : newurl
+                }
+            });
+
+            return{
+                data : create
+            }
+        }
+
+
+        async deleteRedirects(id: string) {
+            const deleteg = await this.prisma.urlredirects.delete({
+                where: {
+                    id : Number(id)
+                }
+            });
+
+            return{
+                data : deleteg
+            }
+        }
 
 
 

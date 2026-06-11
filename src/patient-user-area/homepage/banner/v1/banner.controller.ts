@@ -136,5 +136,11 @@ export class HomepageBannerController {
             return await this.homepageBannerService.getSeoPageSlug();
          }
 
+         @Get("get-redirects")
+         async getredirects(){
+
+            return await this.homepageBannerService.getRedirects();
+         }
+
 
 }

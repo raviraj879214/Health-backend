@@ -28,31 +28,18 @@ export class BlogController{
 
 
     @Post("create-blog")
-    @ModuleAccess('Manage Blog')
+    // @ModuleAccess('Manage Blog')
     @Version("1")
     createBlog(@Req() requestbody : BlogRequest, @Ip() ipAddress: string , @Headers('user-agent') userAgent: string,@Req() request: AuthRequest)
     {
-
-    
-        console.log("imagePath");
-
-        const file = requestbody.file;
-        const image_url = file ? `${file.filename}` : null;
-        console.log("imagePath",image_url);
+        console.log("dto",requestbody);
         
-        const { title = '', content = '',tagid ='' } = requestbody.body ?? {};
 
-        const dto: CreatedBlog = {title,content,...(image_url && { image_url }),tagid};
-
-
-        const userId = request.user?.sub;
-        var uaInfo = (() => { 
-        var result = new UAParser(userAgent).getResult(); 
-        return `${result.browser.name} ${result.browser.version} on ${result.os.name} ${result.os.version}`; })();
-
-
-        return this.blogService.createBlog(dto,userId!,ipAddress,uaInfo);
+        return {success:true}
     }
+
+
+
 
 
     @Put("update-blog")

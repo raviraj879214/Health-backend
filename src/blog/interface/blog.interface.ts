@@ -9,7 +9,7 @@ export interface IBlogService{
 
     getBlogs(page: number, limit: number);
 
-    createBlog(dto : CreatedBlog ,userId: number, ipAddress: string, userAgent: string);
+    createBlog(dto : CreatedBlog ,userId: number);
 
 
     updateBlog(dto:UpdatedBlog,userId: number, ipAddress: string, userAgent: string);

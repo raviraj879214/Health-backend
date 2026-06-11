@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Put, Req, UseGuards, Version ,Headers, Ip } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Put, Req, UseGuards, Version ,Headers, Ip, Post, Delete } from "@nestjs/common";
 import { SEO_SERVICE_V1 } from "../constant/seo.constant";
 import { SeoServices } from "./seo.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
@@ -58,8 +58,40 @@ export class SeoController{
     }
 
 
+    @Get("get-redirects")
+    @ModuleAccess('Manage Seo')
+    @Version("1")
+    async getredirects(){
+
+        console.log("dfdf");
+        return await this.seoService.geRedirects();
+    }
 
 
+    @Post("create-redirects")
+    @ModuleAccess('Manage Seo')
+    @Version("1")
+    async createredirects(@Body() dto:{oldurl:string,newurl:string}){
+
+        console.log("dfdf");
+
+        return await this.seoService.createRedirects(dto.oldurl,dto.newurl);
+    }
+
+
+    @Delete("delete-redirects/:id")
+    @ModuleAccess('Manage Seo')
+    @Version("1")
+    async deleteredirects(@Param("id") id:string){
+        console.log("dfdf");
+        return await this.seoService.deleteRedirects(id);
+    }
+
+
+
+
+
+    
 
 
 
