@@ -83,15 +83,28 @@ model EmailTemplate {
 }
 
 model Blog {
-  id         Int      @id @default(autoincrement())
-  title      String
-  content    String
-  image_url  String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  tagId      String?
-  tagurl     String?
-  titleurl   String?
+  id              Int      @id @default(autoincrement())
+  title           String
+  content         String
+  image_url       String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  tagId           String?
+  tagurl          String?
+  titleurl        String?
+  readingminutes  String?
+  writername      String?
+  writerimage     String?
+  reviewername    String?
+  reviewerimage   String?
+  metatitle       String?
+  metakeywords    String?
+  metadescription String?
+  se_structure    Json?
+  ogurl           String?
+  ogtype          String?
+  publisher       String?
+  ogimageurl      String?
 }
 
 model Tag {
