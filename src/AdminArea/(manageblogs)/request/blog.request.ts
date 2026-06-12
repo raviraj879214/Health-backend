@@ -28,5 +28,6 @@ export interface BlogRequest extends Request {
     ogUrl?: string;
     ogType?: string;
     publisher?: string;
+    category?: string;
   };
 }

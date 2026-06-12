@@ -32,7 +32,8 @@ async createBlog(
     ogUrl: string,
     ogType: string,
     publisher: string,
-    ogImageUrl: string
+    ogImageUrl: string,
+    category:string
 ) {
     console.log("updateid:", updateid);
 
@@ -55,6 +56,8 @@ async createBlog(
         reviewername: reviewerName,
         ogurl: ogUrl,
         ogtype: ogType,
+        category : category,
+        publisher : publisher
      
        
     };

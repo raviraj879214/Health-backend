@@ -53,11 +53,12 @@ export class BlogController{
              ogUrl,
         ogType,
         publisher,
+        category
         } = dto.body ?? {};
 
         console.log(dto.body);
     
-        return await this.blogService.createBlog(dto.body.updateid,dto.body.title!,dto.body.content!,dto.body.readingMinutes!,dto.body.metaTitle!,dto.body.metaKeywords!,dto.body.metaDescription!,dto.body.se_structure!,dto.body.og_structure!,dto.body.writerName!,dto.body.reviewerName!,blogImageUrl,writerImageUrl,reviewerImageUrl,dto.body.ogUrl!,dto.body.ogType!,dto.body.publisher!,ogImageUrl);
+        return await this.blogService.createBlog(dto.body.updateid,dto.body.title!,dto.body.content!,dto.body.readingMinutes!,dto.body.metaTitle!,dto.body.metaKeywords!,dto.body.metaDescription!,dto.body.se_structure!,dto.body.og_structure!,dto.body.writerName!,dto.body.reviewerName!,blogImageUrl,writerImageUrl,reviewerImageUrl,dto.body.ogUrl!,dto.body.ogType!,dto.body.publisher!,ogImageUrl,dto.body.category!);
     }
     
 

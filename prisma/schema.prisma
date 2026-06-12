@@ -105,6 +105,7 @@ model Blog {
   ogtype          String?
   publisher       String?
   ogimageurl      String?
+  category        String?
 }
 
 model Tag {
