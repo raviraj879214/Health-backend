@@ -32,6 +32,10 @@ export interface IHomePageBanner{
 
 
        //blogs
-    getBlogs();
+       getBlogs();
+       getBlogDetails(slug:string);
+
+
+
 
 }

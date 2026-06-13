@@ -143,13 +143,22 @@ export class HomepageBannerController {
          }
 
 
-   @Get("get-blogs")
-   @Version("1")
-   async getBlogs() {
+         @Get("get-blogs")
+         @Version("1")
+         async getBlogs() {
+            return await this.homepageBannerService.getBlogs();
+         }
+
+         @Get("get-blogs-details/:slug")
+         @Version("1")
+         async getBlogsDetails(@Param("slug") slug:string) {
+            return await this.homepageBannerService.getBlogDetails(slug);
+         }
 
 
-      return await this.homepageBannerService.getBlogs();
-   }
+
+
+
 
 
 

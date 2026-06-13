@@ -694,4 +694,17 @@ async clinicboostcronjob(): Promise<void> {
     }
 
 
+    async getBlogDetails(slug: string) {
+        const data = await this.prisma.blog.findFirst({
+          where:{
+            titleurl : slug
+          }
+        });
+        
+        return{
+          data : data
+        }
+    }
+
+
 }
