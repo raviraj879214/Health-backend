@@ -684,4 +684,14 @@ async clinicboostcronjob(): Promise<void> {
   }
 
 
+  
+    async getBlogs() {
+        const data = await this.prisma.blog.findMany();
+
+        return {
+            data : data
+        }
+    }
+
+
 }

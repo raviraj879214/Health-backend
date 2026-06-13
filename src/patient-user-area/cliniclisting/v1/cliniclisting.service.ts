@@ -552,5 +552,16 @@ const formatted = clinics
 
 
 
+    async getBlogs() {
+        const data = await this.prisma.blog.findMany();
+
+        return {
+            data : data
+        }
+    }
+
+
+
+
     
 }

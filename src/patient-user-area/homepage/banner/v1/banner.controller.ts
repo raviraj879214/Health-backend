@@ -143,4 +143,14 @@ export class HomepageBannerController {
          }
 
 
+   @Get("get-blogs")
+   @Version("1")
+   async getBlogs() {
+
+
+      return await this.homepageBannerService.getBlogs();
+   }
+
+
+
 }

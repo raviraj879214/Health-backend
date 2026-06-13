@@ -23,6 +23,9 @@ export interface IClinicListing{
 
     getDoctorDetails(id:string);
 
+
+
+   
     
 
 }

@@ -30,4 +30,8 @@ export interface IHomePageBanner{
 
       getRedirects();
 
+
+       //blogs
+    getBlogs();
+
 }
