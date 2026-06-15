@@ -20,4 +20,7 @@ export interface ISeoServices{
 
     deleteRedirects(id:string);
 
+
+    saveOgImage(id:string,image:string);
+
 }

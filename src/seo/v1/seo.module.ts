@@ -7,10 +7,13 @@ import { ActivityLogModule } from 'src/middleware/activitylogg/activity-log.modu
 import { SeoController } from './seo.controller';
 import { SEO_SERVICE_V1 } from '../constant/seo.constant';
 import { SeoServices } from './seo.service';
+import { FileModule } from 'src/common/middleware/modules/file.module';
+import { UploadMiddleware } from 'src/common/middleware/upload.middleware';
+import { join } from 'path';
 
 
 @Module({
-    imports : [ActivityLogModule],
+    imports : [ActivityLogModule,FileModule],
   controllers: [SeoController],
   providers: [
     {
@@ -27,7 +30,13 @@ import { SeoServices } from './seo.service';
 
 
 
-export class SeoModule {}
 
+ export class SeoModule implements NestModule{
+ 
+   configure(consumer: MiddlewareConsumer) 
+   {
+      consumer.apply(UploadMiddleware(join('uploads/seocontent'))).forRoutes('v1/api/seo/update-og-image');
+   }
+ }
 
 

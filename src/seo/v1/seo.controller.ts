@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Put, Req, UseGuards, Version ,Headers, Ip, Post, Delete } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Put, Req, UseGuards, Version ,Headers, Ip, Post, Delete, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { SEO_SERVICE_V1 } from "../constant/seo.constant";
 import { SeoServices } from "./seo.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
@@ -6,6 +6,8 @@ import { ModuleAccess } from "src/common/decorators/module-access.decorator";
 import { SeoUpdateDto } from "./dto/seo.update";
 import type { AuthRequest } from "src/common/decorators/auth-request.interface";
 import { UAParser } from "ua-parser-js";
+import { FileInterceptor } from "@nestjs/platform-express";
+import type { SeoOGImageRequest } from "./dto/seoogimage.dto";
 
 
 
@@ -52,8 +54,7 @@ export class SeoController{
         var uaInfo = (() => { 
         var result = new UAParser(userAgent).getResult(); 
         return `${result.browser.name} ${result.browser.version} on ${result.os.name} ${result.os.version}`; })();
-
-       
+         
         return this.seoService.updateseopagedetails(dto,userId!,ipAddress,uaInfo)    ;
     }
 
@@ -87,8 +88,15 @@ export class SeoController{
         return await this.seoService.deleteRedirects(id);
     }
 
+   
 
+    @Put("update-og-image")
+    async updateOGImage(@Req() dto:SeoOGImageRequest, @Body("id") id: string,) {
 
+        const ogImageUrl = (dto as any).ogFileName ?? null;
+    
+        return await this.seoService.saveOgImage(dto.body.id, ogImageUrl);
+    }
 
 
     

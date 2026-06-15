@@ -125,6 +125,10 @@ model SeoPages {
   updated_at    DateTime @updatedAt
   seopage       String?
   og_structure  Json?
+  og_url        String?
+  og_type       String?
+  publisher     String?
+  og_image      String?
 }
 
 model Subscription {

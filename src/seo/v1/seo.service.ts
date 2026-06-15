@@ -59,12 +59,10 @@ export class SeoServices implements ISeoServices {
 
         async updateseopagedetails(dto: SeoUpdateDto,userId: number,ipAddress: string,userAgent: string) {
 
+             console.log(dto.og_structure);
+
 
         try {
-
-         
-
-
             if (!dto || !dto.id) {
             return { status: 400, message: "Invalid request: ID is required" };
             }
@@ -78,7 +76,7 @@ export class SeoServices implements ISeoServices {
             return { status: 400, message: "Slug already exists for another page" };
             }
 
-            // Update SEO page
+
             const updateseopages = await this.prisma.seoPages.update({
             where: { id: (dto.id) },
             data: {
@@ -87,8 +85,14 @@ export class SeoServices implements ISeoServices {
                 meta_title: dto.meta_title,
                 meta_desc: dto.meta_desc,
                 meta_keywords: dto.meta_keywords,
+                og_structure : JSON.parse(dto.og_structure || "{}"),
+                og_url : dto.og_url,
+                og_type : dto.og_type,
+                publisher : dto.publisher,
+                og_image: dto.og_image
             },
             });
+
 
             // Log activity
             await this.activityLogService.createLog({
@@ -157,6 +161,22 @@ export class SeoServices implements ISeoServices {
                 data : deleteg
             }
         }
+
+
+
+    async saveOgImage(id: string, image: string) {
+        const data = await this.prisma.seoPages.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                og_image: image
+            }
+        });
+        return {
+            data: data
+        }
+    }
 
 
 

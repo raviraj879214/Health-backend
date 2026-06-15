@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString } from "class-validator";
+import { IsInt, IsObject, IsOptional, IsString } from "class-validator";
 
 
 
@@ -6,11 +6,10 @@ import { IsInt, IsOptional, IsString } from "class-validator";
 export class SeoUpdateDto{
 
 
+
  @IsInt()
   id: number;
 
-
-  
   @IsString()
   title: string;
 
@@ -30,6 +29,26 @@ export class SeoUpdateDto{
   @IsString()
   meta_keywords?: string;
 
+  @IsOptional()
+  @IsString()
+  og_url?: string;
+
+  @IsOptional()
+  @IsString()
+  og_type?: string;
+
+  @IsOptional()
+  @IsString()
+  publisher?: string;
+
+  @IsOptional()
+  @IsString()
+  og_image? : string;
+
+
+  @IsOptional()
+  @IsString()
+  og_structure: any;
 
 
 
