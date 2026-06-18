@@ -1,4 +1,5 @@
 import { BannerCreateClinicDto } from "../v1/dto/banner.create.dto";
+import { SearchClinicDto } from "../v1/dto/SearchClinicDto .dto";
 
 
 
@@ -36,6 +37,7 @@ export interface IHomePageBanner{
        getBlogDetails(slug:string);
 
 
+       getClinicBySearch(dto:SearchClinicDto);
 
 
 }

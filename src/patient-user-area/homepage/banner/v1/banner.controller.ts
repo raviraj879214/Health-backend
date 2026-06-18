@@ -2,6 +2,7 @@ import { Body, Controller, Get, Inject, Param, Post, Put, Query, Version } from 
 import { HOMEPAGE_BANNER_CONSTANT } from "../constant/banner.constant";
 import { HomePageBannerServices } from "./banner.service";
 import { BannerCreateClinicDto } from "./dto/banner.create.dto";
+import { SearchClinicDto } from "./dto/SearchClinicDto .dto";
 
 
 
@@ -156,6 +157,16 @@ export class HomepageBannerController {
          }
 
 
+   @Post("search-clinic")
+   @Version("1")
+   async searchClinic(@Body() body: SearchClinicDto) {
+
+      const { specialization, treatments } = body;
+
+   
+
+      return await this.homepageBannerService.getClinicBySearch(body!);
+   }
 
 
 

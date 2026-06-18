@@ -14,6 +14,7 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { brazilianCurrency } from "src/common/currencyFormat/brazilianCurrency";
+import { SearchClinicDto } from "./dto/SearchClinicDto .dto";
 
 
 
@@ -705,6 +706,139 @@ async clinicboostcronjob(): Promise<void> {
           data : data
         }
     }
+
+
+
+  async getClinicBySearch(dto: SearchClinicDto) {
+    const normalizedSpecialization = dto.specialization
+      ?.replace(/-/g, " ")
+      .trim();
+
+    const normalizedTreatments = dto.treatments?.map((t) =>
+      t.replace(/-/g, " ").trim()
+    );
+
+    // Get matching specializations
+    const specializations = await this.prisma.specialization.findMany({
+      where: normalizedSpecialization
+        ? {
+          name: {
+            contains: normalizedSpecialization,
+            mode: "insensitive",
+          },
+        }
+        : undefined,
+      select: {
+        id: true,
+      },
+    });
+
+    // Get matching treatments
+    const treatments = await this.prisma.treatment.findMany({
+      where:
+        normalizedTreatments?.length
+          ? {
+            OR: normalizedTreatments.map((name) => ({
+              name: {
+                contains: name,
+                mode: "insensitive",
+              },
+            })),
+          }
+          : undefined,
+      select: {
+        id: true,
+      },
+    });
+
+    const specializationIds = specializations.map((s) => s.id);
+    const treatmentIds = treatments.map((t) => t.id);
+
+    // Get clinic ids from specialization mapping
+    const clinicSpecializations =
+      specializationIds.length > 0
+        ? await this.prisma.clinicSpecialization.findMany({
+          where: {
+            specializationId: {
+              in: specializationIds,
+            },
+          },
+          select: {
+            clinicUuid: true,
+          },
+        })
+        : [];
+
+    // Get clinic ids from treatment mapping
+    const clinicTreatments =
+      treatmentIds.length > 0
+        ? await this.prisma.clinicTreatment.findMany({
+          where: {
+            treatmentid: {
+              in: treatmentIds,
+            },
+          },
+          select: {
+            clinicUuid: true,
+          },
+        })
+        : [];
+
+    const clinicIdsFromSpecialization = clinicSpecializations.map((x) => x.clinicUuid);
+    const clinicIdsFromTreatments = clinicTreatments.map((x) => x.clinicUuid);
+    console.log(clinicIdsFromSpecialization);
+    console.log(clinicIdsFromTreatments);
+
+
+    let clinicIds: string[] = [];
+
+   
+    if (
+      clinicIdsFromSpecialization.length > 0 &&
+      clinicIdsFromTreatments.length > 0
+    ) {
+      clinicIds = clinicIdsFromSpecialization.filter((id) =>
+        clinicIdsFromTreatments.includes(id)
+      );
+    }
+
+    else if (clinicIdsFromSpecialization.length > 0) {
+      clinicIds = clinicIdsFromSpecialization;
+    }
+
+    else if (clinicIdsFromTreatments.length > 0) {
+      clinicIds = clinicIdsFromTreatments;
+    }
+
+
+
+    const clinics = await this.prisma.clinic.findMany({
+      where: {
+        uuid: {
+          in: [...new Set(clinicIds)], // remove duplicates
+        },
+      },
+    });
+
+    const clinicuuid = clinics.map((item)=> item.uuid);
+
+    const clinicimages = await this.prisma.clinicImages.findMany({
+      where: {
+        clinicuuid: {
+          in: clinicuuid
+        }
+      }
+    });
+
+    return {
+      clinics,
+      clinicimages
+    };
+  }
+
+
+
+
 
 
 }
