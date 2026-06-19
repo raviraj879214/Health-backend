@@ -250,9 +250,9 @@ const formatted = clinics
     async getClinicDetails(clinicId: string) {
 
 
-        const getClinicDetails = await this.prisma.clinic.findUnique({
+        const getClinicDetails = await this.prisma.clinic.findFirst({
             where :{
-                uuid : clinicId
+                slug : clinicId
             },
             include:{
                 city : true,

@@ -14,6 +14,7 @@ import { WebhookNotificationDto } from "src/notification/webhook-notification.dt
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { PatientRegister } from "src/common/enum/PatientRegistration";
 import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
+import { generateClinicSlug } from "src/common/slugfunction/generateClinicSlug";
 
 
 
@@ -328,7 +329,8 @@ export class PartnerRegisterServices implements IPartnerRegister {
                         ibge : dto.ibge,
                         gia : dto.gia,
                         ddd : dto.ddd,
-                        siafi : dto.siafi
+                        siafi : dto.siafi,
+                        slug : generateClinicSlug(dto.name,dto.city),
                     }
                 });
                 return {
@@ -350,6 +352,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
                     phone: dto.phone,
                     phoneVerify: dto.phoneVerify,
                     userId: 1,
+                    slug : generateClinicSlug(dto.name,""),
                     clinicUserId: clinicuserdetails?.id
                 },
             });
@@ -529,6 +532,12 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
     async accepttermsCondition(dto: PartnerRegisterClinicDetails) {
 
+        const clinicd = await this.prisma.clinic.findFirst({where:{uuid: dto.clinicid}});
+
+
+        const clinicslug = generateClinicSlug(clinicd?.name,clinicd?.citycep);
+
+
 
         const getdata = await this.prisma.clinic.update({
             where: {
@@ -541,7 +550,8 @@ export class PartnerRegisterServices implements IPartnerRegister {
                     update:{
                         status : PartnerRegister.ACTIVE
                     }
-                }
+                },
+                slug : clinicslug
             },
             include:{
                 clinicUser : true

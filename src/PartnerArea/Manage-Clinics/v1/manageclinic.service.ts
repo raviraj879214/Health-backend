@@ -7,6 +7,7 @@ import { EmailService } from "src/EmailServices/email.service";
 import { UniversalNotification } from "src/notification/GlobalNotification/businessnotification";
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
+import { generateClinicSlug } from "src/common/slugfunction/generateClinicSlug";
 
 
 
@@ -64,7 +65,10 @@ export class ManageClinicService implements IManageClinicService{
                 message: "Clinic not found"
             };
         }
-
+        console.log(dto.name);
+        console.log(dto.citycep);
+        const slug = generateClinicSlug(dto.name,dto.citycep);
+        console.log(slug);
         const updated = await this.prisma.clinic.update({
             where: { uuid: dto.clinicuuid },
             data: {
@@ -78,7 +82,6 @@ export class ManageClinicService implements IManageClinicService{
                 neighborhood: dto.neighborhood,
                 citycep: dto.citycep,
                 state: dto.state,
-
                 addressnumber: dto.addressnumber,
                 unidade : dto.unidade,
                 estado : dto.estado,
@@ -86,7 +89,8 @@ export class ManageClinicService implements IManageClinicService{
                 ibge : dto.ibge,
                 gia : dto.gia,
                 ddd : dto.ddd,
-                siafi : dto.siafi
+                siafi : dto.siafi,
+                slug : slug
             }
         });
 
