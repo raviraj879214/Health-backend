@@ -47,7 +47,13 @@ export class PatientQueryServices implements IPatietnQuery{
             
 
             const emailTemplate = await this.prisma.emailTemplate.findUnique({where: { name: Emailenumconsts.PatientEmailVerify },});
-            const emailText = `Hi, your OTP for email verification is ${otp}. Please use this to verify your email.`;
+            const emailText = `
+              <p>Hi, your OTP for email verification is:</p>
+              <p style="color: red; font-size: 28px; font-weight: bold;">
+                ${otp}
+              </p>
+              <p>Please use this OTP to verify your email.</p>
+            `;
             const htmlContent = EmailTemplate.getTemplate(emailText);
 
             await this.emailservice.sendEmail(email,`Email Verification`,  "",htmlContent);
