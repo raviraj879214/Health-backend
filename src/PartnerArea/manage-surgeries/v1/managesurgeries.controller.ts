@@ -34,7 +34,8 @@ export class ManageSurgeriesController{
             const image_url =  (requestbody as any).fileName ?? null;
             // console.log("imagePath",image_url);
             const { surgeryid = '', type = '', doctorUuid = '', clinicUuid = '', treatmentid = '',packageid = '' } = requestbody.body ?? {};
-            // console.log("treatmentid",treatmentid);
+             console.log("packageid",packageid);
+             console.log("doctorUuid",doctorUuid);
             //console.log("type",type);
 
            const dto: ManageSurgeriesCreateDto = {
@@ -42,9 +43,9 @@ export class ManageSurgeriesController{
                 surgeryId: surgeryid ?? undefined,
                 type: type ?? undefined,
                 doctorUuid : doctorUuid,
-                clinicUuid : clinicUuid,
+                clinicUuid : clinicUuid ?? null,
                 treatmentid : treatmentid,
-                packageid : packageid
+                packageid : packageid ?? null
             };
             
             return this.managesurgeries.addSurgeriesImages(dto);
@@ -60,10 +61,12 @@ export class ManageSurgeriesController{
         }
 
         @UseGuards(JwtAuthGuard)
-        @Get("get-treatment")
+        @Get("get-treatment/:id")
         @Version("1")
-        async getAllTreatment(){
-            return this.managesurgeries.getTreatments();
+        async getAllTreatment(@Param("id") id:string){
+
+           
+            return this.managesurgeries.getTreatments(id);
         }
 
 

@@ -294,12 +294,6 @@ export class DoctorServices implements IDoctorServices{
                     console.log("dto",dto);
 
 
-
-                   
-
-
-
-
                      if(dto.id !== ''){
 
                         await this.prisma.clinicDoctorAddress.update({
@@ -320,6 +314,7 @@ export class DoctorServices implements IDoctorServices{
                                 giaCode: dto.gia,
                                 areaCode: dto.ddd,
                                 siafiCode: dto.siafi,
+                                
                             }
                         });
                         return{

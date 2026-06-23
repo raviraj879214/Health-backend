@@ -12,7 +12,7 @@ export interface IManageSurgeries{
 
     deleteSurgeriesImages(id:string);
 
-    getTreatments();
+    getTreatments(id:string);
 
     getDoctors(clinicuuid:string);
 

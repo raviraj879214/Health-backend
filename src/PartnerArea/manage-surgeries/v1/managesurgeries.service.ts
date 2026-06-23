@@ -57,9 +57,9 @@ export class ManageSurgeries implements IManageSurgeries{
                 imageUrl : dto.imageUrl,
                 surgeryId : dto.surgeryId,
                 clinicUuid : dto.clinicUuid,
-                doctorUuid : dto.doctorUuid,
+                doctorUuid : dto.doctorUuid ?? null,
                 treatmentid: dto.treatmentid,
-                packageid : dto.packageid
+                packageid : dto.packageid ?? null
             }
         });
 
@@ -112,10 +112,27 @@ export class ManageSurgeries implements IManageSurgeries{
 
 
 
-    async getTreatments() {
-        const getData = await this.prisma.treatment.findMany({});
+    async getTreatments(id:string) {
 
-      
+        const ids = (
+            await this.prisma.clinicTreatment.findMany({
+                where: {
+                    clinicUuid: id,
+                },
+                select: {
+                    treatmentid: true,
+                },
+            })
+        ).map(x => x.treatmentid).filter((id): id is string => id !== null);
+
+        const getData = await this.prisma.treatment.findMany({
+            where: {
+                id: {
+                    in: ids,
+                },
+            },
+        });
+
 
         return {
             status : 200,

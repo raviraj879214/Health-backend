@@ -16,6 +16,7 @@ export class DoctorUpdateDto {
   image_url?:string;
   cpf?:string;
   degree:string;
+ 
 }
 
 
@@ -39,6 +40,7 @@ export class DoctorAddress {
   gia?: string;
   ddd?: string;
   siafi?: string;
+  addressnumber?:string;
 
 
 }
