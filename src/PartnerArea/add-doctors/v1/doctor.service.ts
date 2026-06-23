@@ -155,7 +155,7 @@ export class DoctorServices implements IDoctorServices{
                     languages:dto.languages,
                     videurl:dto.videourl,
                     clinicuuid : dto.clinicuuid,
-                    image : dto.image_url,
+                    image : dto.image_url || "doctor-default.webp",
                     cpf : dto.cpf,
                     degree : dto.degree
                 }
