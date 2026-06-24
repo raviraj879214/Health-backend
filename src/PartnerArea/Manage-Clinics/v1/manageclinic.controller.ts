@@ -54,9 +54,9 @@ export class ManageClinicController{
 
     @Post('ping-admin')
     @Version("1")
-    async pingAdmin(@Body() dto:{clinicmessage : string }){
+    async pingAdmin(@Body() dto:{clinicmessage : string ,clinicuuid : string }){
 
-        return await this.manageClinicService.pingAdmin(dto.clinicmessage);
+        return await this.manageClinicService.pingAdmin(dto.clinicmessage,dto.clinicuuid);
     }
 
 

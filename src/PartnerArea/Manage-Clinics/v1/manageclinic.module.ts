@@ -7,6 +7,7 @@ import { JwtStrategy } from 'src/PartnerArea/ClinicAuth/JwtStrategy/jwt.strategy
 import { ManageClinicBusiness } from './business/manageclinic.business';
 import { UniversalNotificationnModule } from 'src/notification/GlobalNotification/businessnotificationmodule';
 import { EmailService } from 'src/EmailServices/email.service';
+import { UrlGeneratorService } from 'src/common/urlgenerator/UrlGenerate';
 
 
 @Module({
@@ -22,7 +23,8 @@ import { EmailService } from 'src/EmailServices/email.service';
     PrismaService,
     JwtStrategy,
     ManageClinicBusiness,
-    EmailService
+    EmailService,
+    UrlGeneratorService
   ],
 
   exports: [MANAGE_CLINIC_SERVICES_V1],

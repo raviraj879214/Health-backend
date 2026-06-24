@@ -402,8 +402,9 @@ console.log("assignedQueries", assignedQueries);
       }
     });
 
-    
+     const  googlecomapnyupdateurl= this.urlGenerator.urls.admin_clinic_details(dto.uuid);
     const payload: WebhookNotificationDto = {
+       page : googlecomapnyupdateurl,
       title: `Clinic Google Review Profile Update: ${updateData.name}`,
       area: "admin",
       message: `The clinic "${updateData.name}" has updated its Google review profile. Please check the clinic details page and review it.`

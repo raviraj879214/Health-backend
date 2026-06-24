@@ -8,6 +8,7 @@ import { UniversalNotification } from "src/notification/GlobalNotification/busin
 import { WebhookNotificationDto } from "src/notification/webhook-notification.dto";
 import { EmailTemplate } from "src/common/emailtemplate/email-template";
 import { generateClinicSlug } from "src/common/slugfunction/generateClinicSlug";
+import { UrlGeneratorService } from "src/common/urlgenerator/UrlGenerate";
 
 
 
@@ -20,7 +21,8 @@ export class ManageClinicService implements IManageClinicService{
         private readonly prisma : PrismaService,
         private readonly manageClinicBusiness : ManageClinicBusiness,
         private emailservice : EmailService,
-        private readonly universalNotification:UniversalNotification
+        private readonly universalNotification:UniversalNotification,
+        private readonly urlGenerator: UrlGeneratorService
     ){}
 
 
@@ -126,9 +128,12 @@ export class ManageClinicService implements IManageClinicService{
 
 
 
-    async pingAdmin(clinicmessage: string) {
+    async pingAdmin(clinicmessage: string,clinicuuid:string) {
+
         console.log("clinicmessage",clinicmessage);
+
         let payload: WebhookNotificationDto = {
+            page :  this.urlGenerator.urls.admin_clinic_details(clinicuuid),
             title: clinicmessage,
             area: "admin",
             message: ''
@@ -138,6 +143,7 @@ export class ManageClinicService implements IManageClinicService{
         const adminemail = await this.prisma.user.findFirst({where :{role : {name : "SuperAdmin"}},select:{email : true}});                               
         const emailText = clinicmessage;
         const htmlContent = EmailTemplate.getTemplate(emailText);
+        
         await this.emailservice.sendEmail(
                 adminemail?.email!,
                 `${process.env.NEXT_PUBLIC_PROJECT_NAME} - ` + `Request from clinic`,  
