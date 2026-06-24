@@ -57,7 +57,9 @@ export class ManageSurgeriesController{
         @Version("1")
         async deleteSurgeryImages(@Param("id") id : string){
 
-                return this.managesurgeries.deleteSurgeriesImages(id);
+
+            
+            return this.managesurgeries.deleteSurgeriesImages(id);
         }
 
         @UseGuards(JwtAuthGuard)

@@ -77,10 +77,10 @@ export class ManageSurgeries implements IManageSurgeries{
 
     async deleteSurgeriesImages(id: string) {
 
-        //console.log("id",id);
+        
     const images = await this.prisma.clinicSurgeryImage.findMany({
         where: {
-            id: id,
+            surgeryId: id,
         },
         select: { imageUrl: true }, // or filename if that's what you store
     });
@@ -93,6 +93,7 @@ export class ManageSurgeries implements IManageSurgeries{
         };
     }
 
+    console.log("images",images);
     
     for (const img of images) {
         await this.fileservice.deleteImage(img.imageUrl!,"/surgery/beforeandafter");
@@ -100,7 +101,7 @@ export class ManageSurgeries implements IManageSurgeries{
 
 
     const deletesurgeries = await this.prisma.clinicSurgeryImage.deleteMany({
-        where: { id: id },
+        where: { surgeryId: id },
     });
 
     return {
