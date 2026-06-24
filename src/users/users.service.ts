@@ -85,10 +85,28 @@ async createUser(dto: CreateUserDto) {
     if (dto.password) {
       dto.password = await bcrypt.hash(dto.password, 10);
     }
-    return this.prisma.user.update({
-      where: { id },
-      data: dto,
-    });
+   
+      const data = await this.prisma.user.update({
+        where:{
+          id : id
+        },
+            data: {
+              email: dto.email,
+              firstname: dto.firstname,
+              roleId : Number(dto.roleId),
+              lastname: dto.lastname,
+              Bio: dto.Bio, 
+              password: dto.password,
+              whatsappNumber : dto.whatsappNumber,
+              telegramNumber : dto.telegramNumber,
+              messengerID : dto.messengerID
+            },
+          });
+
+ return {
+      success : true
+    };
+
   }
 
   async deleteUser(id: number) {

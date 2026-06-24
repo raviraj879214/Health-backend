@@ -14,8 +14,11 @@ export class UsersController {
   @Post()
   @Version("1")
   create(@Body() dto: CreateUserDto) {
+    console.log("created");
     return this.usersService.createUser(dto);
   }
+
+
 
   @Get()
   @Version("1")
@@ -23,9 +26,6 @@ export class UsersController {
 
       const pageNumber = parseInt(page) || 1;
       const pageSize = parseInt(limit) || 10;
-
-
-
 
      return this.usersService.getUsers(pageNumber,pageSize);
   }
@@ -39,12 +39,17 @@ export class UsersController {
   @Patch(':id')
   @Version("1")
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+
+    console.log(id);
+    console.log(dto);
+
     return this.usersService.updateUser(Number(id), dto);
   }
 
   @Delete(':id')
   @Version("1")
   remove(@Param('id') id: string) {
+
     return this.usersService.deleteUser(Number(id));
   }
 

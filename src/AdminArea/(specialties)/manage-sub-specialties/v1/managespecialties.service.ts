@@ -23,7 +23,7 @@ export class ManageSpecialtiesServices implements IManageSubSpecialties{
         const getData = await this.prisma.specialty.findMany({
            
             orderBy:{
-                createdAt : 'desc'
+               name : 'asc'
             },
              ...((page > 0 && limit > 0) &&{
                     skip: (page - 1) * limit,
