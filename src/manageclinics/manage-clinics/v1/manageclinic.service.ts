@@ -1111,7 +1111,7 @@ export class ManageClinicServices implements IManageClinic{
         const data= await this.prisma.user.findMany({
             where:{
                 role : {
-                    name : "Cordinator"
+                    name : "Coordinator"
                 }
             }
         });
