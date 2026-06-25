@@ -841,6 +841,7 @@ async clinicboostcronjob(): Promise<void> {
 
 async getTreatmentsForAllPackages() {
   const data = await this.prisma.packageTreatment.findMany({
+    distinct: ['treatmentid'],
     select: {
       treatment: {
         select: {
@@ -851,7 +852,7 @@ async getTreatmentsForAllPackages() {
     },
   });
 
-  return data;
+  return data.map(item => item.treatment);
 }
 
 
