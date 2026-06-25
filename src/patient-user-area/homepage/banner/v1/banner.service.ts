@@ -840,17 +840,40 @@ async clinicboostcronjob(): Promise<void> {
 
 
 async getTreatmentsForAllPackages() {
-  const data = await this.prisma.packageTreatment.findMany({
-    distinct: ['treatmentid'],
-    select: {
-      treatment: {
-        select: {
-          id: true,
-          name: true,
-        },
+
+ const packageids = await this.prisma.clinicPackage.findMany({
+  where: {
+    status: PackageVerifyStatus.VERIFIED,
+    Visibilty: PackageVisibiltyStatus.SHOW,
+  },
+  select: {
+    id: true,
+  },
+});
+
+const pkids = packageids
+  .map((x) => x.id)
+  .filter((id): id is string => id !== null);
+
+  console.log("pkids",pkids);
+
+
+const data = await this.prisma.packageTreatment.findMany({
+  where: {
+    packageId: {
+      in: pkids,
+    },
+  },
+  distinct: ['treatmentid'],
+  select: {
+    treatment: {
+      select: {
+        id: true,
+        name: true,
       },
     },
-  });
+  },
+});
 
   return data.map(item => item.treatment);
 }

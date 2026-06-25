@@ -170,6 +170,7 @@ export class HomepageBannerController {
    @Version("1")
    async getTreatmentForPackages(){
 
+      console.log("dfdf");
       return await this.homepageBannerService.getTreatmentsForAllPackages();
    }
 
