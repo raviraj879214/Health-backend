@@ -903,56 +903,72 @@ async getPackagesByTreatments(
     packageIds = packageTreatments.map(
       (item) => item.packageId,
     );
+
+    if (packageIds.length === 0) {
+      return {
+        data: [],
+        pagination: {
+          total: 0,
+          page,
+          limit,
+          totalPages: 0,
+          hasNext: false,
+          hasPrevious: page > 1,
+        },
+      };
+    }
   }
 
   const whereClause: Prisma.ClinicPackageWhereInput = {
     status: PackageVerifyStatus.VERIFIED,
     Visibilty: PackageVisibiltyStatus.SHOW,
-    ...(treatmentId &&
-      packageIds.length > 0 && {
-        id: {
-          in: packageIds,
-        },
-      }),
+    ...(treatmentId
+      ? {
+          id: {
+            in: packageIds,
+          },
+        }
+      : {}),
   };
 
-  const total = await this.prisma.clinicPackage.count({
-    where: whereClause,
-  });
-
+  // Fetch all matching packages first
   const packages = await this.prisma.clinicPackage.findMany({
     where: whereClause,
     include: {
       boosts: {
         where: {
           isActive: true,
-          startAt: { lte: now },
-          endAt: { gte: now },
+          startAt: {
+            lte: now,
+          },
+          endAt: {
+            gte: now,
+          },
         },
       },
       clinic: true,
     },
-    skip: (page - 1) * limit,
-    take: limit,
   });
 
-  // Get clinic UUIDs
+  const total = packages.length;
+
   const clinicUuids = [
     ...new Set(
       packages
         .map((pkg) => pkg.clinic?.uuid)
-        .filter(Boolean),
+        .filter(
+          (uuid): uuid is string => Boolean(uuid),
+        ),
     ),
   ];
 
-  // Fetch clinic images with sort = 1
   const clinicImages =
     await this.prisma.clinicImages.findMany({
       where: {
         clinicuuid: {
           in: clinicUuids,
         },
-        sort: String(1),
+        sort: '1',
       },
       select: {
         clinicuuid: true,
@@ -960,55 +976,64 @@ async getPackagesByTreatments(
       },
     });
 
-  // Create lookup map
-const clinicImageMap = clinicImages.reduce(
-  (acc, image) => {
-    acc[image.clinicuuid || ""] = image.Images;
-    return acc;
-  },
-  {} as Record<string, string | null>,
-);
+  const clinicImageMap = clinicImages.reduce(
+    (acc, image) => {
+      if (image.clinicuuid) {
+        acc[image.clinicuuid] = image.Images;
+      }
+      return acc;
+    },
+    {} as Record<string, string | null>,
+  );
 
   const packagesWithImages = packages.map(
     (pkg) => ({
       ...pkg,
       clinicImage:
-        clinicImageMap[pkg.clinic?.uuid] || null,
+        clinicImageMap[pkg.clinic?.uuid ?? ''] ??
+        null,
     }),
   );
-
-  type PackageWithRelations = typeof packagesWithImages[number];
-
-  const boosted: PackageWithRelations[] = [];
-  const normal: PackageWithRelations[] = [];
-
-  for (const pkg of packagesWithImages) {
-    if (pkg.boosts.length > 0) {
-      boosted.push(pkg);
-    } else {
-      normal.push(pkg);
-    }
-  }
 
   const shuffle = <T>(arr: T[]) =>
     [...arr].sort(() => Math.random() - 0.5);
 
+  const boosted = shuffle(
+    packagesWithImages.filter(
+      (pkg) => pkg.boosts.length > 0,
+    ),
+  );
+
+  const normal = shuffle(
+    packagesWithImages.filter(
+      (pkg) => pkg.boosts.length === 0,
+    ),
+  );
+
+  // Boosted always first
+  const orderedPackages = [
+    ...boosted,
+    ...normal,
+  ];
+
+  // Pagination AFTER ordering
+  const paginatedPackages = orderedPackages.slice(
+    (page - 1) * limit,
+    page * limit,
+  );
+
   return {
-    data: [
-      ...shuffle(boosted),
-      ...shuffle(normal),
-    ],
+    data: paginatedPackages,
     pagination: {
       total,
       page,
       limit,
       totalPages: Math.ceil(total / limit),
-      hasNext: page < Math.ceil(total / limit),
+      hasNext:
+        page < Math.ceil(total / limit),
       hasPrevious: page > 1,
     },
   };
 }
-
-
 
 }
