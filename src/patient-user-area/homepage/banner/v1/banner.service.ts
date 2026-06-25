@@ -839,6 +839,152 @@ async clinicboostcronjob(): Promise<void> {
 
 
 
+async getTreatmentsForAllPackages() {
+  const data = await this.prisma.packageTreatment.findMany({
+    select: {
+      treatment: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  return data;
+}
+
+
+
+async getPackagesByTreatments(
+  treatmentId?: string,
+  page = 1,
+  limit = 10,
+) {
+  const now = new Date();
+
+  let packageIds: string[] = [];
+
+  if (treatmentId) {
+    const packageTreatments =
+      await this.prisma.packageTreatment.findMany({
+        where: {
+          treatmentid: treatmentId,
+        },
+        select: {
+          packageId: true,
+        },
+      });
+
+    packageIds = packageTreatments.map(
+      (item) => item.packageId,
+    );
+  }
+
+  const whereClause: Prisma.ClinicPackageWhereInput = {
+    status: PackageVerifyStatus.VERIFIED,
+    Visibilty: PackageVisibiltyStatus.SHOW,
+    ...(treatmentId &&
+      packageIds.length > 0 && {
+        id: {
+          in: packageIds,
+        },
+      }),
+  };
+
+  const total = await this.prisma.clinicPackage.count({
+    where: whereClause,
+  });
+
+  const packages = await this.prisma.clinicPackage.findMany({
+    where: whereClause,
+    include: {
+      boosts: {
+        where: {
+          isActive: true,
+          startAt: { lte: now },
+          endAt: { gte: now },
+        },
+      },
+      clinic: true,
+    },
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+
+  // Get clinic UUIDs
+  const clinicUuids = [
+    ...new Set(
+      packages
+        .map((pkg) => pkg.clinic?.uuid)
+        .filter(Boolean),
+    ),
+  ];
+
+  // Fetch clinic images with sort = 1
+  const clinicImages =
+    await this.prisma.clinicImages.findMany({
+      where: {
+        clinicuuid: {
+          in: clinicUuids,
+        },
+        sort: String(1),
+      },
+      select: {
+        clinicuuid: true,
+        Images: true,
+      },
+    });
+
+  // Create lookup map
+const clinicImageMap = clinicImages.reduce(
+  (acc, image) => {
+    acc[image.clinicuuid || ""] = image.Images;
+    return acc;
+  },
+  {} as Record<string, string | null>,
+);
+
+  const packagesWithImages = packages.map(
+    (pkg) => ({
+      ...pkg,
+      clinicImage:
+        clinicImageMap[pkg.clinic?.uuid] || null,
+    }),
+  );
+
+  type PackageWithRelations = typeof packagesWithImages[number];
+
+  const boosted: PackageWithRelations[] = [];
+  const normal: PackageWithRelations[] = [];
+
+  for (const pkg of packagesWithImages) {
+    if (pkg.boosts.length > 0) {
+      boosted.push(pkg);
+    } else {
+      normal.push(pkg);
+    }
+  }
+
+  const shuffle = <T>(arr: T[]) =>
+    [...arr].sort(() => Math.random() - 0.5);
+
+  return {
+    data: [
+      ...shuffle(boosted),
+      ...shuffle(normal),
+    ],
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasNext: page < Math.ceil(total / limit),
+      hasPrevious: page > 1,
+    },
+  };
+}
+
 
 
 }

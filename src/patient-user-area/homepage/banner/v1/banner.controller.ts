@@ -162,12 +162,24 @@ export class HomepageBannerController {
    async searchClinic(@Body() body: SearchClinicDto) {
 
       const { specialization, treatments } = body;
-
-   
-
       return await this.homepageBannerService.getClinicBySearch(body!);
    }
 
+
+   @Get("get-treatment-for-packages")
+   @Version("1")
+   async getTreatmentForPackages(){
+
+      return await this.homepageBannerService.getTreatmentsForAllPackages();
+   }
+
+
+
+   @Get("packages-by-treatment")
+   async getPackagesBytreatments(@Query("treatmentId") treatmentId: string, @Query("page") page = 1, @Query("limit") limit = 10,) {
+
+      return await this.homepageBannerService.getPackagesByTreatments(treatmentId, Number(page), Number(limit),);
+   }
 
 
 

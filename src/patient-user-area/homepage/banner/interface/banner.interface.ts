@@ -40,4 +40,11 @@ export interface IHomePageBanner{
        getClinicBySearch(dto:SearchClinicDto);
 
 
+
+
+      //all packages            
+       getTreatmentsForAllPackages();
+
+       getPackagesByTreatments(treatmentid:string,page:number,limit:number);
+
 }
