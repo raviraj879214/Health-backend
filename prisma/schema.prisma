@@ -270,6 +270,14 @@ model Clinic {
   metakeyword            String?
   metadescription        String?
   slug                   String?
+  ogtitle                String?
+  ogdescription          String?
+  ogurl                  String?
+  ogimage                String?
+  ogtype                 String?
+  ogsitename             String?
+  ogpublisher            String?
+  sestructure            Json?
   city                   City?                    @relation(fields: [cityId], references: [id])
   clinicUser             ClinicUser?              @relation(fields: [clinicUserId], references: [id])
   cordinator             User?                    @relation("ClinicCoordinator", fields: [cordinatorid], references: [id])
