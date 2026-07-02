@@ -1036,4 +1036,20 @@ async getPackagesByTreatments(
   };
 }
 
+
+    async getCms(title: string) {
+      const data =  await this.prisma.terms_and_conditions.findFirst({
+        where :{
+          key : title
+        }
+      }) ;
+
+
+      return{
+        data : data
+      }
+    }
+    
+    
+
 }

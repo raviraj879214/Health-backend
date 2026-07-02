@@ -3,6 +3,8 @@ import { HOMEPAGE_BANNER_CONSTANT } from "../constant/banner.constant";
 import { HomePageBannerServices } from "./banner.service";
 import { BannerCreateClinicDto } from "./dto/banner.create.dto";
 import { SearchClinicDto } from "./dto/SearchClinicDto .dto";
+import { get } from "axios";
+import { title } from "process";
 
 
 
@@ -133,7 +135,7 @@ export class HomepageBannerController {
 
          @Get("get-seo-slug")
          async seoPagesSlug(){
-               console.log("fddddd");
+               
             return await this.homepageBannerService.getSeoPageSlug();
          }
 
@@ -182,6 +184,12 @@ export class HomepageBannerController {
       return await this.homepageBannerService.getPackagesByTreatments(treatmentId, Number(page), Number(limit),);
    }
 
+
+   @Get("get-cms/:id")
+   async getCmsContent(@Param("id") id:string){
+      console.log("id",id);
+      return await this.homepageBannerService.getCms(id);
+   }
 
 
 

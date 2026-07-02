@@ -47,4 +47,7 @@ export interface IHomePageBanner{
 
        getPackagesByTreatments(treatmentid:string,page:number,limit:number);
 
+
+       getCms(title : string);
+
 }

@@ -876,6 +876,7 @@ model terms_and_conditions {
   is_active  Boolean?  @default(false)
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   updated_at DateTime? @default(now()) @db.Timestamptz(6)
+  key        String?
 }
 
 model Notification {
