@@ -59,6 +59,49 @@ export class ClinicDetailServices implements IClinicDetails{
       }
 
 
+      async getCms() {
+          const data = await this.prisma.terms_and_conditions.findMany({
+            where :{
+                is_active : true
+            }
+          });
+
+          return{
+            data : data
+          }
+      }
+
+
+      async postCms(id: string, content: string) {
+                 console.log(id,content);
+
+
+        const data = await this.prisma.terms_and_conditions.update({
+            where:{
+                id : id
+            },
+            data:{
+                is_active : false
+            }
+        });
+
+        await this.prisma.terms_and_conditions.create({
+            data:{
+                name: `${data.name}`,
+                version : Number(data.version + 1),
+                content : content,
+                is_active : true
+            }
+        });
+
+
+        return {
+            message : "successfully created updated cms",
+            data : await this.prisma.terms_and_conditions.findMany()
+        }
+
+      }
+
 
 
 }

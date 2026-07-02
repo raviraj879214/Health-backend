@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { RolesGuard } from "src/common/guards/roles.guards";
 import { ClinicDetailServices } from "./clinicdetails.service";
 import { CLINICDETAILSCONSTANT } from "../constant/clinicdetails.constant";
@@ -37,6 +37,32 @@ export class ClinicDetailsController{
 
         return await this.clinicdetailServices.updateSeoClinicDetails(dto.metatitle,dto.metakeywords,dto.metadescription,dto.slug,dto.uuid);
     }
+
+
+    @Get("get-cms")
+    @ModuleAccess("Manage Clinic Details Page Seo")
+    @Version("1")
+    async getCms(){
+
+        return await this.clinicdetailServices.getCms();
+    }
+
+
+
+    @Post("post-cms")
+    @ModuleAccess("Manage Clinic Details Page Seo")
+    @Version("1")
+    async postCms(@Body() dto:{id:string,content:string}){
+
+
+       
+
+        return await this.clinicdetailServices.postCms(dto.id,dto.content);
+        
+    }
+
+
+
 
 
 
