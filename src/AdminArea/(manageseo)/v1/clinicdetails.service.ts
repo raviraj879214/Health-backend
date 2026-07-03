@@ -90,7 +90,8 @@ export class ClinicDetailServices implements IClinicDetails{
                 name: `${data.name}`,
                 version : Number(data.version + 1),
                 content : content,
-                is_active : true
+                is_active : true,
+                key : data.key
             }
         });
 
