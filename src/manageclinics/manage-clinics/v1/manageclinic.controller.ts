@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Req, UseGuards, Version } from "@nestjs/common";
 import { MANAGE_CLINIC_CONSTANT } from "../constant/manageclinic.constamt";
 import { ManageClinicServices } from "./manageclinic.service";
 import { RolesGuard } from "src/common/guards/roles.guards";
@@ -352,9 +352,15 @@ export class ManageClinicController{
    @Version("1")
    @ModuleAccess("Manage Clinic")
    async getLicense(@Param("clinicuuid") clinicuuid: string) {
-
-
       return await this.manageClinicService.getLicense(clinicuuid);
+   }
+
+   @Delete("delete-clinic/:clinicuuid")
+   @Version("1")
+   @ModuleAccess("Manage Clinic")
+   async deleteClinic(@Param("clinicuuid") clinicuuid: string) {
+      console.log(clinicuuid);
+      return await this.manageClinicService.deleteClinic(clinicuuid);
    }
 
 

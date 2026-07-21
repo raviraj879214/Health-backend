@@ -1169,6 +1169,74 @@ export class ManageClinicServices implements IManageClinic{
             data : data
         }
     }
+
+
+
+    async deleteClinic(uuid: string) {
+        return this.prisma.$transaction(async (tx) => {
+            await tx.clinicDoctorAddress.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicDoctor.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicGoogleAccount.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicListingBoost.deleteMany({
+                where: { clinicId: uuid },
+            });
+
+            await tx.clinicPackage.deleteMany({
+                where: { clinicId: uuid },
+            });
+
+            await tx.clinicRatingSummary.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicSpecialization.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicSpecialty.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicTreatment.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.clinicBoost.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.googleReview.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            await tx.patientQueryFinalPrice.deleteMany({
+                where: { clinicId: uuid },
+            });
+
+            await tx.patientQuery.deleteMany({
+                where: { clinicId: uuid },
+            });
+
+            await tx.hospitalLicense.deleteMany({
+                where: { clinicUuid: uuid },
+            });
+
+            // Finally delete the clinic
+            return tx.clinic.delete({
+                where: { uuid },
+            });
+        });
+    }
+    
     
 
 }

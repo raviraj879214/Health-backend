@@ -78,5 +78,7 @@ export interface IManageClinic{
     
 
     getLicense(id:string);
+
+    deleteClinic(id:string);
     
 }
