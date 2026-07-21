@@ -80,7 +80,46 @@ export class AccreditationService implements IAccreditationService{
 
 
 
+    
+    async createLicense(image: string, id: string) {
+        const create = await this.prisma.hospitalLicense.create({
+            data:{
+                image : image,
+                clinicUuid : id
+            }
+        });
 
+        return{
+            data : create
+        }
+    }
+
+
+    async getLicense(id: string) {
+        const data= await this.prisma.hospitalLicense.findMany({
+            where:{
+                clinicUuid : id
+            }
+        });
+
+        return{
+            data : data
+        }
+    }
+
+    async deleteLicense(id: string) {
+        
+        const data= await this.prisma.hospitalLicense.delete({
+            where:{
+                id : id
+            }
+        });
+
+        return{
+            data : data
+        }
+
+    }
 
 
 

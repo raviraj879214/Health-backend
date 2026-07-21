@@ -294,6 +294,7 @@ model Clinic {
   clinicsSpecialty       ClinicSpecialty[]
   clinicTreatments       ClinicTreatment[]
   googleReviews          GoogleReview[]
+  HospitalLicense        HospitalLicense[]
   queries                PatientQuery[]
   PatientQueryFinalPrice PatientQueryFinalPrice[]
 }
@@ -1013,4 +1014,15 @@ model urlredirects {
   new_url     String
   status_code Int?      @default(301)
   created_at  DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model HospitalLicense {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinicUuid String   @db.Uuid
+  image      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  Clinic     Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+
+  @@index([clinicUuid])
 }

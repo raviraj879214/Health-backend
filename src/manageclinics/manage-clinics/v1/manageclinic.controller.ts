@@ -348,6 +348,15 @@ export class ManageClinicController{
          }
 
 
+   @Get("get-clinic-license/:clinicuuid")
+   @Version("1")
+   @ModuleAccess("Manage Clinic")
+   async getLicense(@Param("clinicuuid") clinicuuid: string) {
+
+
+      return await this.manageClinicService.getLicense(clinicuuid);
+   }
+
 
 
 }

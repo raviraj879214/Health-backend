@@ -255,6 +255,7 @@ const formatted = clinics
                 slug : clinicId
             },
             include:{
+                HospitalLicense : true,
                 city : true,
                 country : true,
                 ratingSummary : true,

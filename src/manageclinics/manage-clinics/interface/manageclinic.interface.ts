@@ -76,5 +76,7 @@ export interface IManageClinic{
     assignCordinators(clinicid:string,cordinatorid:string,userid:string);
 
     
+
+    getLicense(id:string);
     
 }

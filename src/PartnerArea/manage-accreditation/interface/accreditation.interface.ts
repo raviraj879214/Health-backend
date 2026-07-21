@@ -13,5 +13,12 @@ export interface IAccreditationService{
 
 
     deleteAccreditation(id: number);
+
+
+
+    createLicense(image:string,id:string);
+
+    getLicense(id:string);
+    deleteLicense(id:string);
     
 }

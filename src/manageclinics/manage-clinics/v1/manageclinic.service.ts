@@ -1157,6 +1157,18 @@ export class ManageClinicServices implements IManageClinic{
         }
     }
 
+
+    async  getLicense(id: string) {
+        const data = await this.prisma.hospitalLicense.findMany({
+            where:{
+                clinicUuid : id
+            }
+        });
+
+        return{
+            data : data
+        }
+    }
     
 
 }

@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards, Version } from "@nestjs/common";
 import { ACCREDITATION_CONSTANT_SERVICE } from "../constant/accreditation.constant";
 import { AccreditationService } from "./accreditation.services";
 import { JwtAuthGuard } from "src/PartnerArea/AuthGuard/jwt-auth.guard";
 import { AccreditationsCreateDto } from "./dto/accreditation.update.dto";
+import type { LicenseRequest } from "./dto/license.request";
 
 
 
@@ -49,6 +50,38 @@ export class AccreditationController{
             return this.accreditationservice.deleteAccreditation(id);
     }
 
+
+    @UseGuards(JwtAuthGuard)
+    @Post("upload-license")
+    @Version("1")
+    async uploadLicense(@Req() dto: LicenseRequest) {
+        const file = dto.file;
+        const image_url = (dto as any).fileName ?? null;
+        console.log("imagePath", image_url);
+        console.log("clinicuuid", dto.body?.clinicuuid);
+
+        return await this.accreditationservice.createLicense(image_url,dto.body?.clinicuuid);
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get("get-license/:id")
+    @Version("1")
+    async getLicense(@Param("id") id:string) {
+       
+        return await this.accreditationservice.getLicense(id);
+    }
+
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Delete("delete-license/:id")
+    @Version("1")
+    async deleteLicense(@Param("id") id:string) {
+       
+        return await this.accreditationservice.deleteLicense(id);
+    }
 
 
 
