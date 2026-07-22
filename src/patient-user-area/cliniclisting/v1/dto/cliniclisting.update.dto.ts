@@ -37,5 +37,6 @@ export class ClinicListCreateDto {
   skip: number = 0;   
   limit: number = 1; 
   total?: number;   
+  search:string;
 
 }

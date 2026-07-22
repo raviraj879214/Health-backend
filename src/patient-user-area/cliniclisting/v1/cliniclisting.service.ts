@@ -138,6 +138,12 @@ export class ClinicListingServices implements IClinicListing{
                 in: clinicuuids,
             };
         }
+       if (dto.search?.trim()) {
+    whereClause.name = {
+        contains: dto.search.trim(),
+        mode: "insensitive",
+    };
+}
 
 
       const clinics = await this.prisma.clinic.findMany({
