@@ -534,14 +534,17 @@ const formatted = clinics
     async getDoctorDetails(id: string) {
         const data = await this.prisma.doctor.findFirst({
             where :{
-                uuid : id
+                slug : id
             },
             include:{
-                specialtys : {
+                specializations : {
                     include :{
-                        specialty : true
+                        specialization : true
                     }
-                }
+                },
+                clinicDoctorAddress: true
+                   
+                
             }
         });
 

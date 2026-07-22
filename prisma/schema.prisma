@@ -451,6 +451,7 @@ model Doctor {
   updatedAt           DateTime               @updatedAt
   DoctorVerify        Int?                   @default(0)
   Reason              String?
+  slug                String?
   clinicDoctors       ClinicDoctor[]
   clinicDoctorAddress ClinicDoctorAddress[]
   specializations     DoctorSpecialization[]
