@@ -42,12 +42,11 @@ export class PartnerRegisterServices implements IPartnerRegister {
         const checkEmail = await this.prisma.clinicUser.findFirst({
             where: {
                 email: email
-               
             }
         });
-        
+
         if (checkEmail && checkEmail?.status === PartnerRegister.ACTIVE) {
-            
+
 
             return {
                 status: 404,
@@ -55,7 +54,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
             }
         }
         else if (!checkEmail) {
-            
+
 
 
             let randomOtp: string;
@@ -67,7 +66,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
             //     randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
             // }
 
-             
+
 
             const hash = await bcrypt.hash("Aalpha@100", 10);
 
@@ -86,17 +85,28 @@ export class PartnerRegisterServices implements IPartnerRegister {
             const emailText = emailTemplate?.body.replace('${randomOtp}', otptext);
 
 
-            console.log("randomOtp","100000");
+            console.log("randomOtp", "100000");
 
 
             const htmlContent = EmailTemplate.getTemplate(emailText);
 
-            await this.emailservice.sendEmail(
-                email,
-                emailTemplate?.subject!,
-                "",
-                htmlContent
-            );
+            try {
+                await this.emailservice.sendEmail(
+                    email,
+                    emailTemplate?.subject!,
+                    "",
+                    htmlContent
+                );
+            } catch (error) {
+                console.error("Email sending failed:", error);
+
+                return {
+                    status: 400,
+                    message: "Unable to send the OTP to this email address. Please verify the email and try again."
+                };
+            }
+
+
 
 
 
@@ -108,7 +118,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
         }
         else if (checkEmail?.isOtpVerify == false && checkEmail.status == PartnerRegister.PENDING) {
-           
+
             let randomOtp: string;
             randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
             // if (process.env.NODE_ENV === 'local') {
@@ -129,12 +139,21 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
             const htmlContent = EmailTemplate.getTemplate(emailText);
 
-            await this.emailservice.sendEmail(
-                email,
-                emailTemplate?.subject!,
-                "",
-                htmlContent
-            );
+            try {
+                await this.emailservice.sendEmail(
+                    email,
+                    emailTemplate?.subject!,
+                    "",
+                    htmlContent
+                );
+            } catch (error) {
+                console.error("Email sending failed:", error);
+
+                return {
+                    status: 400,
+                    message: "Unable to send the OTP to this email address. Please verify the email and try again."
+                };
+            }
 
             return {
                 status: "Email Created and sent otp to registered email",
@@ -143,14 +162,14 @@ export class PartnerRegisterServices implements IPartnerRegister {
             }
         }
         else if (checkEmail?.isOtpVerify == true && checkEmail.status == PartnerRegister.PENDING) {
-           
+
             return {
                 status: 200,
                 data: checkEmail
             }
         }
         else if (checkEmail.email === email && checkEmail.status !== PartnerRegister.PENDING) {
-          
+
             return {
                 status: 404,
                 message: "This email is already registered. Please log in to continue."
@@ -450,8 +469,18 @@ export class PartnerRegisterServices implements IPartnerRegister {
                             ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
                             The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.<br/>`;
         const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
-        await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
+        
+        try {
+   await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
 
+} catch (error) {
+    console.error("Email sending failed:", error);
+
+    return {
+        status: 400,
+        message: "Unable to send the OTP to this email address. Please verify the email and try again."
+    };
+}
 
 
 
@@ -583,7 +612,21 @@ export class PartnerRegisterServices implements IPartnerRegister {
                             ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
                             Please log in to the dashboard and complete all clinic details so the clinic can be listed on the front end.<br/>`;
         const htmlContent = EmailTemplate.getTemplate(emailText);
-        await this.emailservice.sendEmail(clinicdetails?.clinicUser?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | Clinic Registration Successfull`, "", htmlContent);
+        
+try {
+   await this.emailservice.sendEmail(clinicdetails?.clinicUser?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | Clinic Registration Successfull`, "", htmlContent);
+} catch (error) {
+    console.error("Email sending failed:", error);
+
+    return {
+        status: 400,
+        message: "Unable to send the OTP to this email address. Please verify the email and try again."
+    };
+}
+
+
+
+
 
 
         const adminemail = await this.prisma.user.findFirst({where:{role:{name : "SuperAdmin"}}});
@@ -591,8 +634,19 @@ export class PartnerRegisterServices implements IPartnerRegister {
                             ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
                             The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.<br/>`;
         const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
-        await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
+       
 
+
+        try {
+ await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
+} catch (error) {
+    console.error("Email sending failed:", error);
+
+    return {
+        status: 400,
+        message: "Unable to send the OTP to this email address. Please verify the email and try again."
+    };
+}
 
 
 
