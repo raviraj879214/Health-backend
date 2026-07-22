@@ -109,7 +109,7 @@ export class PatientQueriesServices implements IPatientQueries{
 
         var cordinatorid = 0;
 
-        if(AdminDetails?.role.name === "Cordinator"){
+        if(AdminDetails?.role.name === "Coordinator"){
             cordinatorid = AdminDetails.id;
         }
         else{
@@ -528,7 +528,7 @@ export class PatientQueriesServices implements IPatientQueries{
         const allCordinator = await this.prisma.user.findMany({
             where: {
                 role: {
-                name: "Cordinator"
+                name: "Coordinator"
                 }
             }
         });
