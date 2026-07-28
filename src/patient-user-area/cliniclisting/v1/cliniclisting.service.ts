@@ -307,9 +307,23 @@ const formatted = clinics
         const surgeryimages = await this.prisma.clinicSurgeryImage.findMany({
             where :{
                 clinicUuid : getClinicDetails?.uuid
-            }
-            
+            },
         });
+       
+       const doctoruuid = surgeryimages.map(x => x.doctorUuid).filter((uuid): uuid is string => typeof uuid === 'string' && uuid.trim() !== '');
+
+    
+        
+        const doctor = await this.prisma.doctor.findMany({
+            where: {
+                uuid: {
+                    in: doctoruuid,
+                },
+            },
+        });
+
+        console.log("doctor",doctor);
+        
 
 
         const accreditaions = await this.prisma.clinicAccreditation.findMany({
@@ -321,6 +335,21 @@ const formatted = clinics
             }
         })
 
+       
+         const treatmentsids = surgeryimages.map(x => x.treatmentid).filter((treatmentid): treatmentid is string => typeof treatmentid === 'string' && treatmentid.trim() !== '');
+
+
+        const treatments= await this.prisma.treatment.findMany({
+            where:{
+                id:{
+                    in: treatmentsids
+                }
+            }
+        });
+        
+    
+        console.log("treatments",treatments);
+
 
         
 
@@ -331,7 +360,10 @@ const formatted = clinics
             bannerimages : clinicImges,
             description:description,
             surgeryimages : surgeryimages,
-            accreditaions:accreditaions
+            accreditaions:accreditaions,
+            doctor:doctor,
+            treatments:treatments
+           
         }
 
         

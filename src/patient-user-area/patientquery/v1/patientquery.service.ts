@@ -123,7 +123,7 @@ export class PatientQueryServices implements IPatietnQuery{
 
               const message = await this.client.messages.create({
                 body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
-                from: `${process.env.TWILIO_WHATSAPP_NUMBER}`, 
+                from: `${process.env.TWILIO_PHONE_NUMBER}`, 
                 to: `${phone}`, 
               });
 
