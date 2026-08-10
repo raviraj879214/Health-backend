@@ -518,19 +518,24 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
     async sendOtp(phone: string, otp: string) {
         try {
-            const message = await this.client.messages.create({
-                body: `Your OTP for clinic number verification is ${otp}. Please do not share this code with anyone.`,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: phone,
-            });
+            const verification = await this.client.verify.v2
+                .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
+                .verifications.create({
+                    to: phone,
+                    channel: "sms",
+                });
 
             return {
                 success: true,
-                sid: message.sid,
-                otp: otp
+                sid: verification.sid,
+                status: verification.status,
+                otp: null,
             };
         } catch (error) {
-            return { success: false, error: error.message };
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : error,
+            };
         }
     }
 
@@ -548,6 +553,11 @@ export class PartnerRegisterServices implements IPartnerRegister {
                 phoneVerify: 1
             }
         });
+
+
+
+
+
 
         return {
             status: 200,
