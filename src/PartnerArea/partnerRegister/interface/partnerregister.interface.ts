@@ -30,7 +30,7 @@ export interface IPartnerRegister{
 
     sendOtp(phone: string, otp: string)
 
-    verifyOtp(clinicid:string,phoneverify:string);
+    verifyOtp(clinicid:string,phoneverify:string,phoneno:string);
     
 
     accepttermsCondition(dto:PartnerRegisterClinicDetails);

@@ -543,14 +543,15 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
 
-    async verifyOtp(cliniciduuid: string, phoneverify: string) {
+    async verifyOtp(cliniciduuid: string, phoneverify: string,phoneno:string) {
 
         const updateData = await this.prisma.clinicUser.update({
             where: {
                 uuid: cliniciduuid
             },
             data: {
-                phoneVerify: 1
+                phoneVerify: 1,
+                phone: phoneno
             }
         });
 

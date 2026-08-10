@@ -109,9 +109,9 @@ export class PartnerRegisterController{
 
       @Post('verify-otp-phone')
       @Version("1")
-      async verifyPhoneOtp(@Body('cliniciduuid') cliniciduuid: string,@Body('phoneverify') phoneverify: string) {
+      async verifyPhoneOtp(@Body('cliniciduuid') cliniciduuid: string,@Body('phoneverify') phoneverify: string,@Body('phoneno') phoneno: string) {
        
-        return await this.partnerRegister.verifyOtp(cliniciduuid,phoneverify);
+        return await this.partnerRegister.verifyOtp(cliniciduuid,phoneverify,phoneno);
       }
 
 
