@@ -113,31 +113,54 @@ export class PatientQueryServices implements IPatietnQuery{
 
 
 
-    async sendOtp(phone: string, otp: string) {
-            try {
-              // const message = await this.client.messages.create({
-              //   body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
-              //   from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
-              //   to: `whatsapp:${phone}`,
-              // });
+  async sendOtp(phone: string,otp:string) {
+    try {
+      const verification = await this.client.verify.v2
+        .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
+        .verifications.create({
+          to: phone,
+          channel: "sms",
+        });
 
-              const message = await this.client.messages.create({
-                body: `Your OTP for phone number verification is ${otp}. Please do not share this code with anyone.`,
-                from: `${process.env.TWILIO_PHONE_NUMBER}`, 
-                to: `${phone}`, 
-              });
+      return {
+        success: true,
+        sid: verification.sid,
+        status: verification.status,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : error,
+      };
+    }
+  }
 
-              return {
-                success: true,
-                sid: message.sid,
-                otp: otp
-              };
-              
-            } catch (error) {
-                 return { success: false, error: error };
-            }
-        }
 
+
+
+  async otpverification(phone: string, otp: string, sid: string) {
+
+    console.log(phone, otp, sid);
+    try {
+      const result = await this.client.verify.v2
+        .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
+        .verificationChecks.create({
+          to: phone,
+          code: otp,
+        });
+
+      return {
+        success: result.status === "approved",
+        status: result.status,
+      };
+    } catch (error) {
+      console.log(error instanceof Error ? error.message : error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : error,
+      };
+    }
+  }
 
 
 

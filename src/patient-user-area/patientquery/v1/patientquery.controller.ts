@@ -57,6 +57,13 @@ export class PatientQueryController{
         return result;
       }
 
+    @Post('otp-verification')
+    @Version("1")
+    async otpverification(@Body() dto: { otp: string, sid: string,phone:string }) {
+
+        return await this.patietnQueryServices.otpverification(dto.phone,dto.otp,dto.sid);
+    }
+
 
 
 

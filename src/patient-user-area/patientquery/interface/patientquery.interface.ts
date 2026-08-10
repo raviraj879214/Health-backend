@@ -11,6 +11,9 @@ export interface IPatietnQuery{
 
     getCordinatorDetails(clinicid:string);
 
-     sendOtp(phone: string, otp: string);
+    sendOtp(phone: string, otp: string);
+
+
+    otpverification(phone: string,otp:string,sid:string);
 
 }
