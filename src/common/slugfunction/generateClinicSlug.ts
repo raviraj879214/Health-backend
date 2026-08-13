@@ -4,25 +4,31 @@ export function generateClinicSlug(clinicName, location) {
   const normalize = (str) =>
     str
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // remove accents
+      .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
       .trim();
 
+  const clinicSlug = normalize(clinicName);
+
+  // If location is null, undefined, or empty
+  if (!location?.trim()) {
+    return clinicSlug;
+  }
+
   const locationParts = location
     .split(",")
     .map((part) => part.trim())
     .filter(Boolean);
 
-  // Use the last meaningful part of the address
   const cityPart =
     locationParts.length >= 2
       ? locationParts[locationParts.length - 2]
       : location;
 
-  return `${normalize(clinicName)}-${normalize(cityPart)}`;
+  return `${clinicSlug}-${normalize(cityPart)}`;
 }
 
 console.log(

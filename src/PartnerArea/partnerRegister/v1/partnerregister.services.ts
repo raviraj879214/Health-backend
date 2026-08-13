@@ -320,7 +320,9 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
             if (checkexist !== null) {
-                    
+
+                console.log("dto.name",dto.name);
+
                 const updateData = await this.prisma.clinic.update({
                     where: { uuid: String(checkexist.uuid) },
                     data: {
@@ -349,7 +351,7 @@ export class PartnerRegisterServices implements IPartnerRegister {
                         gia : dto.gia,
                         ddd : dto.ddd,
                         siafi : dto.siafi,
-                        slug : generateClinicSlug(dto.name,dto.city),
+                        slug : generateClinicSlug(checkexist.name,dto.city),
                     }
                 });
                 return {
@@ -384,13 +386,15 @@ export class PartnerRegisterServices implements IPartnerRegister {
             }
 
         } catch (error) {
-            console.log(error.message);
+            console.log(error);
         }
     }
 
 
     async insertMoreClinicDetails(dto: PartnerRegisterClinicDetails) 
     {
+        console.log("executed");
+
         const checkcnpj = await this.prisma.clinic.findFirst({
                     where: {
                         clinicUserUuid: {
