@@ -21,8 +21,11 @@ export function UploadMiddleware(uploadPath: string) {
   const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
-      if (!file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/)) {
-        return cb(new Error("Only image files are allowed!"));
+      if (
+        !file.mimetype.match(/^image\/(jpg|jpeg|png|gif|webp)$/) &&
+        file.mimetype !== "application/pdf"
+      ) {
+        return cb(new Error("Only image and PDF files are allowed!"));
       }
 
       cb(null, true);
