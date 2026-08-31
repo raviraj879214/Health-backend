@@ -1172,8 +1172,10 @@ export class ManageClinicServices implements IManageClinic{
 
 
 
-    async deleteClinic(uuid: string) {
-        return this.prisma.$transaction(async (tx) => {
+async deleteClinic(uuid: string) {
+    return this.prisma.$transaction(
+        async (tx) => {
+
             await tx.clinicDoctorAddress.deleteMany({
                 where: { clinicUuid: uuid },
             });
@@ -1230,13 +1232,18 @@ export class ManageClinicServices implements IManageClinic{
                 where: { clinicUuid: uuid },
             });
 
-            // Finally delete the clinic
             return tx.clinic.delete({
-                where: { uuid },
+                where: { uuid : uuid },
             });
-        });
-    }
+        },
+        {
+            maxWait: 10000,
+            timeout: 60000,
+        },
+    );
+}
     
+
     
 
 }
