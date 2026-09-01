@@ -312,7 +312,7 @@ model ClinicGoogleAccount {
   isConnected      Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-  clinic           Clinic    @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+  clinic           Clinic    @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model GoogleReview {
@@ -336,7 +336,7 @@ model ClinicRatingSummary {
   averageRating Decimal  @db.Decimal(2, 1)
   totalReviews  Int
   updatedAt     DateTime @updatedAt
-  clinic        Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade)
+  clinic        Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model ClinicImages {
@@ -394,7 +394,7 @@ model ClinicListingOrder {
   updatedAt          DateTime       @updatedAt
   cliniclistingorder String?        @unique
   uuid               String         @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clinic             Clinic         @relation(fields: [clinicId], references: [id])
+  clinic             Clinic         @relation(fields: [clinicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   package            ListingPackage @relation(fields: [packageId], references: [id])
 }
 
@@ -467,7 +467,7 @@ model ClinicDoctor {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   id         String   @id @default(uuid()) @db.Uuid
-  clinic     Clinic   @relation(fields: [clinicUuid], references: [uuid])
+  clinic     Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
   doctor     Doctor   @relation(fields: [doctorUuid], references: [uuid])
 
   @@unique([clinicUuid, doctorUuid])
@@ -492,7 +492,7 @@ model ClinicDoctorAddress {
   siafiCode    String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  clinic       Clinic   @relation(fields: [clinicUuid], references: [uuid])
+  clinic       Clinic   @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
   doctor       Doctor   @relation(fields: [doctorUuid], references: [uuid])
 }
 
@@ -513,7 +513,7 @@ model ClinicSpecialization {
   specializationId    String?                @db.Uuid
   suggestedCategoryId String?                @db.Uuid
   createdAt           DateTime               @default(now())
-  clinic              Clinic                 @relation(fields: [clinicUuid], references: [uuid])
+  clinic              Clinic                 @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
   specialization      Specialization?        @relation(fields: [specializationId], references: [id])
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
 
@@ -571,7 +571,7 @@ model ClinicSpecialty {
   specialtyId         String?                @db.Uuid
   suggestedCategoryId String?                @db.Uuid
   createdAt           DateTime               @default(now())
-  clinic              Clinic                 @relation(fields: [clinicUuid], references: [uuid])
+  clinic              Clinic                 @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
   specialty           Specialty?             @relation(fields: [specialtyId], references: [id])
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
 
@@ -609,7 +609,7 @@ model ClinicTreatment {
   treatmentid         String?                @db.Uuid
   suggestedCategoryId String?                @db.Uuid
   createdAt           DateTime               @default(now())
-  clinic              Clinic                 @relation(fields: [clinicUuid], references: [uuid])
+  clinic              Clinic                 @relation(fields: [clinicUuid], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
   treatment           Treatment?             @relation(fields: [treatmentid], references: [id])
 
@@ -645,7 +645,7 @@ model ClinicPackage {
   homepagefeatures  String?
   packageid         String?
   boosts            ClinicBoost[]
-  clinic            Clinic                  @relation(fields: [clinicId], references: [uuid])
+  clinic            Clinic                  @relation(fields: [clinicId], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
   packagesDoctor    PackageDoctor[]         @relation("PackageDoctors")
   fieldValues       PackageFieldValue[]
   packagespackages  PackageProcedure[]
@@ -681,7 +681,7 @@ model ClinicListingBoost {
   updatedAt      DateTime     @updatedAt
   clinicuserid   String?
   boostPackage   BoostPackage @relation(fields: [boostPackageId], references: [id])
-  clinics        Clinic       @relation(fields: [clinicId], references: [uuid])
+  clinics        Clinic       @relation(fields: [clinicId], references: [uuid], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model ClinicBoost {
@@ -706,7 +706,7 @@ model PackageSpecialization {
   specializationId    String?                @db.Uuid
   suggestedCategoryId String?                @db.Uuid
   createdAt           DateTime               @default(now())
-  packages            ClinicPackage          @relation(fields: [packageId], references: [id])
+  packages            ClinicPackage          @relation(fields: [packageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   specialization      Specialization?        @relation(fields: [specializationId], references: [id])
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
 }
@@ -717,7 +717,7 @@ model PackageSpecialty {
   specialtyId         String?                @db.Uuid
   suggestedCategoryId String?                @db.Uuid
   createdAt           DateTime               @default(now())
-  package             ClinicPackage          @relation(fields: [packageid], references: [id])
+  package             ClinicPackage          @relation(fields: [packageid], references: [id], onDelete: Cascade, onUpdate: NoAction)
   specialty           Specialty?             @relation(fields: [specialtyId], references: [id])
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
 }
@@ -728,7 +728,7 @@ model PackageTreatment {
   treatmentid         String?                @db.Uuid
   suggestedCategoryId String?                @db.Uuid
   createdAt           DateTime               @default(now())
-  packagestreatment   ClinicPackage          @relation(fields: [packageId], references: [id])
+  packagestreatment   ClinicPackage          @relation(fields: [packageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
   treatment           Treatment?             @relation(fields: [treatmentid], references: [id])
 }
@@ -749,7 +749,7 @@ model PackageProcedure {
   createdAt           DateTime               @default(now())
   packageId           String                 @db.Uuid
   suggestedCategoryId String?                @db.Uuid
-  packagespackages    ClinicPackage          @relation(fields: [packageId], references: [id])
+  packagespackages    ClinicPackage          @relation(fields: [packageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   procedure           Procedure?             @relation(fields: [procedureid], references: [id])
   suggestedCategory   SpecializationRequest? @relation(fields: [suggestedCategoryId], references: [id])
 }
@@ -775,7 +775,7 @@ model PackageFieldValue {
   valueDate    DateTime?
   createdAt    DateTime               @default(now())
   field        PackageFieldDefinition @relation(fields: [fieldId], references: [id])
-  package      ClinicPackage          @relation(fields: [packageId], references: [id])
+  package      ClinicPackage          @relation(fields: [packageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([packageId, fieldId])
 }
@@ -786,7 +786,7 @@ model PackageDoctor {
   createdAt DateTime      @default(now())
   doctorId  String        @db.Uuid
   doctors   Doctor        @relation("DoctorsuuidFk", fields: [doctorId], references: [uuid])
-  packages  ClinicPackage @relation("PackageDoctors", fields: [packageId], references: [id])
+  packages  ClinicPackage @relation("PackageDoctors", fields: [packageId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model Country {
