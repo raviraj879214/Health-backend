@@ -41,7 +41,7 @@ export class PaymentController {
   async createAccount(@Body() body: { email: string, clinicuuid: string }) {
 
     const account = await this.paymentService.client.accounts.create({
-      type: 'express',
+      type: 'standard',
       country: 'BR',
       email: body.email,
       capabilities: {
