@@ -42,18 +42,13 @@ export class PaymentController {
 
     const account = await this.paymentService.client.accounts.create({
       type: 'express',
-      country: 'US',
+      country: 'BR',
       email: body.email,
-     
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
       },
-
       //  business_type: 'company', 
-
-      
-
     });
 
 
