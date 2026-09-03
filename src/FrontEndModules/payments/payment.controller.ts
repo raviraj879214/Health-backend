@@ -71,7 +71,7 @@ async startOnboarding(@Body() body: { stripeAccountId: string }) {
   const accountLink =
     await this.paymentService.client.accountLinks.create({
       account: body.stripeAccountId,
-      refresh_url: `${process.env.FRONT_END_PUBLI_URL}/stripe/refresh`,
+      refresh_url: `${process.env.FRONT_END_PUBLI_URL}/partner/clinic`,
       return_url: `${process.env.FRONT_END_PUBLI_URL}/stripe/success`,
       type: 'account_onboarding',
     });

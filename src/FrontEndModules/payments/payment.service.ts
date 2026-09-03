@@ -208,8 +208,8 @@ export class PaymentService {
     const accountLink =
         await this.client.accountLinks.create({
           account: stripeaccountid,
-          refresh_url: `${process.env.FRONT_END_PUBLI_URL}/stripe/refresh`,
-          return_url: `${process.env.FRONT_END_PUBLI_URL}/stripe-onboarding-succes/${clinicuuid}`,
+          refresh_url: `${process.env.FRONT_END_PUBLI_URL}/partner/clinic/${clinicuuid}`,
+          return_url: `${process.env.FRONT_END_PUBLI_URL}/partner/clinic/${clinicuuid}`,
           type: 'account_onboarding',
         });
 
