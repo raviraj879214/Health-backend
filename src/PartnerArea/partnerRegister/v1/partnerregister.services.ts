@@ -256,16 +256,32 @@ export class PartnerRegisterServices implements IPartnerRegister {
 
 
     async getClinicDetails(uuid: string) {
-
         const clinicdetails = await this.prisma.clinic.findFirst({
             where: {
                 clinicUserUuid: uuid
             }
         });
-
         return {
             status: 200,
             data: clinicdetails
+        }
+    }
+
+
+    async getClinicEmail(uuid: string) {
+        console.log("emailaccess",uuid);
+        const clinicdetails = await this.prisma.clinicUser.findFirst({
+            where: {
+                uuid: uuid
+            }
+        });
+
+        console.log("emailaccess",clinicdetails);
+
+        
+        return {
+            status: 200,
+            email: clinicdetails?.email
         }
     }
 
@@ -391,50 +407,49 @@ export class PartnerRegisterServices implements IPartnerRegister {
     }
 
 
-    async insertMoreClinicDetails(dto: PartnerRegisterClinicDetails) 
-    {
+    async insertMoreClinicDetails(dto: PartnerRegisterClinicDetails) {
         console.log("executed");
 
         const checkcnpj = await this.prisma.clinic.findFirst({
-                    where: {
-                        clinicUserUuid: {
-                            not: dto.uuid
-                        },
-                        cnpj: dto.cnpj
-                    }
-          });
-
-          if(checkcnpj !== null){
-            return{
-                statusCode : 401,
-                message : "cnpj already exist"
+            where: {
+                clinicUserUuid: {
+                    not: dto.uuid
+                },
+                cnpj: dto.cnpj
             }
-          }
-
-
-          
-
-         const clinicExists = await this.prisma.clinic.findFirst({
-            where: { name: dto.name },
-            select: { id: true },
         });
 
-        if (clinicExists) {
-            
-             return{
-                statusCode : 402,
-                message : "Clinic name already exists"
+        if (checkcnpj !== null) {
+            return {
+                statusCode: 401,
+                message: "cnpj already exist"
             }
         }
 
 
 
-        console.log("insert more clinic",dto);
+
+        const clinicExists = await this.prisma.clinic.findFirst({
+            where: { name: dto.name },
+            select: { id: true },
+        });
+
+        if (clinicExists) {
+
+            return {
+                statusCode: 402,
+                message: "Clinic name already exists"
+            }
+        }
+
+
+
+        console.log("insert more clinic", dto);
 
 
         if (dto.TermsID !== '') {
-            const clinicuserid = await this.prisma.clinicUser.findFirst({where:{uuid: dto.uuid}});
-            const getstripedetails = await this.prisma.clinic.findFirst({where:{cnpj : dto.cnpj}});
+            const clinicuserid = await this.prisma.clinicUser.findFirst({ where: { uuid: dto.uuid } });
+            const getstripedetails = await this.prisma.clinic.findFirst({ where: { cnpj: dto.cnpj } });
 
             const createClinic = await this.prisma.clinic.create({
                 data: {
@@ -446,53 +461,53 @@ export class PartnerRegisterServices implements IPartnerRegister {
                     TermsID: dto.TermsID,
                     userId: 1,
                     CheckedTime: new Date(),
-                    clinicUserId : clinicuserid?.id,
-                    onboardingUrl : getstripedetails?.onboardingUrl,
-                    stripeaccountid : getstripedetails?.stripeaccountid,
-                    isStripeVerify : getstripedetails?.isStripeVerify
+                    clinicUserId: clinicuserid?.id,
+                    onboardingUrl: getstripedetails?.onboardingUrl,
+                    stripeaccountid: getstripedetails?.stripeaccountid,
+                    isStripeVerify: getstripedetails?.isStripeVerify
                 }
             });
 
 
 
 
-        const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: createClinic.uuid },include:{clinicUser:true} });
-        const  clinicdetailsurl= this.urlGenerator.urls.admin_clinic_details(createClinic.uuid);
-        console.log("clinicdetailsurl",clinicdetailsurl);
-        let payload: WebhookNotificationDto = {
-            page : clinicdetailsurl,
-            title: "New Partner Registered",
-            area: "admin",
-            message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner. The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.`
-        }
-        await this.universalNotification.HandleNotification(payload);
+            const clinicdetails = await this.prisma.clinic.findUnique({ where: { uuid: createClinic.uuid }, include: { clinicUser: true } });
+            const clinicdetailsurl = this.urlGenerator.urls.admin_clinic_details(createClinic.uuid);
+            console.log("clinicdetailsurl", clinicdetailsurl);
+            let payload: WebhookNotificationDto = {
+                page: clinicdetailsurl,
+                title: "New Partner Registered",
+                area: "admin",
+                message: `Clinic: ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner. The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.`
+            }
+            await this.universalNotification.HandleNotification(payload);
 
 
-        const adminemail = await this.prisma.user.findFirst({where:{role:{name : "SuperAdmin"}}});
-        const adminemailText = `Hi,<br/><br/>
+            const adminemail = await this.prisma.user.findFirst({ where: { role: { name: "SuperAdmin" } } });
+            const adminemailText = `Hi,<br/><br/>
                             ${clinicdetails?.name ?? 'Unknown clinic'} has just been registered as a new partner.<br/>
                             The partner would like to update their clinic details. Basic information has already been submitted and can be reviewed in the admin section.<br/>`;
-        const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
-        
-        try {
-   await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
+            const adminhtmlContent = EmailTemplate.getTemplate(adminemailText);
 
-} catch (error) {
-    console.error("Email sending failed:", error);
+            try {
+                await this.emailservice.sendEmail(adminemail?.email!, `${process.env.NEXT_PUBLIC_PROJECT_NAME} | New Clinic Registration Successfull`, "", adminhtmlContent);
 
-    return {
-        status: 400,
-        message: "Unable to send the OTP to this email address. Please verify the email and try again."
-    };
-}
+            } catch (error) {
+                console.error("Email sending failed:", error);
+
+                return {
+                    status: 400,
+                    message: "Unable to send the OTP to this email address. Please verify the email and try again."
+                };
+            }
 
 
 
 
         }
-        
-        return{
-            status : true
+
+        return {
+            status: true
         }
     }
 

@@ -20,6 +20,7 @@ export interface IPartnerRegister{
 
 
     getClinicDetails(uuid:string);
+    getClinicEmail(uuid:string);
 
     insertClinicDetails(dto:PartnerRegisterClinicDetails);
 

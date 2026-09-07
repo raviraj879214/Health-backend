@@ -56,6 +56,13 @@ export class PartnerRegisterController{
       }
 
 
+      @Get("/get-clinic-email/:uuid")
+      @Version("1")
+      async getClinicEmail(@Param("uuid") uuid:string){
+        return await this.partnerRegister.getClinicEmail(uuid);
+      }
+
+
       
       @Post("/insert-clinic-details")
       @Version("1")
@@ -68,7 +75,7 @@ export class PartnerRegisterController{
       @Post("/insert-more-clinic-details")
       @Version("1")
       async insertMoreClinicDetails(@Body() dto:PartnerRegisterClinicDetails){
-        console.log("dto",dto);
+
         return await this.partnerRegister.insertMoreClinicDetails(dto);
       }
 
