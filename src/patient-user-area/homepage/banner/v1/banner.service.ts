@@ -647,17 +647,23 @@ async clinicboostcronjob(): Promise<void> {
 
 
 
-  async getSeoPageContent(slug: string) {
-      const seoPages = await this.prisma.seoPages.findUnique({
-        where :{
-          slug : slug
-        }
-      });
+async getSeoPageContent(slug: string) {
+  console.log("slug", slug);
 
-      return {
-        seoPages
-      }
-  }
+  const actualSlug = slug === "Homepage" ? "/" : slug;
+  
+  console.log("actualSlug", actualSlug);
+
+  const seoPages = await this.prisma.seoPages.findUnique({
+    where: {
+      slug: actualSlug,
+    },
+  });
+
+  return {
+    seoPages,
+  };
+}
 
 
 
